@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:amigo="http://schemas.android.com/apk/res/amigo"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal" >
+
+	<amigo.widget.AmigoTextView
+		android:id="@+id/title"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="10dp"
+		android:layout_marginTop="10dp"
+		android:layout_marginLeft="55dp"
+		android:layout_marginRight="16dp"
+		android:textColor="@color/info_text_color_name"
+		android:gravity="center_vertical"
+		android:paddingLeft="@dimen/sound_control_preference_panding"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+</LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:amigo="http://schemas.android.com/apk/res/amigo"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+	
+	<amigo.widget.AmigoTextView
+		android:id="@+id/tv_traffic_alert_remind"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="@dimen/dialog_activity_vertical_margin"
+		android:layout_marginRight="@dimen/dialog_activity_vertical_margin"
+		android:layout_marginTop="@dimen/dialog_title_marge_top"
+		android:text="@string/traffic_alert_remind"
+		android:textSize="@dimen/dialog_remind_text_size_traffic"
+		android:textColor="@color/text_title_color" />
+
+	<amigo.widget.AmigoCheckBox
+		android:id="@+id/checkbox_traffic_alert"
+		android:layout_width="wrap_content"
+		android:layout_height="@dimen/dialog_checkbox_height"
+		android:layout_marginLeft="@dimen/dialog_checkbox_marge_left"
+		android:layout_below="@+id/tv_traffic_alert_remind"
+		android:layout_marginTop="@dimen/dialog_checkbox_marge_top"
+		android:layout_marginBottom="@dimen/dialog_checkbox_marge_top"
+		android:text="@string/traffic_alert_no_longer"
+		android:textSize="@dimen/dialog_checkbox_text"
+		android:textColor="@color/dialog_checkbox_color"
+		android:paddingLeft="@dimen/dialog_checkbox_padding_left"
+		android:checked="true"/>
+</RelativeLayout>

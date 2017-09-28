@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:gravity="center_vertical">
+
+	<TextView
+		android:id="@+id/info"
+		android:layout_width="0dp"
+		android:layout_weight="1"
+		android:layout_height="@dimen/contact_child_height"
+		android:singleLine="true"
+		android:ellipsize="end"
+		android:textColor="@color/else_info_text_color"
+		android:textSize="@dimen/content_text_size"
+		android:layout_centerVertical="true"
+		android:gravity="center_vertical"/>
+
+	<LinearLayout 
+		android:id="@+id/action_area"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:descendantFocusability="blocksDescendants"
+		android:gravity="center_vertical">
+	   
+		<ImageButton
+			android:id="@+id/sms"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@drawable/gn_detail_item_icon_sms_normal"
+			android:visibility="gone" />
+		
+		<ImageButton
+			android:id="@+id/dial"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@drawable/gn_detail_item_icon_phone1_normal"
+			android:visibility="gone"
+			android:layout_marginLeft="@dimen/button_layout_margin"/>
+	</LinearLayout>
+</LinearLayout>

@@ -1,0 +1,515 @@
+<resources>
+    <string name="app_name">GnVoiceAssist</string>
+    <string name="err_net_msg">当前网络连接失败,请稍后重试</string>
+    <string name="voice_err_msg">识别失败，请稍后再试</string>
+    <string name="audio_paused">暂停中&#8230;</string>
+    <string name="audio_playing">播放中&#8230;</string>
+    <string name="audio_default">等待音乐</string>
+    <string name="stop_record">点击说话</string>
+    <string name="start_record">录音中&#8230;</string>
+    <string name="time_record">耗时:click->StopListen:%1$dms</string>
+    <string name="request_error">出错了，请稍后再试</string>
+    <string name="no_log">暂时没有日志</string>
+    <string name="no_directive">对不起，暂时没有收到指令</string>
+    <string name="no_audio">暂时没有歌曲了，请稍后再试</string>
+    <string name="open_file_title">选择浏览工具</string>
+    <string name="previous_audio">上一首</string>
+    <string name="next_audio">下一首</string>
+    <string name="open_log">打开日志</string>
+    <string name="login">登陆</string>
+    <string name="client_id">您应用的client_id</string>
+    <string name="client_id_empty">请输入您申请的client_id</string>
+    <string name="login_succeed">登陆成功</string>
+    <string name="login_failed">登陆失败</string>
+    <string name="login_canceled">登陆取消</string>
+    <string name="wakeup_succeed">唤醒成功,您问点什么呢?</string>
+    <string name="wakeup_word">您可以说【小度小度】进行唤醒</string>
+    <string name="audio_permission_error_msg">录音权限失败</string>
+
+    <!-- **************************** string-array start *************************** -->
+    <string-array name="contact_othername">
+        <item>电话簿</item>
+        <item>电话本</item>
+    </string-array>
+    <string-array name="message_othername">
+        <item>短信</item>
+    </string-array>
+    <string-array name="dail_othername">
+        <item>电话</item>
+        <item>拨号盘</item>
+    </string-array>
+    <string-array name="picture_othername">
+        <item>相册</item>
+        <item>照片</item>
+    </string-array>
+    <string-array name="photo_othername">
+        <item>图库</item>
+        <item>照片</item>
+    </string-array>
+    <string-array name="email_othername">
+        <item>邮箱</item>
+        <item>邮件</item>
+        <item>EMAIL</item>
+    </string-array>
+    <string-array name="voicehelper_othername">
+        <item>语音</item>
+    </string-array>
+    <string-array name="calendar_othername">
+        <item>日程</item>
+    </string-array>
+    <string-array name="camera_othername">
+        <item>拍照</item>
+    </string-array>
+    <string-array name="music_othername">
+        <item>音乐</item>
+        <item>音乐播放器</item>
+    </string-array>
+    <string-array name="all_othername">
+        <item>电话簿</item>
+        <item>电话本</item>
+        <item>短信</item>
+        <item>电话</item>
+        <item>拨号盘</item>
+        <item>相册</item>
+        <item>照片</item>
+        <item>邮箱</item>
+        <item>EMAIL</item>
+        <item>语音</item>
+        <item>日程</item>
+        <item>拍照</item>
+        <item>依赖辐射区</item>
+        <item>依赖射区</item>
+    </string-array>
+    <string-array name="poweroff">
+        <item>关机</item>
+        <item>官妓</item>
+        <item>惯技</item>
+        <item>关闭手机</item>
+    </string-array>
+    <string-array name="phone_type">
+        <item>手机</item>
+        <item>住宅</item>
+        <item>公司</item>
+        <item>其他</item>
+    </string-array>
+    <!-- ****************************** string-array end ****************************** -->
+    <!-- ******************************** string start ******************************** -->
+    <string name="launcher_name">Voice Assist</string>
+    <string name="music_appname">音乐</string>
+    <string name="message_appname">信息</string>
+    <string name="dail_appname">拨号</string>
+    <string name="picture_appname">图库</string>
+    <string name="photo_appname">相册</string>
+    <string name="email_appname">电子邮件</string>
+    <string name="voicehelper_appname">智能语音</string>
+    <string name="calendar_appname">日历</string>
+    <string name="camera_appname">相机</string>
+    <string name="msg_ok">确定</string>
+    <string name="msg_cancle">取消</string>
+    <string name="install">下载</string>
+    <string name="rsp_confuse_promp">请说"打电话"，"发信息"，"读信息"，"闹钟"，"提醒"，"便签"，"天气"，"股票"，"搜索"</string>
+    <string name="rsp_ask_who_to_call">打电话给谁？</string>
+    <string name="rsp_ask_who_to_call_promp">请说姓名或号码</string>
+    <string name="rsp_ask_who_to_sms">发信息给谁？</string>
+    <string name="rsp_calling_format">正在呼叫[n1]%1$s</string>
+    <string name="rsp_calling_with_call_info">正在呼叫</string>
+    <string name="rsp_calling_with_name_number">正在呼叫</string>
+    <string name="rsp_no_phone_number_to_sms_format">%1$s没有保存号码</string>
+    <string name="rsp_no_phone_number_format">%1$s没有保存号码.</string>
+    <string name="rsp_no_contact_with_request">找不到联系人</string>
+    <string name="rsp_contact_list_with_firstname_one">找不到联系人，你要找的是%1$s？</string>
+    <string name="rsp_contact_list_with_firstname_many">找不到联系人，你要找的是这%1$s位中的一位？</string>
+    <string name="rsp_abort_dialing">好的。</string>
+    <string name="rsp_sending_using_simcard">正在发送</string>
+    <string name="rsp_choose_sim_for_tts_with_num">卡1呼叫还是卡2</string>
+    <string name="rsp_choose_sim_for_tts_with_name_num">卡1呼叫还是卡2</string>
+    <string name="rsp_choose_sim_for_tts_with_all_info">卡1呼叫还是卡2</string>
+    <string name="rsp_calling_using_simcard">正在呼叫</string>
+    <string name="rsp_choose_sim_promp">卡1呼叫还是卡2</string>
+    <string name="rsp_choose_sim_promp_call">卡1呼叫还是卡2</string>
+    <string name="rsp_choose_sim_promp_send">卡1发送还是卡2</string>
+    <string name="rsp_contact_detail">%1$s的详情</string>
+    <string name="rsp_ask_choose_phone_type_to_call_promp">请说号码前的标签或点击图标</string>
+    <string name="rsp_ask_choose_phone_type_to_sms_promp">请说号码前的标签或点击图标</string>
+    <string name="rsp_ask_send_sms_confirm">发送还是取消？</string>
+    <string name="rsp_ask_send_sms_promp">发送还是取消？</string>
+    <string name="rsp_ask_send_sms_again">发送还是取消？</string>
+    <string name="rsp_network_error_short">网络有问题。</string>
+    <string name="string_stock_name">股票</string>
+    <string name="rsp_sms_send_done">正在发送</string>
+    <string name="rsp_sms_send_cancel">好的</string>
+    <string name="rsp_multiple_same_name_found">以下是联系人的详情：</string>
+    <string name="rsp_multiple_name_number_found">选择第几条？</string>
+    <string name="rsp_multiple_contact_choose_again">选择第几条？</string>
+    <string name="rsp_one_contact_has_multi_number">选择第几条？</string>
+
+    <string name="rsp_contact_alert_no_contact">没有此联系人</string>
+    <string name="rsp_web_loading_promp">网络加载中，请稍候</string>
+    <string name="label_format">%1$s:%2$s</string>
+    <string name="label_with_seq_format">%1$s%2$d:%3$s</string>
+    <string name="label_cmd_format">%1$s%2$d</string>
+    <string name="phone_label_mobile">手机</string>
+    <string name="phone_label_work">公司</string>
+    <string name="phone_label_work_fax">单位传真</string>
+    <string name="phone_label_home">住宅</string>
+    <string name="phone_label_other">其他</string>
+    <string name="sms_recipient">收件人:</string>
+    <string name="sms_content">发送内容:</string>
+    <string name="language_mandarin_code">9</string>
+    <string name="language_man_code">4</string>
+    <string name="reminder_content">提醒内容:</string>
+    <string name="reminder_time">提醒时间:</string>
+    <string name="rsp_contact_new" formatted="false">保存还是取消？</string>
+    <string name="rsp_ask_input_sms_content_promp">请说发送内容</string>
+    <string name="rsp_ask_input_sms_content">请说发送内容</string>
+    <string name="rsp_app_open">将为您打开</string>
+    <string name="rsp_app_not_found">系统中没有该应用,下载还是取消?</string>
+    <string name="rsp_app_already_here">我已经在这里了哟。</string>
+    <string name="rsp_app_exit">应用已经安装过了哟</string>
+    <string name="rsp_app_search">将为您搜索%1$s，请稍后。</string>
+    <string name="sms_send_confirm">发送</string>
+    <string name="sms_send_cancel">取消</string>
+    <string name="other_web_search">http://www.baidu.com/s?wd=%1$s</string>
+    <string name="music_web_search">http://music.baidu.com/s?fr=jinli&amp;key=%1$s</string>
+    <string name="separator">，</string>
+    <string name="separator_and">和</string>
+    <string name="rsp_contact_new_ask_number">请说号码。</string>
+    <string name="rsp_contact_new_ask_name">请说姓名。</string>
+    <string name="rsp_contact_new_again">保存还是取消。</string>
+    <string name="rsp_contact_saved">已保存。</string>
+    <string name="rsp_contact_cancel">已取消。</string>
+    <string name="rsp_contact_open_app">将为您打开联系人</string>
+    <string name="rsp_contact_app_not_found">无法打开联系人</string>
+    <string name="rsp_contact_not_found">没有找到%1s</string>
+    <string name="rsp_contact_no_number">%1s没有保存号码</string>
+    <string name="rsp_contactl_send_contact_tip">想发送号码吗？简单！只要对我说\"把小明的号码发给小红\"就ok啦！</string>
+    <string name="navigate">导航</string>
+    <string name="gao_name">高德</string>
+    <string name="rsp_error_in_sms1">短信内容为空，将打开信息界面。</string>
+    <string name="rsp_error_in_sms2">识别出错，将打开信息界面。</string>
+    <string name="contact_new_name_title">姓名：%1$s</string>
+    <string name="contact_new_number_title">号码：%1$s</string>
+    <string name="contact_cmd_confirm">保存</string>
+    <string name="contact_cmd_cancel">取消</string>
+    <string name="contact_not_save_tip">保存失败，请重试！</string>
+
+    <string name="remind_specify_day_format">%1$d月%2$d日</string>
+    <string name="remind_suc_rsp_format">确定还是取消？</string>
+    <string name="remind_create_remind_success">创建成功</string>
+    <string name="remind_create_remind_fail">创建失败</string>
+    <string name="remind_create_remind_cancel">已取消</string>
+    <string name="remind_create_remind_out_of_date">时间已经过去了</string>
+    <string name="remind_error_cmd"> 确定还是取消？</string>
+    <string name="remind_after_year_date_format">%1$d年%2$d月%3$d日</string>
+    <string name="music_search_tip1">正在搜索%1$s的歌曲。</string>
+    <string name="music_search_tip2">正在搜索歌曲%1$s。</string>
+    <string name="music_search_tip3">正在搜索%1$s的%2$s。</string>
+    <string name="music_search_tip4">正在挑选精品歌曲。</string>
+    <string name="reminder_date_formate">yyyy年MM月dd日 EE HH:mm</string>
+    <string name="weather_below_zero">零下</string>
+    <string name="unknown_info">亲，这个我真不懂，要不点击搜索看看吧：</string>
+    <string name="weather_no_info">这个真没有。您可以试试询问今天和未来三天的天气情况。</string>
+    <string name="weather_date_info">%1$s月%2$s日</string>
+    <string name="weather_date_diffent_year_info">%1$s年%2$s月%3$s日</string>
+    <string name="sim_card_absent">电话卡没有安装</string>
+    <string name="msg_voice_control_cancel">将为您结束音控</string>
+    <string name="open_app_endwith_app">应用</string>
+    <string name="open_app_endwith_software">程序</string>
+    <string name="rsp_cancel_noting">没有什么可以取消。</string>
+
+    <string name="restaurant_dianping">大众点评dianping.com</string>
+    <string name="contact_appname">联系人</string>
+    <string name="have_no_result">没有查询结果</string>
+    <string name="input_new_order">请重新输入命令？</string>
+    <string name="open_airplan">打开飞行模式</string>
+    <string name="close_airplan">关闭飞行模式</string>
+    <string name="airplan_mode_opened">飞行模式已打开</string>
+    <string name="airplan_mode_closed">飞行模式已关闭</string>
+    <string name="getminutes">"%s 分"</string>
+    <string name="gethours">"%s 点"</string>
+
+
+    <string name="rsp_nomatch_error_power">确定还是取消！</string>
+    <string name="rsp_no_phone_number_for_call">找不到电话号码</string>
+    <string name="rsp_no_phone_number_for_sms">找不到电话号码</string>
+    <string name="card">卡</string>
+    <string name="is_reboot">确定要重启吗？</string>
+    <string name="is_shutdown">确定要关机吗？</string>
+    <string name="is_rebooting">正在重启</string>
+    <string name="is_shutdownning">正在关机</string>
+    <string name="is_cancel_reboot">取消重启</string>
+    <string name="is_cancel_shutdown">取消关机</string>
+    <string name="shutdown_yes_or_no">确定还是取消</string>
+    <string name="reboot_yes_or_no">确定还是取消</string>
+    <string name="app_download_cancel">取消下载%1$s</string>
+    <string name="app_download_tip_error">识别错误!</string>
+    <string name="app_download_remind_error_cmd">下载还是取消？</string>
+    <string name="app_is_uninstall">手机中未安装此应用！</string>
+    <string name="gaode_app_is_uninstall">手机中暂未安装高德地图！</string>
+    <string name="baidu_app_is_uninstall">手机中暂未安装百度地图！</string>
+    <string name="voice_navi_to_somewhere">将为您导航到%1$s</string>
+    <string name="voice_navi_detail_info">请说出目的地所在的城市名称!!!</string>
+    <string name="voice_navi_asked_install_gaodemap">没有安装高德地图,确定要下载吗?</string>
+    <string name="voice_navi_asked_install_baidumap">没有安装百度地图,确定要下载吗?</string>
+    <string name="voice_navi_asked_install_didi">没有安装滴滴出行,确定要下载吗？</string>
+    <string name="voice_navi_not_install_didi">没有安装滴滴出行</string>
+    <string name="tts_open_didi">正在打开滴滴出行</string>
+    <string name="tts_didi_name">滴滴出行</string>
+    <string name="voice_navi_unknown_error">未知的错误，请稍后重试!</string>
+    <string name="voice_navi_network_error">网络错误，请稍后重试!</string>
+    <string name="voice_navi_map_service_error">地图服务异常，请稍后重试!</string>
+    <string name="voice_navi_location_service_error">无法获取您的当前位置</string>
+    <string name="app_name_is_null">没有听清楚，请重试!</string>
+    <string name="ok_or_cancel">确定还是取消?</string>
+    <string name="create_deskclock_success">创建成功!</string>
+    <string name="cancel_create_deskclock">已取消</string>
+
+    <string name="not_surpport_command">不支持该数据查询！</string>
+    <string name="not_surpport_download_command">手机中暂不支持下载命令！</string>
+    <string name="sima_send">卡1发送</string>
+    <string name="simb_send">卡2发送</string>
+    <string name="sima_call">卡1呼叫</string>
+    <string name="simb_call">卡2呼叫</string>
+    <string name="rsp_ask_who_to_sms_agian">发短信给谁？</string>
+    <string name="stop_recognize_for_error">太累了，我想休息一下</string>
+    <string name="recogizing_and_waiting">识别中，请稍后再试！</string>
+    <string name="app_download">搜索%1$s</string>
+    <string name="say_again">没听清楚，请再说一遍</string>
+    <string name="do_fail_and_again">操作失败，请重试！</string>
+    <string name="reminder_clock_content" >内容:</string>
+    <string name="reminder_clock_time">时间:</string>
+    <string name="voice_set_alarm_success">创建成功!</string>
+    <string name="voice_set_alarm_cancel">已取消</string>
+
+    <string name="voice_set_alarm_reco_error">识别错误!</string>
+    <string name="rsp_ask_who_to_call_agian">打电话给谁？</string>
+    <string name="gn_engine_is_wrong">Activate voice service unusually, please try again later.</string>
+    <string name="inputing">正在输入</string>
+    <string name="recognizing">正在识别</string>
+    <string name="event_infor_title">主题：</string>
+    <string name="exit">Exit</string>
+
+    <string name="tip">您好，有什么可以帮您？</string>
+    <string name="tip_title">您可以这样：</string>
+
+
+    <!--语音主界面ListView显示的String-->
+    <string name="category_name_call">\"打电话给小明\"</string>
+    <string name="category_name_sms">\"发短信给小明\"</string>
+    <string name="category_name_contact">\"小明的电话是多少\"</string>
+    <string name="category_name_reminder">\"提醒我下午三点开会\"</string>
+    <string name="category_name_time">\"几点了\"</string>
+    <string name="category_name_date">\"今天几号\"</string>
+    <string name="category_name_app">\"打开微博\"</string>
+    <string name="category_name_search">\"搜索水果\"</string>
+    <string name="category_name_food">\"附近有什么好吃的\"</string>
+    <string name="category_name_music">\"放几首歌听听\"</string>
+    <string name="category_name_weather">\"今天天气怎么样\"</string>
+    <string name="category_name_flight">\"北京到广州的火车\"</string>
+    <string name="category_name_phone_help">\"手机怎么上网\"</string>
+    <string name="category_name_conversation">\"你在干嘛呢\"</string>
+    <string name="category_name_shutdown">\"关机\"</string>
+    <string name="category_name_restart">\"重启手机\"</string>
+    <string name="category_name_schairplane">\"打开飞行模式\"</string>
+    <string name="category_name_navigation">\"导航到西直门\"</string>
+    <string name="category_name_flashlight">\"打开手电筒\"</string>
+    <string name="category_sub_name_call">打电话</string>
+    <string name="category_sub_name_sms">发短信</string>
+    <string name="category_sub_name_contact">联系人</string>
+    <string name="category_sub_name_reminder">日程提醒</string>
+    <string name="category_sub_name_time">时间查询</string>
+    <string name="category_sub_name_date">日期查询</string>
+    <string name="category_sub_name_app">打开应用</string>
+    <string name="category_sub_name_search">上网搜索</string>
+    <string name="category_sub_name_food">餐饮美食，加油站等（需打开定位服务）</string>
+    <string name="category_sub_name_music">音乐搜索</string>
+    <string name="category_sub_name_weather">天气查询（需打开定位服务）</string>
+    <string name="category_sub_name_flight">火车航班</string>
+    <string name="category_sub_name_phone_help">手机帮助问答</string>
+    <string name="category_sub_name_conversation">聊天</string>
+    <string name="category_sub_name_shutdown">手机关机</string>
+    <string name="category_sub_name_restart">手机重启</string>
+    <string name="category_sub_name_schairplane">设置飞行模式</string>
+    <string name="category_sub_name_navigation">路线规划</string>
+    <string name="category_sub_name_call_taxi">出行方案</string>
+    <string name="category_sub_name_flashlight">快捷开关手电筒</string>
+
+    <!-- 语音助手流量提示界面相关字符串 -->
+    <string name="invalable_assist">Other voice functions are being used，please try again later.</string>
+    <string name="invalable_assist_in_calling">Calling, please try again later.</string>
+    <string name="traffic_alert_title">System Tips</string>
+    <string name="Welcome_to_use_voice">Welcome to use voice assist</string>
+    <string name="traffic_alert_no_longer">Never remind</string>
+    <string name="voice_to_text_cancel">Cancel</string>
+    <string name="voice_to_text_open">Continue</string>
+    <string name="traffic_alert_remind">Allow to access the permissions while using the app:\nNetwork connection;access location;access/modify messages;access/modify contacts;access/modify/delete the contents of the SD card;make calls;record audio;control cellular networks;control WLAN connections;Bluetooth connections.\nContinue?</string>
+    <string name="gn_voice_is_initialized">Initializing engine, please wait</string>
+
+    <!-- 讯飞识别相关字符串 -->
+    <string name="reco_error_msp_timeout">网络不好，请稍候再试</string>
+    <string name="reco_error_complaint">没听清楚,请重复一下</string>
+    <string name="no_address">没有找到相应的地点,请重新输入命令！</string>
+    <string name="reco_error_too_long">您说的有点多,听不过来</string>
+    <string name="reco_error_no_match_0">走神了,麻烦再说一遍</string>
+
+    <string name="reco_error_no_match_1">没听清楚,请重复一下</string>
+    <string name="reco_error_no_match_2">听不懂哦，联网后的我会变聪明的</string>
+    <string name="reco_error_no_match_3">没联网我懂的很少，你可以说"打电话给小明"或"打开相机"试试看</string>
+    <string name="reco_net_timeout">网络不太好，请稍候再试</string>
+    <string name="reco_recode_error">录音设备不可用,请稍候再试</string>
+    <string name="reco_response_timeout">反应超时</string>
+    <string name="guide_to_text_skip">跳过</string>
+    <string name="guide_to_text_content">您好，欢迎使用金立语音功能。\n\n我是您的语音助手，您可以使用语音打电话、发信息、找路线，更多命令您可以去（设置－特色功能－语音控制－软件介绍）中查看。\n\n悬浮触点中的语音图标与长按锁屏键都可以开启语音，需要停止语音时按挂机键或右侧锁屏键，都可以停止语音功能。\n\n快来试试吧～滴声后开始录音呦！</string>
+
+    <!-- 天气查询相关字符串 -->
+    <string name="weather_sunshine">晴</string>
+    <string name="weather_cloudy">多云</string>
+    <string name="weather_overcast">阴</string>
+    <string name="weather_fog">雾</string>
+    <string name="weather_haze">霾</string>
+    <string name="weather_rainy">雨</string>
+    <string name="weather_snow">雪</string>
+    <string name="weather_rain_snow">雨夹雪</string>
+    <string name="weather_thunder">雷阵雨</string>
+    <string name="weather_rain_shower">阵雨</string>
+    <string name="weather_snow_shower">阵雪</string>
+    <string name="weather_freezing_rain">冻雨</string>
+    <string name="snow_level_x">暴雪</string>
+    <string name="weather_fly_ash">浮尘</string>
+    <string name="weather_fly_sand">扬沙</string>
+    <string name="rain_level_s">小雨</string>
+    <string name="rain_level_m">中雨</string>
+    <string name="rain_level_h">大雨</string>
+    <string name="rain_level_x">暴雨</string>
+    <string name="snow_level_s">小雪</string>
+    <string name="snow_level_m">中雪</string>
+    <string name="snow_level_h">大雪</string>
+    <string name="sand_strom">沙尘</string>
+    <string name="weather_head_info">%1$s&#160;&#160;%2$s</string>
+    <string name="weather_temp_range">%1$s&#176;C～%2$s&#176;C</string>
+    <string name="weather_info_display_format">%1$s%2$s的天气情况:%3$s,最低温度%4$s摄氏度,最高温度%5$s摄氏度,%6$s</string>
+
+    <string name="didi_back">返回</string>
+    <string name="didi_close">关闭</string>
+
+    <string name="screenshot">截屏</string>
+    <string name="screenshot_two">截一下屏</string>
+    <string name="open_bluetooth">打开蓝牙</string>
+    <string name="close_bluetooth">关闭蓝牙</string>
+    <string name="bluetooth_opened">蓝牙已打开</string>
+    <string name="bluetooth_closed">蓝牙已关闭</string>
+    <string name="open_wifi">打开外发</string>
+    <string name="close_wifi">关闭外发</string>
+    <string name="open_wifi_two">打开歪发</string>
+    <string name="close_wifi_two">关闭歪发</string>
+    <string name="open_wifi_three">打开无线网</string>
+    <string name="close_wifi_three">关闭无线网</string>
+    <string name="open_wifi_four">打开无线网络</string>
+    <string name="close_wifi_four">关闭无线网络</string>
+    <string name="open_wifi_five">打开wlan</string>
+    <string name="close_wifi_five">关闭wlan</string>
+    <string name="open_wifi_six">打开打不留浪</string>
+    <string name="close_wifi_six">关闭打不留浪</string>
+    <string name="open_wifi_seven">打开大不留浪</string>
+    <string name="close_wifi_seven">关闭大不留浪</string>
+    <string name="wifi_opened">W lan已打开</string>
+    <string name="wifi_closed">W lan已关闭</string>
+    <string name="open_location">打开定位</string>
+    <string name="close_location">关闭定位</string>
+    <string name="open_location_two">打开位置信息</string>
+    <string name="close_location_two">关闭位置信息</string>
+    <string name="location_opened">位置信息已打开</string>
+    <string name="location_closed">位置信息已关闭</string>
+    <string name="open_mobile_data">打开数据链接</string>
+    <string name="close_mobile_data">关闭数据链接</string>
+    <string name="open_mobile_data_two">打开数据连接</string>
+    <string name="close_mobile_data_two">关闭数据连接</string>
+    <string name="open_mobile_data_three">打开数据网络</string>
+    <string name="close_mobile_data_three">关闭数据网络</string>
+    <string name="open_mobile_data_four">打开移动数据</string>
+    <string name="close_mobile_data_four">关闭移动数据</string>
+    <string name="open_flashlight">打开手电筒</string>
+    <string name="close_flashlight">关闭手电筒</string>
+    <string name="flashlight_data_opened">手电筒已打开</string>
+    <string name="flashlight_data_closed">手电筒已关闭</string>
+    <string name="flashlight_data_fail">相机使用中，不能操作手电筒</string>
+    <string name="mobile_data_opened">移动数据已打开</string>
+    <string name="mobile_data_closed">移动数据已关闭</string>
+    <string name="check_simcard_state">请检查sim卡状态</string>
+
+
+    <string name="accessibility_description">打开辅助功能是使用语音助手完整功能所需要的，会帮助用户完善与语音相关的应用功能。</string>
+
+    <!-- Content description of the phone signal when no signal for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_no_phone">No phone.</string>
+    <!-- Content description of the phone signal when it is one bar for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_phone_one_bar">Phone one bar.</string>
+    <!-- Content description of the phone signal when it is two bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_phone_two_bars">Phone two bars.</string>
+    <!-- Content description of the phone signal when it is three bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_phone_three_bars">Phone three bars.</string>
+    <!-- Content description of the phone signal when it is full for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_phone_signal_full">Phone signal full.</string>
+
+    <!-- Content description of the data signal when no signal for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_no_data">No data.</string>
+    <!-- Content description of the data signal when it is one bar for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_one_bar">Data one bar.</string>
+    <!-- Content description of the data signal when it is two bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_two_bars">Data two bars.</string>
+    <!-- Content description of the data signal when it is three bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_three_bars">Data three bars.</string>
+    <!-- Content description of the data signal when it is full for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_signal_full">Data signal full.</string>
+
+    <!-- Content description of the WIFI signal when no signal for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_no_wifi">Wifi disconnected.</string>
+    <!-- Content description of the WIFI signal when it is one bar for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_wifi_one_bar">Wifi one bar.</string>
+    <!-- Content description of the WIFI signal when it is two bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_wifi_two_bars">Wifi two bars.</string>
+    <!-- Content description of the WIFI signal when it is three bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_wifi_three_bars">Wifi three bars.</string>
+    <!-- Content description of the WIFI signal when it is full for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_wifi_signal_full">Wifi signal full.</string>
+
+    <!-- Content description of the data connection type Edge for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_connection_edge">Edge</string>
+    <!-- Content description of the data connection type CDMA for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_connection_cdma">CDMA</string>
+    <!-- Content description of the data connection type GPRS for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_connection_gprs">GPRS</string>
+    <!-- Content description of the data connection type 3G for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_connection_3g">3G</string>
+    <!-- Content description of the data connection type 3.5G for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_connection_3.5g">3.5G</string>
+    <!-- Content description of the data connection type 4G for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_connection_4g">4G</string>
+    <!-- Content description of the data connection type LTE for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_connection_lte">LTE</string>
+    <!-- Content description of the roaming data connection type for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_data_connection_roaming">Roaming</string>
+
+    <!-- Content description of the airplane mode icon for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_airplane_mode">Airplane mode.</string>
+    <!-- Network connection string for Bluetooth Reverse Tethering -->
+    <string name="bluetooth_tethered">Bluetooth tethered</string>
+    <!-- Textual description of Ethernet connections -->
+    <string name="ethernet_label">Ethernet</string>
+    <!-- Text to display underneath the graphical signal strength meter when no connection is available. [CHAR LIMIT=20] -->
+    <string name="status_bar_settings_signal_meter_disconnected">No Internet connection</string>
+    <string name="no_service">no service</string>
+    <string name="no_card">No card</string>
+    <string name="no_sim_card">No SIM Card</string>
+    <string name="invalid_card">Invalid Card</string>
+    <string name="status_bar_network_name_separator" translatable="false">|</string>
+
+    <string name="close_other_recording_and_retry">请关闭其他录音程序再试！</string>
+    <string name="permission">权限(permission)</string>
+    <string name="no_permissions">应用需要必要的运行权限</string>
+
+    <string name="settings">设置</string>
+    <string name="help">帮助</string>
+    <string name="string_help_text">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。\n\n最后点击两次后退按钮，即可返回。</string>
+    <string name="quit">退出</string>
+</resources>

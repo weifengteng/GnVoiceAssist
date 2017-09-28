@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  Gionee <huangxc><2013-6-21> modify for CR00810922 begin-->
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/linear_interpolator"
+    android:duration="800"
+    android:valueFrom="0"
+    android:valueTo="360"
+    android:propertyName="rotation"
+    android:repeatCount ="300"
+    android:repeatMode="restart"
+    />
+<!--  Gionee <huangxc><2013-6-21> modify for CR00810922 end-->

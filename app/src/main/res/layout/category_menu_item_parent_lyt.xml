@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:amigo="http://schemas.android.com/apk/res/amigo"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+
+	<RelativeLayout
+		android:id="@+id/head"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:minHeight="@dimen/sound_control_preference_height" >
+
+		<ImageView
+			android:id="@+id/category_icon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
+			android:paddingLeft="@dimen/description_second_list_icon_padding_horizontal"
+			android:paddingRight="@dimen/description_second_list_icon_padding_horizontal"
+			android:scaleType="centerInside" />
+	
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true" 
+			android:orientation="vertical"
+			android:layout_toRightOf="@id/category_icon"
+			android:paddingRight="@dimen/sound_control_preference_panding" >
+	
+			<amigo.widget.AmigoTextView
+				android:id="@+id/category_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="@color/info_text_color_name"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+	
+			<amigo.widget.AmigoTextView
+				android:id="@+id/category_subtitle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="@dimen/description_second_list_summary_text_size"
+				android:textColor="@color/info_text_color_name"
+				android:layout_marginRight="@dimen/dialog_activity_vertical_margin"
+				android:paddingRight="@dimen/dialog_activity_vertical_margin"/>
+		</LinearLayout>
+	</RelativeLayout>
+</RelativeLayout>

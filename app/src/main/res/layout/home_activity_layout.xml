@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:gionee="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp">
+			<FrameLayout
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1">
+
+				<LinearLayout
+					android:id="@+id/help_command"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:orientation="vertical"
+					android:layout_marginTop="20dp"
+					android:visibility="gone">
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textSize="22sp"
+						android:gravity="center"
+						android:textColor="@color/info_text_color"
+						android:text="@string/tip_title"
+						android:layout_marginTop="15dp"/>
+
+					<ExpandableListView
+						android:id="@+id/home_listview"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_marginTop="10dp"
+						android:cacheColorHint="@android:color/transparent"
+						android:divider="@android:color/transparent"
+						android:groupIndicator="@drawable/software_description_expandable_indicator"
+						android:indicatorRight="@dimen/helplist_indicator_margin_left"
+						android:scrollbarStyle="outsideOverlay" />
+				</LinearLayout>
+
+				<com.gionee.gnvoiceassist.widget.HomeScrollView
+					android:id="@+id/sv"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_marginTop="5dp">
+					<LinearLayout
+						android:id="@+id/sv_ll"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:orientation="vertical"/>
+				</com.gionee.gnvoiceassist.widget.HomeScrollView>
+
+				<TextView
+					android:visibility="gone"
+					android:id="@+id/tip"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:textSize="22sp"
+					android:gravity="center"
+					android:textColor="@color/info_text_color"
+					android:text="@string/tip"
+					android:layout_marginTop="100dp"/>
+			</FrameLayout>
+
+					<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:orientation="vertical"
+						android:gravity="center_horizontal"
+						android:layout_alignParentBottom="true">
+
+						<com.gionee.gnvoiceassist.widget.RippleLayout
+							android:id="@+id/ripple_layout"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							gionee:colora="#1786c1"
+							gionee:duration="2000"
+							gionee:radius="30dp"
+							gionee:rippleNums="3"
+							gionee:scale="2.5">
+
+							<ImageView
+								android:id="@+id/iv"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_centerInParent="true"
+								android:background="@drawable/voice_button_selector" />
+
+							<ImageView
+								android:id="@+id/anim_outside"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:src="@drawable/processing_anim_outside"
+								android:visibility="gone"/>
+						</com.gionee.gnvoiceassist.widget.RippleLayout>
+
+					</LinearLayout>
+			</LinearLayout>
+
+	<ImageButton
+		android:id="@+id/help"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentBottom="true"
+		android:layout_marginRight="26dp"
+		android:layout_marginBottom="20dp"
+		android:src="@drawable/help_btn"
+		android:background="@color/transparent"
+		android:visibility="gone"/>
+</RelativeLayout>

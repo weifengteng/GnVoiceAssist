@@ -1,0 +1,74 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- dp 用于间距 -->
+    <dimen name="category_icon_width">50dp</dimen>
+    <dimen name="category_icon_height">50dp</dimen>
+    <dimen name="contact_child_height">50dp</dimen>
+    <dimen name="button_item_height">40dp</dimen>
+    <dimen name="button_margin_left">10dp</dimen>
+    <dimen name="button_margin_right">10dp</dimen>
+    <dimen name="button_margin_top">15dp</dimen>
+    <dimen name="button_margin_top1">18dp</dimen>
+    <dimen name="button_margin_bottom">15dp</dimen>
+    <dimen name="button_margin_interval">20dp</dimen>
+    <dimen name="list_item_textview_padding">5dp</dimen>
+    <dimen name="weather_area_height">350dp</dimen>
+    <dimen name="today_weather_area_height">150dp</dimen>
+    <dimen name="today_weather_padding">15dp</dimen>
+    <dimen name="future_panel_height">200dp</dimen>
+    <dimen name="morecontact_tel_icon_width">40dp</dimen>
+    <dimen name="morecontact_tel_icon_height">40dp</dimen>
+    <dimen name="list_item_padding">3dp</dimen>
+    <dimen name="sub_item_magrin_left">7dp</dimen>
+    <dimen name="sub_item_magrin_right">7dp</dimen>
+    <dimen name="sub_item_magrin_top">7dp</dimen>
+    <dimen name="bubble_gap_height">16dp</dimen>
+    <dimen name="dialog_activity_vertical_margin">20dp</dimen>
+    <dimen name="dialog_title_marge_top">20dp</dimen>
+    <dimen name="no_padding_margin">0dp</dimen>
+    <dimen name="status_bar_img_height">25dp</dimen>
+    <dimen name="status_bar_img_width">25dp</dimen>
+    <dimen name="contact_single_list_height">50dp</dimen>
+    <dimen name="contact_item_height">72dp</dimen>
+    <dimen name="sms_title_content_height">56dp</dimen>
+    <dimen name="sms_number_name_height">64dp</dimen>
+    <dimen name="contact_name_height">64dp</dimen>
+    <dimen name="sms_margin_top">7dp</dimen>
+    <dimen name="layout_padding_left">20dp</dimen>
+    <dimen name="layout_padding_right">20dp</dimen>
+    <dimen name="layout_padding_top">12dp</dimen>
+    <dimen name="layout_layout_height">88dp</dimen>
+    <dimen name="layout_margin_bottom">10dp</dimen>
+    <dimen name="layout_horizontal_line">1px</dimen>
+    <dimen name="scrollView_margin_left">10dp</dimen>
+    <dimen name="scrollView_margin_right">10dp</dimen>
+    <dimen name="scrollView_margin_top">48dp</dimen>
+    <dimen name="scrollView_margin_bottom">48dp</dimen>
+    <dimen name="simple_host_info_margin">20dp</dimen>
+    <dimen name="contact_margin_left">14dp</dimen>
+    <dimen name="contact_margin_right">14dp</dimen>
+    <dimen name="contact_layout_margin">16dp</dimen>
+    <dimen name="button_layout_margin">12dp</dimen>
+    <dimen name="contact_list_height">12dp</dimen>
+
+    <dimen name="dialog_checkbox_marge_top">5dp</dimen>
+    <dimen name="dialog_checkbox_marge_left">16dp</dimen>
+    <dimen name="dialog_checkbox_padding_left">8dp</dimen>
+    <dimen name="dialog_checkbox_height">32dp</dimen>
+    <dimen name="dialog_checkbox_text">12sp</dimen>
+
+    <!-- sp 用于字体 -->
+    <dimen name="content_text_size">16sp</dimen>
+    <dimen name="main_content_text_size">18sp</dimen>
+    <dimen name="sub_content_text_size">18sp</dimen>
+    <dimen name="sub1_content_text_size">12sp</dimen>
+    <dimen name="dialog_remind_text_size_traffic">16sp</dimen>
+
+    <dimen name="sound_control_preference_panding">15dp</dimen>
+    <dimen name="sound_control_preference_height">64dp</dimen>
+    <dimen name="description_second_list_icon_padding_horizontal">20dp</dimen>
+    <dimen name="description_second_list_summary_text_size">12sp</dimen>
+    <dimen name="helplist_indicator_margin_left">266dp</dimen>
+</resources>

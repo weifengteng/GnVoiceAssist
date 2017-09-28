@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+	<style name="VoiceFullScreenThemeWallpaper">
+		<item name="android:windowShowWallpaper">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowBackground">@color/transparent</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+	</style>
+
+	<style name="HomeVoiceFullScreenThemeWallpaper">
+		<item name="android:windowShowWallpaper">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowBackground">@drawable/voice_background</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionBar">false</item>
+	</style>
+
+</resources>

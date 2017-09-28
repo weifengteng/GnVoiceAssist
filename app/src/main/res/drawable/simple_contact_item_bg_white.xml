@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:maxLevel="0"
+          android:drawable="@drawable/note_board_w"/>
+    <item android:maxLevel="1"
+          android:drawable="@drawable/note_board_w"/>
+    <item android:maxLevel="2"
+          android:drawable="@drawable/note_board_body_white"/>
+    <item android:maxLevel="3"
+          android:drawable="@drawable/note_board_body_white"/>
+</level-list>

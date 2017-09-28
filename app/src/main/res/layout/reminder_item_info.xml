@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingTop="5dp"
+	android:paddingBottom="5dp"
+	android:orientation="vertical">
+
+<RelativeLayout
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/button">
+
+	<LinearLayout
+		android:id="@+id/content_panel"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical" >
+
+		<TextView
+			android:id="@+id/reminder_content"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="@dimen/main_content_text_size" 
+			android:textColor="@color/content_text_color"
+			android:gravity="center_vertical"/>
+
+		<include layout="@layout/list_item_line" />
+
+		<TextView
+			android:id="@+id/reminder_time"
+			android:layout_width="wrap_content"
+			android:layout_height="@dimen/sms_title_content_height"
+			android:textAppearance="?android:attr/textAppearanceMedium" 
+			android:textSize="@dimen/content_text_size"
+			android:textColor="@color/content_text_color"
+			android:gravity="center_vertical"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/button_bar"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/button_item_height"
+		android:layout_marginTop="@dimen/sms_margin_top"
+		android:layout_below="@id/content_panel"
+		android:orientation="horizontal" >
+
+		<Button
+			android:id="@+id/cancle"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:background="@drawable/button"
+			android:text="@string/msg_cancle"
+			android:padding="0dp"
+			android:textSize="@dimen/main_content_text_size"
+			android:textColor="@color/content_text_color" />
+
+		<Button
+			android:id="@+id/confirm"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:background="@drawable/button"
+			android:text="@string/msg_ok"
+			android:layout_marginLeft="@dimen/button_layout_margin"
+			android:padding="0dp"
+			android:textSize="@dimen/main_content_text_size"
+			android:textColor="@color/content_text_color_send" />
+	</LinearLayout>
+</RelativeLayout>
+
+</LinearLayout>

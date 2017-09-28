@@ -1,0 +1,92 @@
+{
+    "BarginOper": [
+        "barginoper"
+    ],
+    "NumberSelectCancel": [
+        "poscancel"
+    ],
+    "AirConditionerTemperature2": [
+        "airconditioner",
+        "temperature"
+    ],
+    "AirConditionerTemperature1": [
+        "airconditioner",
+        "num",
+        "unit"
+    ],
+    "SearchTime": [
+        "search",
+        "now",
+        "what"
+    ],
+    "DeviceFantype": [
+        "device",
+        "fantype"
+    ],
+    "AirConditionerWind": [
+        "airconditioner",
+        "wind"
+    ],
+    "OperateFlashlight": [
+        "operateflashlight"
+    ],
+    "DviceConfirm": [
+        "device",
+        "confirm"
+    ],
+    "OperatePrintscreen": [
+        "printscreen"
+    ],
+    "DownloadSelect": [
+        "select"
+    ],
+    "NumberSelect": [
+        "selectpre",
+        "num",
+        "selecttail"
+    ],
+    "DeviceOpencloseVoice": [
+        "device",
+        "openclose",
+        "voice"
+    ],
+    "AirConditionerOpenclose1": [
+        "openclose",
+        "airconditioner"
+    ],
+    "AirConditionerOpenclose3": [
+        "airconditioner",
+        "openclose",
+        "lamplight"
+    ],
+    "AirConditionerOpenclose2": [
+        "airconditioner",
+        "openclose"
+    ],
+    "AirConditionerMode": [
+        "airconditioner",
+        "mode"
+    ],
+    "DeviceOpenclose2": [
+        "device",
+        "openclose"
+    ],
+    "DeviceOpenclose1": [
+        "openclose",
+        "device"
+    ],
+    "DeviceChangevoice1": [
+        "device",
+        "changevoice",
+        "voice"
+    ],
+    "DeviceNextpre": [
+        "device",
+        "nextprevious"
+    ],
+    "DeviceChangevoice2": [
+        "device",
+        "voice",
+        "changevoice"
+    ]
+}

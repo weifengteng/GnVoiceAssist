@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/box"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:paddingBottom="5dp"
+	android:paddingTop="5dp">
+
+<RelativeLayout
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/button">
+	
+	<LinearLayout 
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		
+		<TextView
+			android:id="@+id/simcard_1"
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/contact_single_list_height"
+			android:gravity="center_vertical"
+			android:padding="@dimen/list_item_textview_padding"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="@dimen/main_content_text_size"
+			android:textColor="@color/info_text_color"
+			android:text="@string/sima_send" />
+
+		
+		<TextView
+			android:id="@+id/simcard_2"
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/contact_single_list_height"
+			android:gravity="center_vertical"
+			android:padding="@dimen/list_item_textview_padding"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="@dimen/main_content_text_size"
+			android:textColor="@color/info_text_color"
+			android:text="@string/simb_send" />
+	</LinearLayout>
+</RelativeLayout>
+</LinearLayout>

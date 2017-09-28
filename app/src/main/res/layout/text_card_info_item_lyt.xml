@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingLeft="@dimen/layout_padding_left"
+	android:paddingTop="@dimen/layout_padding_top"
+	android:paddingRight="@dimen/layout_padding_right">
+
+	<TextView
+		android:id="@+id/content"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="left"
+		android:textColor="@color/tel_addr_text_color"
+		android:textSize="@dimen/sub_content_text_size"/>
+
+	<TextView
+		android:id="@+id/moreinfo"
+		android:layout_below="@id/content"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="@color/tel_addr_text_color"
+		android:visibility="gone"
+		android:textSize="@dimen/sub1_content_text_size"
+		android:layout_alignParentRight="true"
+		android:layout_marginBottom="@dimen/layout_margin_bottom"/>
+</RelativeLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<declare-styleable name="Voice">
+		<attr name="primaryColor" format="reference|color" />
+		<attr name="noteBoardBg" format="reference" />
+		<attr name="simpleHostInfoBg" format="reference" />
+		<attr name="simpleUserInfoBg" format="reference" />
+		<attr name="simpleUserLogo" format="reference" />
+	</declare-styleable>
+
+	<declare-styleable name="RippleLayout">
+		<attr name="colora" format="color" />
+		<attr name="strokeWidth" format="dimension" />
+		<attr name="radius" format="dimension" />
+		<attr name="duration" format="integer" />
+		<attr name="rippleNums" format="integer" />
+		<attr name="scale" format="float" />
+	</declare-styleable>
+	<declare-styleable name="RadarScanView">
+		<attr name="circleColor" format="color"/>
+		<attr name="radarColor" format="color"/>
+		<attr name="tailColor" format="color"/>
+	</declare-styleable>
+</resources>

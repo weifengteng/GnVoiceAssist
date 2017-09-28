@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:paddingTop="5dp"
+	android:paddingBottom="5dp"
+	android:background="@color/transparent"
+    android:paddingLeft="80dp"
+	android:gravity="right">
+
+<TextView
+	android:id="@+id/reco_result"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:textSize="16sp"
+	android:padding="10dp"
+	android:textColor="@color/info_text_color"
+	android:lineSpacingExtra="2dp"
+	android:background="@drawable/background_right" />
+</LinearLayout>
