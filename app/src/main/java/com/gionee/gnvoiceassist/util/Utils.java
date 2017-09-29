@@ -53,6 +53,24 @@ public class Utils {
         DcsSDK.getInstance().getSystemDeviceModule().getProvider().userActivity();
     }
 
+
+    public static void startActivity(Context cxt, Intent intent) {
+        if (null == cxt || null == intent) {
+            LogUtil.e(Utils.class, "Utils startActivity param null");
+            return;
+        }
+        LogUtil.e(Utils.class, "Utils startActivity param cxt = " + cxt + ", intent = " + intent);
+
+        try {
+            // TODO:
+            /*wakeUpSystem(cxt);
+            releaseLockScreen(cxt);*/
+            cxt.startActivity(intent);
+        } catch (Exception e) {
+            LogUtil.e(Utils.class, "Utils startActivity Exception : " + e);
+        }
+    }
+
     // TODO: 监听联系人数据库变化
     public static void uploadContacts() {
         try{

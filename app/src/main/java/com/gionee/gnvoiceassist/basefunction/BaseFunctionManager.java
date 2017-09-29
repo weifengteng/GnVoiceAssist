@@ -7,6 +7,7 @@ import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactsPresenter;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.DeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.kookong.KookongOperator;
+import com.gionee.gnvoiceassist.basefunction.music.GNMusicOperator;
 import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
 import com.gionee.gnvoiceassist.basefunction.recordcontrol.RecordController;
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
@@ -33,6 +34,7 @@ public class BaseFunctionManager implements IBaseFunction {
     private KookongOperator kookongOperator;
     private IVoiceInputEventListener voiceInputEventListener;
     private IAudioPlayerStateListener audioPlayerStateListener;
+    private GNMusicOperator gnMusicOperator;
 
     public void setHandler(Handler handler) {
         this.mMainHandler = handler;
@@ -143,5 +145,13 @@ public class BaseFunctionManager implements IBaseFunction {
             audioPlayerStateListener = mainActivity;
         }
         return audioPlayerStateListener;
+    }
+
+    @Override
+    public GNMusicOperator getGNMusicOperattor() {
+        if(gnMusicOperator == null) {
+            gnMusicOperator = new GNMusicOperator(this);
+        }
+        return gnMusicOperator;
     }
 }

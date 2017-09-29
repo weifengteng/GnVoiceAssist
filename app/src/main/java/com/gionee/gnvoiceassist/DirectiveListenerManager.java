@@ -5,6 +5,7 @@ import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.alarm.AlarmDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.applauncher.AppLauncherListener;
 import com.gionee.gnvoiceassist.directiveListener.audioplayer.AudioPlayerListener;
+import com.gionee.gnvoiceassist.directiveListener.audioplayer.LocalAudioPlayerListener;
 import com.gionee.gnvoiceassist.directiveListener.contacts.ContactsDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CUIDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.devicecontrol.DeviceControlListener;
@@ -47,6 +48,7 @@ public class DirectiveListenerManager {
     private LocationHandler locationHandler;
     private OfflineAsrListener offlineAsrListener;
     private AsrVoiceInputListener asrVoiceInputListener;
+    private LocalAudioPlayerListener localAudioPlayerListener;
 
 
     public DirectiveListenerManager(IBaseFunction baseFunctionManager) {
@@ -72,6 +74,8 @@ public class DirectiveListenerManager {
         DcsSDK.getInstance().getAsr().registOfflineListener(offlineAsrListener);
         DcsSDK.getInstance().getAudioRecord().registerRecordListener(voiceInputVolumeListener);
         DcsSDK.getInstance().getCustomUserInteractionDeviceModule().setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
+        // 音乐指令相关
+        DcsSDK.getInstance().getLocalAudioPlayerDeviceModule().addLocalAudioPlayerListener(localAudioPlayerListener);
     }
 
     public void unRegisterDirectiveListener() {
@@ -93,6 +97,7 @@ public class DirectiveListenerManager {
         DcsSDK.getInstance().getAsr().registOfflineListener(null);
         DcsSDK.getInstance().getAudioRecord().registerRecordListener(null);
         DcsSDK.getInstance().getCustomUserInteractionDeviceModule().setCustomUserInteractionDirectiveListener(null);
+        DcsSDK.getInstance().getLocalAudioPlayerDeviceModule().addLocalAudioPlayerListener(null);
     }
 
     public void initDirectiveListener() {
@@ -131,6 +136,8 @@ public class DirectiveListenerManager {
         audioPlayerListener = new AudioPlayerListener(baseFunctionManager);
 
         deviceModuleListener = new DeviceModuleListener(baseFunctionManager);
+
+        localAudioPlayerListener = new LocalAudioPlayerListener(baseFunctionManager);
     }
 
     public void onDestroy(){
