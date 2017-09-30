@@ -12,10 +12,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.baidu.duer.dcs.devicemodule.screen.message.Link;
+import com.baidu.duer.dcs.devicemodule.screen.message.TextCardPayload;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
-import com.gionee.gnvoiceassist.bean.TextCardBean;
 
 import static android.R.id.list;
 
@@ -23,16 +24,15 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 	public static final String TAG = SimpleTextCardItem.class.getSimpleName();
 	private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 	private Context mContext;
-	private TextCardBean mTextCardBean;
+	private TextCardPayload mTextCardPayload;
 	private View mCachedView;
 	private LayoutInflater mInflater;
 	private ViewGroup mParent;
 
 	/******************************* 构造函数 & Override *******************************/
-	public SimpleTextCardItem(Context ctx, TextCardBean textCardBean) {
-		LogUtil.d(TAG, "SimpleTextCardItem beanList = " + textCardBean);
+	public SimpleTextCardItem(Context ctx, TextCardPayload textCardPayload) {
 		mContext = ctx;
-		mTextCardBean = textCardBean;
+		mTextCardPayload = textCardPayload;
 	}
 
 	@Override
@@ -62,13 +62,13 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 			LogUtil.d(TAG, "SimpleTextCardItem bindView ---------------1111------ ");
 			View itemView = View.inflate(mContext,R.layout.text_card_info_item_lyt, null);
 			LogUtil.d(TAG, "SimpleTextCardItem bindView ---------------2222------ ");
-			if(mTextCardBean == null) {
+			if(mTextCardPayload == null) {
 				customPanel.addView(itemView);
 				return;
 			}
 
-    		setContentView(mTextCardBean.getContent(), itemView);
-    		setMoreInfoView(mTextCardBean.getLink(), itemView);
+    		setContentView(mTextCardPayload.getContent(), itemView);
+    		setMoreInfoView(mTextCardPayload.getLink(), itemView);
 	        customPanel.addView(itemView);
 //		customPanel.addView(View.inflate(mContext, R.layout.restaurant_dianping_info, null));
 	}
@@ -99,18 +99,18 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 		LogUtil.d(TAG, "SimpleTextCardItem setContentView list = " + list);
     }
 
-    private void setMoreInfoView(final TextCardBean.Link link, View itemView) {
+    private void setMoreInfoView(final Link link, View itemView) {
 		if(link == null) {
 			return;
 		}
 
-		final String linkUrl = link.url;
+		final String linkUrl = link.getUrl();
 		if(linkUrl != null) {
 			LogUtil.d(TAG, "SimpleTextCardItem setMoreInfoView addr[0] = " + linkUrl);
 			TextView detailUrlView = (TextView) itemView.findViewById(R.id.moreinfo);
 			detailUrlView.setVisibility(View.VISIBLE);
 			detailUrlView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
-			detailUrlView.setText(link.anchorText);
+			detailUrlView.setText(link.getAnchorText());
 			detailUrlView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {

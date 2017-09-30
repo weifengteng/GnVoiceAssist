@@ -8,28 +8,25 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.baidu.duer.dcs.util.LogUtil;
+import com.baidu.duer.dcs.devicemodule.screen.message.Image;
 import com.gionee.gnvoiceassist.R;
-import com.gionee.gnvoiceassist.bean.ImageListBean;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleImageListItem extends BaseItem implements OnClickListener {
 	public static final String TAG = SimpleImageListItem.class.getSimpleName();
-	private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 	private static final int MAX_DISPLAY_ITEM = 5;
 	private Context mContext;
-	private ArrayList<ImageListBean> mBeanList;
+	private List<Image> mImageList;
 	private View mCachedView;
 	private LayoutInflater mInflater;
 	private ViewGroup mParent;
 
 	/******************************* 构造函数 & Override *******************************/
-	public SimpleImageListItem(Context ctx, ArrayList<ImageListBean> beanList) {
-		LogUtil.d(TAG, "SimpleImageListItem beanList = " + beanList);
+	public SimpleImageListItem(Context ctx, List<Image> imageList) {
 		mContext = ctx;
-		mBeanList = beanList;
+		mImageList = imageList;
 	}
 
 	@Override
@@ -44,7 +41,6 @@ public class SimpleImageListItem extends BaseItem implements OnClickListener {
 	}
 
 	public View getView() {
-		LogUtil.d(TAG, "-------------------------333333333333333------------------------- ");
 		if (mCachedView == null) {
 			mCachedView = View.inflate(mContext, R.layout.empty_note_board, null);
 			bindView();
@@ -57,16 +53,14 @@ public class SimpleImageListItem extends BaseItem implements OnClickListener {
 		LinearLayout customPanel = (LinearLayout) mCachedView.findViewById(R.id.custom_panel);
 
 		int count = 0;
-		for(ImageListBean bean : mBeanList) {
-			LogUtil.d(TAG, "SimpleImageListItem bindView ---------------1111------ ");
+		for(Image img : mImageList) {
 			View itemView = View.inflate(mContext,R.layout.imagelist_info_item_lyt, null);
-			LogUtil.d(TAG, "SimpleImageListItem bindView ---------------2222------ ");
-			if(bean == null) {
+			if(img == null) {
 				customPanel.addView(itemView);
 				continue;
 			}
 
-			setImage(bean.getSrc(), itemView);
+			setImage(img.getSrc(), itemView);
 			count++;
 			if(count > MAX_DISPLAY_ITEM) {
 				break;

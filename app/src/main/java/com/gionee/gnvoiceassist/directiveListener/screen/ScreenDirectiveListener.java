@@ -6,18 +6,21 @@ import android.view.View;
 
 import com.baidu.duer.dcs.devicemodule.screen.ScreenDeviceModule;
 import com.baidu.duer.dcs.devicemodule.screen.message.HtmlPayload;
+import com.baidu.duer.dcs.devicemodule.screen.message.Image;
+import com.baidu.duer.dcs.devicemodule.screen.message.ImageListCardPayload;
+import com.baidu.duer.dcs.devicemodule.screen.message.Link;
+import com.baidu.duer.dcs.devicemodule.screen.message.ListCardItem;
+import com.baidu.duer.dcs.devicemodule.screen.message.ListCardPayload;
 import com.baidu.duer.dcs.devicemodule.screen.message.RenderHintPayload;
 import com.baidu.duer.dcs.devicemodule.screen.message.RenderVoiceInputTextPayload;
+import com.baidu.duer.dcs.devicemodule.screen.message.StandardCardPayload;
+import com.baidu.duer.dcs.devicemodule.screen.message.TextCardPayload;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
-import com.gionee.gnvoiceassist.bean.ImageListBean;
-import com.gionee.gnvoiceassist.bean.ListCardItemBean;
-import com.gionee.gnvoiceassist.bean.StandardCardItemBean;
-import com.gionee.gnvoiceassist.bean.TextCardBean;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.Utils;
@@ -27,10 +30,7 @@ import com.gionee.gnvoiceassist.widget.SimpleStandardCardItem;
 import com.gionee.gnvoiceassist.widget.SimpleTextCardItem;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,24 +65,13 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
 
     @Override
     public void onRenderCard(Directive directive) {
-        //test code
-        /*String testJsonStr = "{\"list\":[{\"img\":\"http\"},{\"img2\":\"https\"}]}";
-        try {
-            Map<String, Object> testJsonMap = new ObjectMapper().readValue(testJsonStr, Map.class);
-            Object obj = testJsonMap.get("list");
-            String testListStr = String.valueOf(obj);
-            Log.d("DCSF", "onRenderCard: *********************************" + testListStr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-
-        //test code
 
         String rawMessage = directive.rawMessage;
+        Payload payload = directive.getPayload();
+        String cardType = Utils.getValueByKey(rawMessage, Constants.TYPE);
         Map<String, Map<String, Object>> headerAndPayloadMap = Utils.getHeaderAndPayloadMap(rawMessage);
         Map<String, Object> payloadMap = headerAndPayloadMap.get(Constants.PAYLOAD);
-        String cardType = String.valueOf(payloadMap.get(Constants.TYPE));
+//        String cardType = String.valueOf(payloadMap.get(Constants.TYPE));
         ObjectMapper mapper = new ObjectMapper();
 
         if(TextUtils.isEmpty(cardType)) {
@@ -92,89 +81,66 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
 
         switch (cardType) {
             case Constants.TEXT_CARD:
-//                String content = Utils.getValueByKey(rawMessage, Constants.CONTENT);
-                TextCardBean textCardBean = null;
-                try {
-                    String jsonStr = mapper.writeValueAsString(payloadMap);
-                    textCardBean = mapper.readValue(jsonStr, TextCardBean.class);
-                    LogUtil.d(TAG, "beanList : " + textCardBean.toString());
-                } catch (IOException e) {
-                    LogUtil.d(TAG, "textcard exception : " + e.toString());
-                    e.printStackTrace();
+                if(payload instanceof TextCardPayload) {
+                    TextCardPayload textCardPayload = (TextCardPayload) payload;
+                    Link link = textCardPayload.getLink();
+                    if(link != null) {
+                        SimpleTextCardItem stci = new SimpleTextCardItem(mAppCtx, textCardPayload){
+                            @Override
+                            public void onClick() {
+                                super.onClick();
+                            }
+                        };
+                        View textCardView = stci.getView();
+                        screenRender.renderInfoPanel(textCardView);
+                    } else {
+                        screenRender.renderAnswerInScreen(textCardPayload.getContent());
+                    }
                 }
-
-                TextCardBean.Link link = textCardBean.getLink();
-                if(link != null) {
-                    SimpleTextCardItem stci = new SimpleTextCardItem(mAppCtx, textCardBean){
+                break;
+            case Constants.STANDARD_CARD:
+                //TODO
+                if(payload instanceof StandardCardPayload) {
+                    StandardCardPayload standardCardPayload = (StandardCardPayload) payload;
+                    SimpleStandardCardItem ssci = new SimpleStandardCardItem(mAppCtx, standardCardPayload){
                         @Override
                         public void onClick() {
                             super.onClick();
                         }
                     };
-                    View textCardView = stci.getView();
-                    screenRender.renderInfoPanel(textCardView);
-                } else {
-                    screenRender.renderAnswerInScreen(textCardBean.getContent());
-                }
 
-                break;
-            case Constants.STANDARD_CARD:
-                //TODO
-                StandardCardItemBean bean = null;
-                try {
-                    String jsonStr = mapper.writeValueAsString(payloadMap);
-                    bean = mapper.readValue(jsonStr, StandardCardItemBean.class);
-                    LogUtil.d(TAG, "beanList : " + bean.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    screenRender.renderInfoPanel(ssci.getView());
                 }
-                SimpleStandardCardItem ssci = new SimpleStandardCardItem(mAppCtx, bean){
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-
-                screenRender.renderInfoPanel(ssci.getView());
                 break;
             case Constants.LIST_CARD:
                 //TODO
-                ArrayList<ListCardItemBean> beanList = new ArrayList<>();
-                try {
-                    String jsonStr = mapper.writeValueAsString(payloadMap.get("list"));
-                    beanList = mapper.readValue(jsonStr, new TypeReference<List<ListCardItemBean>>() {});
-                    LogUtil.d(TAG, "beanList : " + beanList.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(payload instanceof ListCardPayload) {
+                    ListCardPayload listCardPayload = (ListCardPayload) payload;
+                    List<ListCardItem> listCardItems = listCardPayload.getList();
+                    SimpleListCardItem sri =  new SimpleListCardItem(mAppCtx, listCardItems){
+
+                        @Override
+                        public void onClick() {
+                            super.onClick();
+                        }
+                    };
+                    View view = sri.getView();
+                    screenRender.renderInfoPanel(view);
                 }
-
-                SimpleListCardItem sri =  new SimpleListCardItem(mAppCtx, beanList){
-
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-                View view = sri.getView();
-                screenRender.renderInfoPanel(view);
                 break;
             case Constants.IMAGELIST_CARD:
                 //TODO
-                ArrayList<ImageListBean> imageListBeans = new ArrayList<>();
-                try {
-                    String jsonStr = mapper.writeValueAsString(payloadMap.get("imageList"));
-                    imageListBeans = mapper.readValue(jsonStr, new TypeReference<List<ImageListBean>>() {});
-                    LogUtil.d(TAG, "imageListBeans : " + imageListBeans.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(payload instanceof ImageListCardPayload) {
+                    ImageListCardPayload imageListCardPayload = (ImageListCardPayload) payload;
+                    List<Image> images = imageListCardPayload.getImageList();
+                    SimpleImageListItem sili = new SimpleImageListItem(mAppCtx, images) {
+                        @Override
+                        public void onClick() {
+                            super.onClick();
+                        }
+                    };
+                    screenRender.renderInfoPanel(sili.getView());
                 }
-                SimpleImageListItem sili = new SimpleImageListItem(mAppCtx, imageListBeans) {
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-                screenRender.renderInfoPanel(sili.getView());
                 break;
             default:
                 break;
