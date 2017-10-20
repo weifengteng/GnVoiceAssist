@@ -9,6 +9,7 @@ import com.baidu.duer.dcs.androidsystemimpl.custominteraction.ICustomUserInterac
 import com.baidu.duer.dcs.androidsystemimpl.phonecall.IPhoneCallImpl;
 import com.baidu.duer.dcs.androidsystemimpl.player.MediaPlayerImpl;
 import com.baidu.duer.dcs.androidsystemimpl.sms.ISmsImpl;
+import com.baidu.duer.dcs.api.IASROffLineConfigProvider;
 import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.devicemodule.audioplayer.AudioPlayerDeviceModule;
 import com.baidu.duer.dcs.devicemodule.contacts.ContactsDeviceModule;
@@ -20,6 +21,9 @@ import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.DialogRequestIdHandler;
 import com.baidu.duer.dcs.framework.IMessageSender;
 import com.baidu.duer.dcs.framework.InternalApi;
+import com.baidu.duer.dcs.framework.internalApi.DcsConfig;
+import com.baidu.duer.dcs.framework.internalApi.IDcsConfigProvider;
+import com.baidu.duer.dcs.framework.internalApi.IDcsInternalProvider;
 import com.baidu.duer.dcs.framework.internalApi.IDcsRequestBodySentListener;
 import com.baidu.duer.dcs.framework.internalApi.IDirectiveReceivedListener;
 import com.baidu.duer.dcs.framework.internalApi.IErrorListener;
@@ -28,8 +32,10 @@ import com.baidu.duer.dcs.framework.message.DcsRequestBody;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
+import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
 import com.baidu.duer.dcs.systeminterface.IAudioRecorder;
 import com.baidu.duer.dcs.systeminterface.IOauth;
+import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncher;
@@ -40,7 +46,16 @@ import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
+import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.T;
+import com.gionee.gnvoiceassist.util.Utils;
+import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by liyingheng on 10/15/17.
@@ -56,22 +71,22 @@ public class SdkManagerImpl implements ISdkManager {
     private static SdkManagerImpl sInstance;
 
     private IDcsSdk mDcsSdk;
+    private Context mAppCtx;
 
     private SdkManagerImpl() {
-
+        mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
     }
 
     public static synchronized SdkManagerImpl getInstance() {
         if (sInstance == null) {
             sInstance = new SdkManagerImpl();
         }
-
         return sInstance;
     }
 
     @Override
-    public void init(Context context) {
-        initSdk(context);
+    public void init() {
+        initSdk(mAppCtx);
 //        initDirectiveReceivedListener();
 //        initLocationHandler();
         initErrorListener();
@@ -85,13 +100,28 @@ public class SdkManagerImpl implements ISdkManager {
 
     private void initSdk(Context context) {
         // 第一步初始化sdk
-        mDcsSdk = DcsSdkImpl.getInstance();
+//        mDcsSdk = DcsSdkImpl.getInstance();
+
         IAudioRecorder audioRecorder = new AudioRecordImpl();
 
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
         String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
         IOauth oauth = new BaiduOauthClientCredentialsImpl(clientId, clientSecret);
-        mDcsSdk.init(clientId, oauth, audioRecorder, ENABLE_WAKEUP, WAKEUP_WORD);
+        final ASROffLineConfig asrOffLineConfig = new ASROffLineConfig();
+        asrOffLineConfig.offlineAsrSlots = getOfflineAsrSlots();
+        IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
+            @Override
+            public ASROffLineConfig get() {
+                return asrOffLineConfig;
+            }
+        };
+        mDcsSdk = new DcsSdkImpl.Builder()
+                .oauth(oauth)
+                .clientId(clientId)
+                .audioRecorder(audioRecorder)
+                .asrMode(DcsConfig.ASR_MODE_ONLINE)
+                .asrOffLineConfig(asrOffLineConfigProvider)
+                .build();
 
 //        ((TtsOutputDeviceModule)getInternalApi().getDeviceModule(ApiConstants.NAMESPACE)).addVoiceOutputListener(new TtsOutputDeviceModule.ITtsOutputListener() {
 //            @Override
@@ -119,7 +149,7 @@ public class SdkManagerImpl implements ISdkManager {
         IAppLauncher appLauncher = new IAppLauncherImpl(context);
         IMessageSender messageSender = ((DcsSdkImpl) mDcsSdk).getInternalApi().getMessageSender();
         AppLauncherDeviceModule appLauncherDeviceModule = new AppLauncherDeviceModule(appLauncher, messageSender);
-        mDcsSdk.setDeviceModule(appLauncherDeviceModule);
+        mDcsSdk.putDeviceModule(appLauncherDeviceModule);
 
         //初始化音频播放器模块AudioPlayerDeviceModule
 //        AudioPlayerDeviceModule audioPlayerDeviceModule = new AudioPlayerDeviceModule(new MediaPlayerImpl(),messageSender);
@@ -131,37 +161,37 @@ public class SdkManagerImpl implements ISdkManager {
 
         //初始化电话模块PhonecallDeviceModule
         PhoneCallDeviceModule phoneCallDeviceModule = new PhoneCallDeviceModule(new IPhoneCallImpl(),messageSender);
-        mDcsSdk.setDeviceModule(phoneCallDeviceModule);
+        mDcsSdk.putDeviceModule(phoneCallDeviceModule);
 
         //初始化短信模块SmsDeviceModule
         SmsDeviceModule smsDeviceModule = new SmsDeviceModule(new ISmsImpl(),messageSender);
-        mDcsSdk.setDeviceModule(smsDeviceModule);
+        mDcsSdk.putDeviceModule(smsDeviceModule);
 
         //初始化联系人模块ContactsDeviceModule
         ContactsDeviceModule contactsDeviceModule = new ContactsDeviceModule(messageSender);
-        mDcsSdk.setDeviceModule(contactsDeviceModule);
+        mDcsSdk.putDeviceModule(contactsDeviceModule);
 
         //初始化浏览器模块WebBrowserDeviceModule
         WebBrowserDeviceModule webBrowserDeviceModule = new WebBrowserDeviceModule(messageSender);
-        mDcsSdk.setDeviceModule(webBrowserDeviceModule);
+        mDcsSdk.putDeviceModule(webBrowserDeviceModule);
 
         //初始化闹铃模块AlarmsDeviceModule
         AlarmsDeviceModule alarmsDeviceModule = new AlarmsDeviceModule(messageSender);
-        mDcsSdk.setDeviceModule(alarmsDeviceModule);
+        mDcsSdk.putDeviceModule(alarmsDeviceModule);
 
         //初始化手机控制模块DeviceControlDeviceModule
         DeviceControlDeviceModule deviceControlDeviceModule = new DeviceControlDeviceModule(messageSender);
-        mDcsSdk.setDeviceModule(deviceControlDeviceModule);
+        mDcsSdk.putDeviceModule(deviceControlDeviceModule);
 
         //初始化上屏模块ScreenDeviceModule
         ScreenDeviceModule screenDeviceModule = new ScreenDeviceModule(messageSender);
         ScreenExtendDeviceModule screenExtendDeviceModule = new ScreenExtendDeviceModule(messageSender);
-        mDcsSdk.setDeviceModule(screenDeviceModule);
-        mDcsSdk.setDeviceModule(screenExtendDeviceModule);
+        mDcsSdk.putDeviceModule(screenDeviceModule);
+        mDcsSdk.putDeviceModule(screenExtendDeviceModule);
 
         //初始化telecontrollerDeviceModule
         TeleControllerDeviceModule teleControllerDeviceModule = new TeleControllerDeviceModule(messageSender);
-        mDcsSdk.setDeviceModule(teleControllerDeviceModule);
+        mDcsSdk.putDeviceModule(teleControllerDeviceModule);
 
         //初始化customInteractionDeviceModule
 //        CustomUserInteractionDeviceModule customUserInteractionDeviceModule = new CustomUserInteractionDeviceModule(new ICustomUserInteractionImpl(), messageSender, new DialogRequestIdHandler());
@@ -169,7 +199,7 @@ public class SdkManagerImpl implements ISdkManager {
 
         //初始化localAudioPlayerDeviceModule
         LocalAudioPlayerDeviceModule localAudioPlayerDeviceModule = new LocalAudioPlayerDeviceModule(messageSender);
-        mDcsSdk.setDeviceModule(localAudioPlayerDeviceModule);
+        mDcsSdk.putDeviceModule(localAudioPlayerDeviceModule);
 
         getInternalApi().getDeviceModule(com.baidu.duer.dcs.devicemodule.custominteraction.ApiConstants.NAMESPACE);
     }
@@ -249,8 +279,65 @@ public class SdkManagerImpl implements ISdkManager {
         });
     }
 
+    private JSONObject getOfflineAsrSlots() {
+        long startTimemills = System.currentTimeMillis();
+        long endTimemills = 0;
+        JSONObject slotJson = new JSONObject();
+        try {
+            {
+                Map<String, String[]> slotMap = KookongCustomDataHelper.getKookongOfflineAsrSlotMap();
+
+                String[] deviceList = slotMap.get(Constants.SLOT_DEVICELIST);
+                if(deviceList != null) {
+                    JSONArray slotdataArray1 = new JSONArray(deviceList);
+                    slotJson.put(Constants.SLOT_DEVICELIST, slotdataArray1);
+                }
+
+                String[] customACStateList = slotMap.get(Constants.SLOT_CUSTOMACSTATELIST);
+                if(customACStateList != null) {
+                    JSONArray slotDataArray2 = new JSONArray(customACStateList);
+                    slotJson.put(Constants.SLOT_CUSTOMACSTATELIST, slotDataArray2);
+                }
+
+                JSONArray slotdataArray = new JSONArray();
+                slotdataArray.put("相机");
+                slotdataArray.put("设置");
+                slotdataArray.put("相册");
+                slotdataArray.put("联系人");
+                // 通用识别槽位
+                slotJson.put(Constants.SLOT_APPNAME, slotdataArray);
+            }
+            {
+                JSONArray slotdataArray = new JSONArray();
+                ArrayList<String> contactNameList = Utils.getAllContacts(GnVoiceAssistApplication.getInstance());
+                for(String name : contactNameList) {
+                    slotdataArray.put(name);
+                    slotdataArray.put("杨锐");
+                    slotdataArray.put("曹玉树");
+                }
+                // 通用识别槽位
+                slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            endTimemills = System.currentTimeMillis();
+            Log.i("liyh","getOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
+            return slotJson;
+        }
+    }
+
+    public IDcsSdk getDcsSdk() {
+        if (mDcsSdk == null) {
+            init();
+        }
+        return mDcsSdk;
+    }
+
 
     public InternalApi getInternalApi() {
         return ((DcsSdkImpl) mDcsSdk).getInternalApi();
     }
+
 }

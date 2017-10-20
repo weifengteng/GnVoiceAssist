@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.directiveListener.telecontroller.TeleControllerListener;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -26,6 +27,7 @@ public class GnVoiceAssistApplication extends Application{
         super.onCreate();
         LogUtil.d(TAG, "onCreate1111");
         instance = this;
+        LeakCanary.install(this);
 //        String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
 //        String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
 //        DcsSDK.getInstance().initSDK(clientId, clientSecret, this);

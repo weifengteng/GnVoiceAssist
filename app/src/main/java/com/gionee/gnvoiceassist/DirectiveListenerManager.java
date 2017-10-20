@@ -35,6 +35,7 @@ import com.gionee.gnvoiceassist.directiveListener.tvLive.TvLiveListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.AsrVoiceInputListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinputvolume.VoiceInputVolumeListener;
 import com.gionee.gnvoiceassist.directiveListener.webbrowser.WebBrowserListener;
+import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
@@ -99,7 +100,7 @@ public class DirectiveListenerManager {
 //        // 音乐指令相关
 //        DcsSDK.getInstance().getLocalAudioPlayerDeviceModule().addLocalAudioPlayerListener(localAudioPlayerListener);
 
-        DcsSdkImpl.getInstance().getInternalApi().addDirectiveReceivedListener(new IDirectiveReceivedListener() {
+        SdkManagerImpl.getInstance().getInternalApi().addDirectiveReceivedListener(new IDirectiveReceivedListener() {
             @Override
             public void onDirective(Directive directive) {
                 //TODO: 处理IDirectiveReceivedListener，评估是否可以拿掉
@@ -117,7 +118,7 @@ public class DirectiveListenerManager {
         });
 
         //初始化对话回调接口
-        DcsSdkImpl.getInstance().getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
+        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
 
         //        ((TtsOutputDeviceModule)getInternalApi().getDeviceModule(ApiConstants.NAMESPACE)).addVoiceOutputListener(new TtsOutputDeviceModule.ITtsOutputListener() {
 //            @Override
@@ -129,7 +130,7 @@ public class DirectiveListenerManager {
 //            public void onTtsOutputFinished() {
 //                T.showShort("onTtsOutputFinished");
 
-        DcsSdkImpl.getInstance().getInternalApi().setLocationHandler(locationHandler);
+//        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(locationHandler);
         ((AudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.audio_player")).addAudioPlayListener(audioPlayerListener);
         ((SystemDeviceModule)getDeviceModule("ai.dueros.device_interface.system")).addModuleListener(deviceModuleListener);
         ((PhoneCallDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.telephone")).addDirectiveListener(phoneCallDirectiveListener);
@@ -181,6 +182,7 @@ public class DirectiveListenerManager {
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(null);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(null);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(speakTxtListener);
+//        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(null);
 
     }
 
@@ -223,7 +225,7 @@ public class DirectiveListenerManager {
         localAudioPlayerListener = new LocalAudioPlayerListener(baseFunctionManager);
 
         //位置回调
-        locationHandler = new LocationHandler(baseFunctionManager);
+//        locationHandler = new LocationHandler(baseFunctionManager);
 
         //自定义多伦交互回调
         cuiDirectiveListener = new CUIDirectiveListener();
@@ -255,6 +257,6 @@ public class DirectiveListenerManager {
     }
 
     private BaseDeviceModule getDeviceModule(String namespace) {
-        return DcsSdkImpl.getInstance().getInternalApi().getDeviceModule(namespace);
+        return SdkManagerImpl.getInstance().getInternalApi().getDeviceModule(namespace);
     }
 }

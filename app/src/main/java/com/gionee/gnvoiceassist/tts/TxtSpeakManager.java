@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
+import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 
 import java.util.HashMap;
 
@@ -59,7 +60,7 @@ public class TxtSpeakManager {
             mTtsListenerMap.put(mCurrUtterId, listener);
         }
 //        DcsSDK.getInstance().getSpeak().speakTxt(ttsText, SpeakInterface.SpeakTxtMixMode.MIX_MODE_DEFAULT);
-        DcsSdkImpl.getInstance().getInternalApi().speakRequest(ttsText);
+        SdkManagerImpl.getInstance().getInternalApi().speakRequest(ttsText);
     }
 
     public void playTTS(String ttsText) {
@@ -69,7 +70,7 @@ public class TxtSpeakManager {
         }
         mCurrUtterId = "";
 //        DcsSDK.getInstance().getSpeak().speakTxt(ttsText, SpeakInterface.SpeakTxtMixMode.MIX_MODE_DEFAULT);
-        DcsSdkImpl.getInstance().getInternalApi().speakRequest(ttsText);
+        SdkManagerImpl.getInstance().getInternalApi().speakRequest(ttsText);
     }
 
     public void playTTS(int resId) {

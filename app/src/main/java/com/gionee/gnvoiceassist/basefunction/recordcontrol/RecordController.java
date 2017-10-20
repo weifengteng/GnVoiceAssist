@@ -8,6 +8,7 @@ import com.baidu.duer.dcs.framework.internalApi.DcsConfig;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
+import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.SoundPlayer;
 import com.gionee.gnvoiceassist.util.Utils;
@@ -41,14 +42,14 @@ public class RecordController implements IRecordControl {
     public void stopRecord() {
         //TODO: 停止录音
 //        DcsSDK.getInstance().getAsr().stopRecord();
-        DcsSdkImpl.getInstance().getVoiceRequest().endVoiceRequest();
+        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().endVoiceRequest();
     }
 
     @Override
     public void cancelRecord() {
         //TODO: 取消录音
 //        DcsSDK.getInstance().getAsr().cancelRecord();
-        DcsSdkImpl.getInstance().getVoiceRequest().cancelVoiceRequest();
+        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().cancelVoiceRequest();
     }
 
     @Override
@@ -85,7 +86,7 @@ public class RecordController implements IRecordControl {
             @Override
             public void run() {
                 //参数代表是否开启句尾识别
-                DcsSdkImpl.getInstance().getVoiceRequest().beginVoiceRequest(true);
+                SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().beginVoiceRequest(true);
             }
         }, DELAY_SHORT);
     }

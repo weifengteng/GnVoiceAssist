@@ -196,7 +196,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private void initDuerSDK() {
         long startTs = System.currentTimeMillis();
         mSdkManager = SdkManagerImpl.getInstance();
-        mSdkManager.init(MainActivity.this);
+        mSdkManager.init();
         long endTs = System.currentTimeMillis();
         LogUtil.i("liyh","initDuerSDK() duration = " + (endTs - startTs));
     }
