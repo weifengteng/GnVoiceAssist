@@ -1,12 +1,13 @@
 package com.gionee.gnvoiceassist.directiveListener.audioplayer;
 
-import com.baidu.duer.dcs.devicemodule.localaudioplayer.LocalAudioPlayerDeviceModule;
-import com.baidu.duer.dcs.devicemodule.localaudioplayer.message.SearchAndPlayMusicPayload;
-import com.baidu.duer.dcs.devicemodule.localaudioplayer.message.SearchAndPlayRadioPayload;
-import com.baidu.duer.dcs.devicemodule.localaudioplayer.message.SearchAndPlayUnicastPayload;
+
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.music.GNMusicOperator;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayMusicPayload;
+import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayRadioPayload;
+import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayUnicastPayload;
 import com.gionee.gnvoiceassist.util.T;
 
 /**

@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
@@ -20,19 +21,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.util.CommonUtil;
-import com.baidu.duer.dcs.util.LogUtil;
-import com.baidu.duer.sdk.DcsSDK;
-import com.baidu.duer.sdk.speak.SpeakInterface;
 import com.gionee.gnvoiceassist.basefunction.BaseFunctionManager;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactObserver;
 import com.gionee.gnvoiceassist.directiveListener.audioplayer.IAudioPlayerStateListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.IVoiceInputEventListener;
+import com.gionee.gnvoiceassist.sdk.ISdkManager;
+import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
 import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.ContactProcessor;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.PermissionsChecker;
 import com.gionee.gnvoiceassist.util.SharedData;
 import com.gionee.gnvoiceassist.util.Utils;
@@ -61,12 +61,16 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
             Manifest.permission.CALL_PHONE,
             Manifest.permission.SEND_SMS,
             Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
     };
     private long startTimeStopListen;
     private static Handler mMainHandler;
     private IBaseFunction baseFunctionManager;
     private ContactObserver mContactObserver;
     private ContentResolver mContentResolver;
+
+    private ISdkManager mSdkManager;
 
 
     private LinearLayout help_command;
@@ -90,6 +94,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        long startTs = System.currentTimeMillis();
         LogUtil.d(TAG, "onCreate");
         setContentView(R.layout.home_activity_layout);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -98,11 +103,14 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         initView();
         registerContentObserver();
         KookongCustomDataHelper.bindDataRetriveService();
+        long endTs = System.currentTimeMillis();
+        LogUtil.i("liyh","onCreate() duration = " + (endTs - startTs));
     }
 
     @Override
     protected void onResume() {
         LogUtil.d(TAG, "onResume");
+        long startTs = System.currentTimeMillis();
         // 缺少权限时, 进入权限配置页面
         if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
             startPermissionsActivity();
@@ -111,10 +119,27 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                 handleUpdateContacts();
                 initDuerSDK();
                 initFrameWork();
+//                Runnable r = new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Looper.prepare();
+//                        handleUpdateContacts();
+//                        initDuerSDK();
+////                        Looper.loop();
+//                        mMainHandler.sendEmptyMessage(Constants.MSG_INIT_SUCCESS);
+////                        initFrameWork();
+////                        needInitFramework = false;
+//                    }
+//                };
+//                ThreadPoolManager.getInstance().executeTask(r);
+//                TxtSpeakManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, this);
+//                startVoiceCommand();
                 TxtSpeakManager.getInstance().playTTS("您好", UTTER_ID_WELCOME, this);
                 needInitFramework = false;
             }
         }
+        long endTs = System.currentTimeMillis();
+        LogUtil.i("liyh","onResume() duration = " + (endTs - startTs));
         super.onResume();
     }
 
@@ -142,9 +167,10 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                 if(needInitFramework) {
                     handleUpdateContacts();
                     initDuerSDK();
-                    initFrameWork();
-                    TxtSpeakManager.getInstance().playTTS("您好", UTTER_ID_WELCOME, this);
-                    needInitFramework = false;
+//                    initFrameWork();
+//                    TxtSpeakManager.getInstance().playTTS("您好", UTTER_ID_WELCOME, this);
+//                    needInitFramework = false;
+//                    mMainHandler.sendEmptyMessage(Constants.MSG_INIT_SUCCESS);
                 }
             }
 
@@ -168,9 +194,11 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void initDuerSDK() {
-        String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
-        String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
-        DcsSDK.getInstance().initSDK(clientId, clientSecret, getApplication());
+        long startTs = System.currentTimeMillis();
+        mSdkManager = SdkManagerImpl.getInstance();
+        mSdkManager.init(MainActivity.this);
+        long endTs = System.currentTimeMillis();
+        LogUtil.i("liyh","initDuerSDK() duration = " + (endTs - startTs));
     }
 
     private void initFrameWork() {
@@ -220,7 +248,9 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private void updateStartRecordingUI() {
         startTimeStopListen = System.currentTimeMillis();
         SharedData.getInstance().setStopListenReceiving(true);
-        DcsSDK.getInstance().getSystemDeviceModule().getProvider().userActivity();
+//        DcsSdkImpl.getInstance().getSystemDeviceModule().getProvider().userActivity();
+//        ((SystemDeviceModule)(mDcsSdk.getInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
+//                .getProvider().userActivity();
 //        voiceButton.setText(getResources().getString(R.string.start_record));
 //        textViewTimeStopListen.setText("");
 //        textViewRenderVoiceInputText.setText("");
@@ -342,9 +372,11 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void onSpeakError(SpeakInterface.SpeakTxtResultCode speakTxtResultCode, String s) {
+    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
+        //note by liyh [refactor]: 此处原来还有一个参数是错误信息码，但是引用了百度自身的sdk包的enum。建议使用自己的enum。
 
     }
+
 
     /**
      * Called when a view has been clicked.
@@ -377,22 +409,26 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                 }*/
 
 //            case R.id.voiceBtn:
-                if(CommonUtil.isFastDoubleClick()) {
-                    return;
-                }
-                if(SharedData.getInstance().isStopListenReceiving()) {
-                    baseFunctionManager.getRecordController().stopRecord();
-                    SharedData.getInstance().setStopListenReceiving(false);
-                    return;
-                }
-                SharedData.getInstance().setStopListenReceiving(true);
-                startTimeStopListen = System.currentTimeMillis();
-                // TODO：强制退出云端多轮交互场景(权宜之计)
-                DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
-//                baseFunctionManager.getRecordController().startRecordOfflineOnly();
-                baseFunctionManager.getRecordController().startRecordOfflinePrior();
-//                baseFunctionManager.getRecordController().startRecordOnline();
-                doUserActivity();
+//                if(CommonUtil.isFastDoubleClick()) {
+//                    return;
+//                }
+//                if(SharedData.getInstance().isStopListenReceiving()) {
+//                    baseFunctionManager.getRecordController().stopRecord();
+//                    SharedData.getInstance().setStopListenReceiving(false);
+//                    return;
+//                }
+//                SharedData.getInstance().setStopListenReceiving(true);
+//                startTimeStopListen = System.currentTimeMillis();
+//                // TODO：强制退出云端多轮交互场景(权宜之计)
+////                DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
+////                ((SystemDeviceModule)
+////                        (DcsSdkImpl.getInstance().getInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
+////                        .release();
+////                baseFunctionManager.getRecordController().startRecordOfflineOnly();
+//                baseFunctionManager.getRecordController().startRecordOfflinePrior();
+////                baseFunctionManager.getRecordController().startRecordOnline();
+//                doUserActivity();
+                startVoiceCommand();
                 break;
 //            case R.id.openLogBtn:
 //
@@ -423,7 +459,27 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         return false;
     }*/
 
+    private void startVoiceCommand() {
+        if(SharedData.getInstance().isStopListenReceiving()) {
+            baseFunctionManager.getRecordController().stopRecord();
+            SharedData.getInstance().setStopListenReceiving(false);
+            return;
+        }
+        SharedData.getInstance().setStopListenReceiving(true);
+        startTimeStopListen = System.currentTimeMillis();
+        // TODO：强制退出云端多轮交互场景(权宜之计)
+//                DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
+//                ((SystemDeviceModule)
+//                        (DcsSdkImpl.getInstance().getInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
+//                        .release();
+//                baseFunctionManager.getRecordController().startRecordOfflineOnly();
+//        baseFunctionManager.getRecordController().startRecordOfflinePrior();
+        baseFunctionManager.getRecordController().startRecordOnline();
+    }
+
     private void registerContentObserver() {
+        long startTs = System.currentTimeMillis();
+        //TODO: 将联系人变化检测Observer放到单独的类中
         if(mContactObserver == null) {
             mContactObserver = new ContactObserver(mMainHandler, this.getApplicationContext());
         }
@@ -431,6 +487,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
             mContentResolver = this.getApplicationContext().getContentResolver();
         }
         mContentResolver.registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, mContactObserver);
+        long endTs = System.currentTimeMillis();
+        LogUtil.i("liyh","registerContentObserver() duration = " + (endTs - startTs));
     }
 
     private void unRegisterContentObserver() {
@@ -439,15 +497,28 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 
     private void handleUpdateContacts() {
         LogUtil.d(TAG, "handleUpdateContacts");
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                Utils.uploadContacts();
-                boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
-            }
-        };
+        long startTs = System.currentTimeMillis();
+//        Runnable r = new Runnable() {
+//            @Override
+//            public void run() {
+//                Utils.uploadContacts();
+//                boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
+//            }
+//        };
 
-        ThreadPoolManager.getInstance().executeTask(r);
+//        ThreadPoolManager.getInstance().executeTask(r);
+        Utils.uploadContacts();
+        boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
+        long endTs = System.currentTimeMillis();
+
+        LogUtil.i("liyh","handleUpdateContacts() duration = " + (endTs - startTs));
+    }
+
+    private void initSuccess() {
+        LogUtil.i("liyh","initSuccess()");
+        initFrameWork();
+        needInitFramework = false;
+        TxtSpeakManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
     }
 
 
@@ -460,8 +531,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         }
         super.onDestroy();
         if(!needInitFramework) {
-            DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
-            DcsSDK.getInstance().release();
+            mSdkManager.destroy();
         }
     }
 
@@ -482,6 +552,11 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 
             switch (msg.what) {
 
+                case Constants.MSG_INIT_SUCCESS:
+                    if (mainActivity != null) {
+                        mainActivity.initSuccess();
+                    }
+                    break;
                 case Constants.MSG_SHOW_QUERY:
 //                    LogUtil.d(TAG, "MainHandler MSG_SHOW_QUERY");
                     String text = String.valueOf(msg.obj);

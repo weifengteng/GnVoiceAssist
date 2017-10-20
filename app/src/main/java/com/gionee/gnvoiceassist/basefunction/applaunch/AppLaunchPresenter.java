@@ -7,24 +7,29 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.BasePresenter;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.recordcontrol.RecordController;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.widget.SimpleAppItem;
 
 import java.util.List;
 
 /**
  * Created by tengweifeng on 9/12/17.
+ *
+ * 打开手机中的App 功能实现
+ * 实现通过应用名称或者包名启动app
  */
 
 public class AppLaunchPresenter extends BasePresenter {
@@ -52,6 +57,11 @@ public class AppLaunchPresenter extends BasePresenter {
     }
 
     @Override
+    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
+
+    }
+
+    @Override
     public void onDestroy() {
 
     }
@@ -60,12 +70,12 @@ public class AppLaunchPresenter extends BasePresenter {
         this.appName = appName;
         PackageManager pManager = mAppCtx.getPackageManager();
         // 获取手机内所有应用
-        List<PackageInfo> paklist = pManager.getInstalledPackages(0);
+        List<PackageInfo> pkgList = pManager.getInstalledPackages(0);
         boolean isInstalledSuccess = false;
-        if (paklist != null) {
+        if (pkgList != null) {
             try {
-                for (int idx = 0; idx < paklist.size(); idx++) {
-                    PackageInfo packageInfo = paklist.get(idx);
+                for (int idx = 0; idx < pkgList.size(); idx++) {
+                    PackageInfo packageInfo = pkgList.get(idx);
                     String appNameTmp = packageInfo.applicationInfo.loadLabel(pManager).toString().toLowerCase();
                     if (appName.contains(appNameTmp) || appNameTmp.contains(appName)) {
                         String packageName = packageInfo.applicationInfo.packageName;
@@ -129,6 +139,16 @@ public class AppLaunchPresenter extends BasePresenter {
             isPkgExist = false;
         }
         return isPkgExist;
+    }
+
+    public void launchAppByDeepLink(String deepLink) {
+        try {
+            Uri uri = Uri.parse(deepLink);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            mAppCtx.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void disappearSelectButton() {

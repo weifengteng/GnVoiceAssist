@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
+import com.baidu.duer.dcs.devicemodule.system.message.ExceptionEncounteredPayload;
 import com.baidu.duer.dcs.devicemodule.system.message.SetEndPointPayload;
 import com.baidu.duer.dcs.devicemodule.system.message.ThrowExceptionPayload;
 import com.baidu.duer.dcs.util.LogUtil;
@@ -39,6 +40,11 @@ public class DeviceModuleListener extends BaseDirectiveListener implements Syste
             }
             LogUtil.e("DCSF", " ********************  onThrowException by TWF = " + throwExceptionPayload.toString());
         }
+    }
+
+    @Override
+    public void onExceptionEncountered(ExceptionEncounteredPayload exceptionEncounteredPayload) {
+
     }
 
     @Override

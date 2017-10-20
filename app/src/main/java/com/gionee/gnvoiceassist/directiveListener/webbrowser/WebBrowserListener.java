@@ -3,12 +3,12 @@ package com.gionee.gnvoiceassist.directiveListener.webbrowser;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.baidu.duer.dcs.devicemodule.webbrowser.WebBrowserDeviceModule;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 
 /**
  * Created by twf on 2017/8/16.

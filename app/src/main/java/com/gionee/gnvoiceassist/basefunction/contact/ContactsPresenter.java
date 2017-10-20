@@ -8,12 +8,13 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.view.View;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.BasePresenter;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
+import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
 import com.gionee.gnvoiceassist.util.ContactProcessor;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.widget.SimpleContactInfoItem;
 
@@ -22,6 +23,9 @@ import java.util.List;
 
 /**
  * Created by tengweifeng on 9/14/17.
+ *
+ * 处理联系人查找功能，并调用系统相应模块，实现：
+ * 查找联系人、新建联系人操作。
  */
 
 public class ContactsPresenter extends BasePresenter {
@@ -36,6 +40,11 @@ public class ContactsPresenter extends BasePresenter {
     @Override
     public void onSpeakFinish(String utterId) {
         super.onSpeakFinish(utterId);
+    }
+
+    @Override
+    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
+
     }
 
     @Override

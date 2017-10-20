@@ -58,6 +58,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
 
     @Override
     public void smsDirectiveReceived(List<SmsInfo> list, Directive directive) {
+        //TODO: 此处依赖了SDK的SmsInfo，应封装成自己的
         LogUtil.d(TAG, "smsDirectiveReceived!");
         mSmsInfos = list;
         selectSmsContact(mSmsInfos);

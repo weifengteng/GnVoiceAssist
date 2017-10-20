@@ -1,6 +1,5 @@
 package com.gionee.gnvoiceassist.directiveListener;
 
-import com.baidu.duer.sdk.speak.SpeakInterface;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.ICUIDirectiveReceivedInterface;
 import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
@@ -10,7 +9,8 @@ import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
  * Created by twf on 2017/8/14.
  */
 
-public abstract class BaseDirectiveListener implements ISpeakTxtEventListener, ICUIDirectiveReceivedInterface{
+public abstract class BaseDirectiveListener
+        implements ISpeakTxtEventListener, ICUIDirectiveReceivedInterface{
     protected IBaseFunction iBaseFunction;
 
     public BaseDirectiveListener(IBaseFunction iBaseFunction) {
@@ -31,7 +31,7 @@ public abstract class BaseDirectiveListener implements ISpeakTxtEventListener, I
     }
 
     @Override
-    public void onSpeakError(SpeakInterface.SpeakTxtResultCode speakTxtResultCode, String s) {
+    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
 
     }
 

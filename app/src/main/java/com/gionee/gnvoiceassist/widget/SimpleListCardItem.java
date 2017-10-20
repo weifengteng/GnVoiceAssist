@@ -17,10 +17,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.devicemodule.screen.message.ListCardItem;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.ListCardItem;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.RenderCardPayload;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -33,13 +34,13 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 	public static final String TAG = SimpleListCardItem.class.getSimpleName();
 	private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 	private Context mContext;
-	private List<ListCardItem> mListCardItems;
+	private List<RenderCardPayload.ListItem> mListCardItems;
 	private View mCachedView;
 	private LayoutInflater mInflater;
 	private ViewGroup mParent;
 
 	/******************************* 构造函数 & Override *******************************/
-	public SimpleListCardItem(Context ctx, List<ListCardItem> itemList) {
+	public SimpleListCardItem(Context ctx, List<RenderCardPayload.ListItem> itemList) {
 		mContext = ctx;
 		mListCardItems = itemList;
 	}
@@ -68,18 +69,21 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 	public void bindView() {
 		LinearLayout customPanel = (LinearLayout) mCachedView.findViewById(R.id.custom_panel);
 
-		for(ListCardItem item : mListCardItems) {
+		for(RenderCardPayload.ListItem item : mListCardItems) {
 			View itemView = View.inflate(mContext,R.layout.listcard_info_item_lyt, null);
 			if(item == null) {
 				customPanel.addView(itemView);
 				continue;
 			}
 
-			setTitleTextView(item.getTitle(), itemView);
+			setTitleTextView(item.title, itemView);
 //    		setScoreImage(itemView, new String[] { "75" });
-    		setContentView(item.getContent(), itemView);
-    		setDetailUrlView(item.getUrl(), itemView);
-			setImage(item.getImage(), itemView);
+    		setContentView(item.content, itemView);
+    		setDetailUrlView(item.url, itemView);
+			if (item.image != null) {
+				setImage(item.image.src, itemView);
+			}
+			final String url = item.url;
 	        customPanel.addView(itemView);
 		}
 //		customPanel.addView(View.inflate(mContext, R.layout.restaurant_dianping_info, null));
@@ -198,7 +202,7 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 			LogUtil.d(TAG, "SimpleListCardItem setDetailUrlView addr[0] = " + detailUrl);
 			TextView detailUrlView = (TextView) itemView.findViewById(R.id.moreinfo);
 			detailUrlView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
-			detailUrlView.setText(detailUrl);
+			detailUrlView.setText("更多信息");
 			detailUrlView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -216,7 +220,7 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 		Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 		mIntent.addCategory(Intent.CATEGORY_BROWSABLE);
 		mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
+//		mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
 		GnVoiceAssistApplication.getInstance().startActivity(mIntent);
 	}
 }

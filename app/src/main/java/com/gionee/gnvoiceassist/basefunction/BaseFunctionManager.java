@@ -1,11 +1,16 @@
 package com.gionee.gnvoiceassist.basefunction;
 
+import android.os.Build;
 import android.os.Handler;
 
 import com.gionee.gnvoiceassist.MainActivity;
+import com.gionee.gnvoiceassist.basefunction.alarm.AlarmPresenter;
+import com.gionee.gnvoiceassist.basefunction.alarm.IAlarmPresenter;
 import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactsPresenter;
+import com.gionee.gnvoiceassist.basefunction.devicecontrol.AospDeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.DeviceControlOperator;
+import com.gionee.gnvoiceassist.basefunction.devicecontrol.GioneeDeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.kookong.KookongOperator;
 import com.gionee.gnvoiceassist.basefunction.music.GNMusicOperator;
 import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
@@ -30,6 +35,7 @@ public class BaseFunctionManager implements IBaseFunction {
     private AppLaunchPresenter appLaunchPresenter;
     private ContactsPresenter contactsPresenter;
     private ScreenRender screenRender;
+    private IAlarmPresenter alarmPresenter;
     private TimeQuery timeQuery;
     private KookongOperator kookongOperator;
     private IVoiceInputEventListener voiceInputEventListener;
@@ -81,6 +87,14 @@ public class BaseFunctionManager implements IBaseFunction {
     }
 
     @Override
+    public IAlarmPresenter getAlarmPresenter() {
+        if (alarmPresenter == null) {
+            alarmPresenter = new AlarmPresenter(this);
+        }
+        return alarmPresenter;
+    }
+
+    @Override
     public KookongOperator getKookongOperator() {
         if(kookongOperator == null) {
             kookongOperator = new KookongOperator(this);
@@ -99,7 +113,14 @@ public class BaseFunctionManager implements IBaseFunction {
     @Override
     public DeviceControlOperator getDeviceControlOperator() {
         if(deviceControlOperator == null) {
-            deviceControlOperator = new DeviceControlOperator(this);
+            switch (Build.BRAND.toLowerCase()) {
+                case "gionee":
+                    deviceControlOperator = new GioneeDeviceControlOperator(this);
+                    break;
+                default:
+                    deviceControlOperator = new AospDeviceControlOperator(this);
+                    break;
+            }
         }
         return deviceControlOperator;
     }

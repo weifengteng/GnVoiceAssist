@@ -2,11 +2,11 @@ package com.gionee.gnvoiceassist.directiveListener.telecontroller;
 
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.devicemodule.telecontroller.TeleControllerDeviceModule;
 import com.baidu.duer.dcs.framework.message.Directive;
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.Utils;
 
 /**
@@ -29,7 +29,7 @@ public class TeleControllerListener extends BaseDirectiveListener implements Tel
     }
 
     @Override
-    public void onTeleControllerOnlineDirectiveReceived(Directive directive) {
+    public void onTeleControllerDirectiveReceived(Directive directive) {
         String msg = directive.rawMessage;
 
         LogUtil.d("DCSF", "TeleControllerListener: " + msg);

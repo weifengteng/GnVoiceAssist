@@ -13,12 +13,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.devicemodule.screen.message.Image;
-import com.baidu.duer.dcs.devicemodule.screen.message.Link;
-import com.baidu.duer.dcs.devicemodule.screen.message.StandardCardPayload;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.Image;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.Link;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.RenderCardPayload;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.StandardCardPayload;
 import com.squareup.picasso.Picasso;
 
 import static android.R.id.list;
@@ -27,13 +28,13 @@ public class SimpleStandardCardItem extends BaseItem implements OnClickListener 
 	public static final String TAG = SimpleStandardCardItem.class.getSimpleName();
 	private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 	private Context mContext;
-	private StandardCardPayload mStandardCardPayload;
+	private RenderCardPayload mStandardCardPayload;
 	private View mCachedView;
 	private LayoutInflater mInflater;
 	private ViewGroup mParent;
 
 	/******************************* 构造函数 & Override *******************************/
-	public SimpleStandardCardItem(Context ctx, StandardCardPayload standardCardPayload) {
+	public SimpleStandardCardItem(Context ctx, RenderCardPayload standardCardPayload) {
 		mContext = ctx;
 		mStandardCardPayload = standardCardPayload;
 	}
@@ -70,10 +71,10 @@ public class SimpleStandardCardItem extends BaseItem implements OnClickListener 
 				return;
 			}
 
-			setNameTextView(mStandardCardPayload.getTitle(), itemView);
-    		setContentView(mStandardCardPayload.getContent(), itemView);
-    		setMoreInfoView(mStandardCardPayload.getLink(), itemView);
-			setImage(mStandardCardPayload.getImage(), itemView);
+			setNameTextView(mStandardCardPayload.title, itemView);
+    		setContentView(mStandardCardPayload.content, itemView);
+    		setMoreInfoView(mStandardCardPayload.link, itemView);
+			setImage(mStandardCardPayload.image, itemView);
 	        customPanel.addView(itemView);
 //		customPanel.addView(View.inflate(mContext, R.layout.restaurant_dianping_info, null));
 	}
@@ -114,7 +115,7 @@ public class SimpleStandardCardItem extends BaseItem implements OnClickListener 
 		LogUtil.d(TAG, "SimpleStandardCardItem setContentView list = " + list);
     }
 
-	private void setImage(Image image, View itemView) {
+	private void setImage(RenderCardPayload.ImageStructure image, View itemView) {
 		if(image == null) {
 			LogUtil.d(TAG, "SimpleStandardCardItem setImage image = " + list);
 			return;
@@ -122,22 +123,22 @@ public class SimpleStandardCardItem extends BaseItem implements OnClickListener 
 		ImageButton imageButton = (ImageButton) itemView.findViewById(R.id.image);
 		imageButton.setVisibility(View.VISIBLE);
 		Picasso.with(mContext)
-				.load(image.getSrc())
+				.load(image.src)
 				.placeholder(R.drawable.gn_detail_item_icon_phone_normal)
 				.resize(1240, 1563)
 				.onlyScaleDown()
 				.into(imageButton);
 	}
     
-    private void setMoreInfoView(final Link link, View itemView) {
+    private void setMoreInfoView(final RenderCardPayload.LinkStructure link, View itemView) {
 		if(link != null) {
 			TextView detailUrlView = (TextView) itemView.findViewById(R.id.moreinfo);
 			detailUrlView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
-			detailUrlView.setText(link.getAnchorText());
+			detailUrlView.setText(link.anchorText);
 			detailUrlView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					openLink(link.getUrl());
+					openLink(link.url);
 				}
 			});
 		} else {

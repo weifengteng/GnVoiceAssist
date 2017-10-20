@@ -1,6 +1,5 @@
 package com.gionee.gnvoiceassist.basefunction;
 
-import com.baidu.duer.sdk.speak.SpeakInterface;
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
 import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
@@ -32,7 +31,7 @@ public abstract class BasePresenter implements ISpeakTxtEventListener {
     }
 
     @Override
-    public void onSpeakError(SpeakInterface.SpeakTxtResultCode speakTxtResultCode, String s) {
+    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
 
     }
 

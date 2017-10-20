@@ -3,6 +3,7 @@ package com.gionee.gnvoiceassist.basefunction;
 import android.os.Handler;
 
 import com.gionee.gnvoiceassist.MainActivity;
+import com.gionee.gnvoiceassist.basefunction.alarm.IAlarmPresenter;
 import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactsPresenter;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.DeviceControlOperator;
@@ -47,6 +48,8 @@ public interface IBaseFunction {
     SmsSendPresenter getSmsSendPresenter();
 
     ContactsPresenter getContactsPresenter();
+
+    IAlarmPresenter getAlarmPresenter();
 
     IVoiceInputEventListener getVoiceInputEventListener();
 

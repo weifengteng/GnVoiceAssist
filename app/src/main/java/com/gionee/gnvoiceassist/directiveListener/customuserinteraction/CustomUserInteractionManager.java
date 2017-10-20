@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
-import com.baidu.duer.sdk.DcsSDK;
+import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 
 import java.util.HashMap;
@@ -44,7 +44,8 @@ public class CustomUserInteractionManager {
         this.mShouldStopCurrentInteraction = false;
         this.mCurrCUInteractionId = interactionId;
         mCustomUserInteractionMap.put(mCurrCUInteractionId, receivedInterface);
-        DcsSDK.getInstance().getCustomUserInteractionDeviceModule()
+        ((CustomUserInteractionDeviceModule)DcsSdkImpl.getInstance().getInternalApi()
+                .getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction"))
                 .setCustomInteractionState(CustomClicentContextMachineState.PHONE, payLoadGenerator);
         mCustomUserInteractionProcessing = true;
     }

@@ -12,11 +12,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.devicemodule.screen.message.Link;
-import com.baidu.duer.dcs.devicemodule.screen.message.TextCardPayload;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.Link;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.RenderCardPayload;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.TextCardPayload;
 
 import static android.R.id.list;
 
@@ -24,13 +25,13 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 	public static final String TAG = SimpleTextCardItem.class.getSimpleName();
 	private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 	private Context mContext;
-	private TextCardPayload mTextCardPayload;
+	private RenderCardPayload mTextCardPayload;
 	private View mCachedView;
 	private LayoutInflater mInflater;
 	private ViewGroup mParent;
 
 	/******************************* 构造函数 & Override *******************************/
-	public SimpleTextCardItem(Context ctx, TextCardPayload textCardPayload) {
+	public SimpleTextCardItem(Context ctx, RenderCardPayload textCardPayload) {
 		mContext = ctx;
 		mTextCardPayload = textCardPayload;
 	}
@@ -67,8 +68,8 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 				return;
 			}
 
-    		setContentView(mTextCardPayload.getContent(), itemView);
-    		setMoreInfoView(mTextCardPayload.getLink(), itemView);
+    		setContentView(mTextCardPayload.content, itemView);
+    		setMoreInfoView(mTextCardPayload.link, itemView);
 	        customPanel.addView(itemView);
 //		customPanel.addView(View.inflate(mContext, R.layout.restaurant_dianping_info, null));
 	}
@@ -99,18 +100,18 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 		LogUtil.d(TAG, "SimpleTextCardItem setContentView list = " + list);
     }
 
-    private void setMoreInfoView(final Link link, View itemView) {
+    private void setMoreInfoView(final RenderCardPayload.LinkStructure link, View itemView) {
 		if(link == null) {
 			return;
 		}
 
-		final String linkUrl = link.getUrl();
+		final String linkUrl = link.url;
 		if(linkUrl != null) {
 			LogUtil.d(TAG, "SimpleTextCardItem setMoreInfoView addr[0] = " + linkUrl);
 			TextView detailUrlView = (TextView) itemView.findViewById(R.id.moreinfo);
 			detailUrlView.setVisibility(View.VISIBLE);
 			detailUrlView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
-			detailUrlView.setText(link.getAnchorText());
+			detailUrlView.setText(link.anchorText);
 			detailUrlView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -126,7 +127,7 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 		Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 		mIntent.addCategory(Intent.CATEGORY_BROWSABLE);
 		mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
+//		mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
 		GnVoiceAssistApplication.getInstance().startActivity(mIntent);
 	}
 }

@@ -12,10 +12,10 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.upload.contact.UploadContactManager;
+import com.baidu.duer.dcs.framework.upload.contact.IUpload;
+import com.baidu.duer.dcs.framework.upload.contact.UploadImpl;
 import com.baidu.duer.dcs.util.ContactsChoiceUtil;
 import com.baidu.duer.dcs.util.LogUtil;
-import com.baidu.duer.sdk.DcsSDK;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -50,7 +50,7 @@ import static com.gionee.gnvoiceassist.util.Constants.PAYLOAD;
 public class Utils {
 
     public static void doUserActivity() {
-        DcsSDK.getInstance().getSystemDeviceModule().getProvider().userActivity();
+//        DcsSDK.getInstance().getSystemDeviceModule().getProvider().userActivity();
     }
 
 
@@ -75,7 +75,8 @@ public class Utils {
     public static void uploadContacts() {
         try{
             String contacts = ContactsChoiceUtil.getAllContacts(GnVoiceAssistApplication.getInstance());
-            UploadContactManager.getInstance().uploadContacts(GnVoiceAssistApplication.getInstance(), contacts);
+            IUpload contactUploader = new UploadImpl();
+            contactUploader.uploadPhoneContacts(GnVoiceAssistApplication.getInstance(), contacts);
             LogUtil.d("DCSF", "DCSF------------- contacts=  " + contacts);
         }catch (JSONException e) {
             e.printStackTrace();

@@ -5,8 +5,8 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.util.Constants;
+import com.gionee.gnvoiceassist.util.LogUtil;
 
 
 /**

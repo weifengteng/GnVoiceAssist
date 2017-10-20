@@ -21,6 +21,9 @@ import java.util.Random;
 
 /**
  * Created by tengweifeng on 9/29/17.
+ *
+ * 控制音乐播放 功能实现类
+ *
  */
 
 public class GNMusicOperator extends BasePresenter {
@@ -267,6 +270,7 @@ public class GNMusicOperator extends BasePresenter {
         } else {
             setDataForBrowserSearch(uri);
         }
+        mAppCtx.startActivity(mIntent);
     }
 
     private void setDataForAmigoMusicSearch(Uri uri) {

@@ -4,7 +4,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.devicemodule.applauncher.AppLauncherDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
@@ -13,13 +12,13 @@ import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.CommonUtil;
 import com.baidu.duer.dcs.util.LogUtil;
-import com.baidu.duer.sdk.DcsSDK;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.util.SharedData;
 
 import java.util.ArrayList;
@@ -69,8 +68,10 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
     public void appDeepLinkDirectiveReceived(String s, String s1, String deeplink, Directive directive) {
         // 地图导航
         LogUtil.d("DCSF", TAG + " s= " + s + " s1= " + s1 + " deeplink= " + deeplink);
-        DcsSDK.getInstance().getAppLauncher().
-                launchAppByDeepLink(iBaseFunction.getMainActivity(), deeplink);
+
+//        DcsSDK.getInstance().getAppLauncher().
+//                launchAppByDeepLink(iBaseFunction.getMainActivity(), deeplink);
+        mAppLaunchPresenter.launchAppByDeepLink(deeplink);
     }
 
     @Override
