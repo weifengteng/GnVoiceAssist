@@ -1,6 +1,8 @@
 package com.gionee.gnvoiceassist.basefunction.phonecall;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,7 +10,6 @@ import android.widget.TextView;
 
 import com.baidu.duer.dcs.devicemodule.phonecall.message.ContactInfo;
 import com.baidu.duer.dcs.util.LogUtil;
-import com.baidu.duer.sdk.DcsSDK;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.BasePresenter;
@@ -66,9 +67,16 @@ public class PhoneCallPresenter extends BasePresenter {
     }
 
     public void callPhone() {
-        // TODO:
-        DcsSDK.getInstance().getPhoneCall()
-                        .callPhone(mAppCtx, mPhoneNumber);
+
+        if (!TextUtils.isEmpty(mPhoneNumber) && mAppCtx != null) {
+            Uri uri = Uri.parse("tel:" + mPhoneNumber);
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(uri);
+            if (intent.resolveActivity(mAppCtx.getPackageManager()) != null) {
+                // TODO: 实现选卡打电话功能
+                mAppCtx.startActivity(intent);
+            }
+        }
         resetCallPhoneParam();
         isContactSelectViewCanClick = false;
         isSimCardSelectViewCanClick = false;

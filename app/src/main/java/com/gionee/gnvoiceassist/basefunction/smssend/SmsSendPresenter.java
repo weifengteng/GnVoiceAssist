@@ -1,12 +1,14 @@
 package com.gionee.gnvoiceassist.basefunction.smssend;
 
 import android.content.Context;
+import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.duer.dcs.devicemodule.sms.message.SmsInfo;
-import com.baidu.duer.sdk.DcsSDK;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.BasePresenter;
@@ -24,6 +26,9 @@ import java.util.List;
 
 /**
  * Created by twf on 2017/8/28.
+ *
+ * 短信 功能实现
+ * 主要实现发送短信功能。读取系统内短信未能实现。
  */
 
 public class SmsSendPresenter extends BasePresenter {
@@ -80,11 +85,34 @@ public class SmsSendPresenter extends BasePresenter {
     }
 
     public void sendSms(String phoneNumber, String content, String simId) {
-        // TODO:
+        // TODO: 发短信时选卡功能
         playAndRenderText("正在为您发送短信", true);
-        DcsSDK.getInstance().getSms().sendSms(mAppCtx, phoneNumber, content);
+        TelephonyManager tm = (TelephonyManager)mAppCtx.getSystemService(Context.TELEPHONY_SERVICE);
+        String simSer = tm.getSimSerialNumber();
+        SmsManager smsManager = SmsManager.getDefault();
+        if (!TextUtils.isEmpty(simSer))
+        {
+            if (content.length() >= 70)
+            {
+                List<String> ms = smsManager.divideMessage(content);
+                for (String str : ms) {
+                    if (!TextUtils.isEmpty(phoneNumber)) {
+                        smsManager.sendTextMessage(phoneNumber, null, str, null, null);
+                    }
+                }
+            }
+            else if (!TextUtils.isEmpty(phoneNumber))
+            {
+                smsManager.sendTextMessage(phoneNumber, null, content, null, null);
+            }
+        }
+        else {
+            Toast.makeText(mAppCtx, "手机当前没有插入SIM卡",Toast.LENGTH_SHORT).show();
+        }
         resetSendSmsParam();
         isContactSelectViewCanClick = false;
+
+        //TODO: 发送短信成功/失败的回调提示
     }
 
     public void setSmsSimQueryInterface(SmsDirectiveListener.SmsSimQueryInterface smsSimQueryInterface) {

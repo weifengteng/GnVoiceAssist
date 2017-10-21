@@ -3,10 +3,12 @@ package com.gionee.gnvoiceassist.basefunction;
 import android.os.Handler;
 
 import com.gionee.gnvoiceassist.MainActivity;
+import com.gionee.gnvoiceassist.basefunction.alarm.IAlarmPresenter;
 import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactsPresenter;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.DeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.kookong.KookongOperator;
+import com.gionee.gnvoiceassist.basefunction.music.GNMusicOperator;
 import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
 import com.gionee.gnvoiceassist.basefunction.recordcontrol.RecordController;
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
@@ -47,7 +49,11 @@ public interface IBaseFunction {
 
     ContactsPresenter getContactsPresenter();
 
+    IAlarmPresenter getAlarmPresenter();
+
     IVoiceInputEventListener getVoiceInputEventListener();
 
     IAudioPlayerStateListener getAudioPlayerStateListener();
+
+    GNMusicOperator getGNMusicOperattor();
 }

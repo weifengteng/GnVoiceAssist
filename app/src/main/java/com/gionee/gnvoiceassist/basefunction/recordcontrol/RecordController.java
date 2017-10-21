@@ -1,13 +1,14 @@
 package com.gionee.gnvoiceassist.basefunction.recordcontrol;
 
-import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.util.Log;
 
+import com.baidu.duer.dcs.framework.DcsSdkImpl;
+import com.baidu.duer.dcs.framework.internalApi.DcsConfig;
 import com.baidu.duer.dcs.util.LogUtil;
-import com.baidu.duer.sdk.DcsSDK;
-import com.baidu.duer.sdk.asr.AsrInterface;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
+import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.SoundPlayer;
 import com.gionee.gnvoiceassist.util.Utils;
@@ -21,20 +22,34 @@ import java.util.Map;
 
 /**
  * Created by twf on 2017/8/31.
+ *
+ * 语音识别控制类
+ *
+ * 用来控制语音识别的开始、结束与取消。
  */
 
 public class RecordController implements IRecordControl {
     public static final String TAG = RecordController.class.getSimpleName();
     public static final int DELAY_SHORT = 50;
 
+    public static final int ASR_TYPE_AUTO = 1;
+    public static final int ASR_TYPE_TOUCH = 2;
+    public static final int ASR_MODE_ONLINE = 1;
+    public static final int ASR_MODE_OFFLINE = 2;
+    public static final int ASR_MODE_OFFLINE_PRIORITY = 3;
+
     @Override
     public void stopRecord() {
-        DcsSDK.getInstance().getAsr().stopRecord();
+        //TODO: 停止录音
+//        DcsSDK.getInstance().getAsr().stopRecord();
+        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().endVoiceRequest();
     }
 
     @Override
     public void cancelRecord() {
-        DcsSDK.getInstance().getAsr().cancelRecord();
+        //TODO: 取消录音
+//        DcsSDK.getInstance().getAsr().cancelRecord();
+        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().cancelVoiceRequest();
     }
 
     @Override
@@ -43,22 +58,23 @@ public class RecordController implements IRecordControl {
     }
 
     public void startRecordOfflinePrior() {
-        startRecord(AsrInterface.AsrMode.ASR_MODE_OFFLINE_PRIORITY, getOfflineAsrSlots());
+//        startRecord(ASR_MODE_OFFLINE_PRIORITY, getOfflineAsrSlots());
+        startRecord(ASR_MODE_OFFLINE_PRIORITY, getOfflineAsrSlots());
+
     }
 
     public void startRecordOfflineOnly() {
-        startRecord(AsrInterface.AsrMode.ASR_MODE_OFFLINE, getOfflineAsrSlots());
+        startRecord(ASR_MODE_OFFLINE, getOfflineAsrSlots());
     }
 
     public void startRecordOnline() {
-        startRecord(AsrInterface.AsrMode.ASR_MODE_ONLINE, null);
+        startRecord(ASR_MODE_ONLINE, null);
     }
 
-    private void startRecord(AsrInterface.AsrMode mode, JSONObject jsonObject) {
-        // Stop Speak
-        DcsSDK.getInstance().getSpeak().stopSpeak();
+    private void startRecord(final int mode, JSONObject jsonObject) {
+        // TODO: 当正在录音时，停止上一次录音进度
 
-        final AsrInterface.AsrParam asrParam = new AsrInterface.AsrParam();
+        final DcsConfig.ASRConfig asrParam = new DcsConfig.ASRConfig();
         asrParam.setAsrMode(mode);
         if(jsonObject != null) {
             asrParam.setOfflineAsrSlots(jsonObject);
@@ -69,13 +85,15 @@ public class RecordController implements IRecordControl {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                DcsSDK.getInstance().getAsr().startRecord(asrParam);
+                //参数代表是否开启句尾识别
+                SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().beginVoiceRequest(true);
             }
         }, DELAY_SHORT);
     }
 
-    @SuppressLint("NewApi")
     private JSONObject getOfflineAsrSlots() {
+        long startTimemills = System.currentTimeMillis();
+        long endTimemills = 0;
         JSONObject slotJson = new JSONObject();
         try {
             {
@@ -116,6 +134,8 @@ public class RecordController implements IRecordControl {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            endTimemills = System.currentTimeMillis();
+            Log.i("liyh","getOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
             return slotJson;
         }
     }

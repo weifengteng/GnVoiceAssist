@@ -1,10 +1,10 @@
 package com.gionee.gnvoiceassist.directiveListener.tvLive;
 
-import com.baidu.duer.dcs.devicemodule.tvlive.TvLiveDeviceModule;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.sdk.module.tvlive.TvLiveDeviceModule;
 import com.gionee.gnvoiceassist.util.Utils;
 
 /**

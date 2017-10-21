@@ -20,7 +20,9 @@ import android.widget.TextView;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
-import com.gionee.gnvoiceassist.bean.ListCardItemBean;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.ListCardItem;
+import com.gionee.gnvoiceassist.sdk.module.screen.message.RenderCardPayload;
+import com.gionee.gnvoiceassist.util.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,16 +34,15 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 	public static final String TAG = SimpleListCardItem.class.getSimpleName();
 	private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 	private Context mContext;
-	private ArrayList<ListCardItemBean> mBeanList;
+	private List<RenderCardPayload.ListItem> mListCardItems;
 	private View mCachedView;
 	private LayoutInflater mInflater;
 	private ViewGroup mParent;
 
 	/******************************* 构造函数 & Override *******************************/
-	public SimpleListCardItem(Context ctx, ArrayList<ListCardItemBean> beanList) {
-		LogUtil.d(TAG, "SimpleListCardItem beanList = " + beanList);
+	public SimpleListCardItem(Context ctx, List<RenderCardPayload.ListItem> itemList) {
 		mContext = ctx;
-		mBeanList = beanList;
+		mListCardItems = itemList;
 	}
 
 	@Override
@@ -68,20 +69,21 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 	public void bindView() {
 		LinearLayout customPanel = (LinearLayout) mCachedView.findViewById(R.id.custom_panel);
 
-		for(ListCardItemBean bean : mBeanList) {
-			LogUtil.d(TAG, "SimpleListCardItem bindView ---------------1111------ ");
+		for(RenderCardPayload.ListItem item : mListCardItems) {
 			View itemView = View.inflate(mContext,R.layout.listcard_info_item_lyt, null);
-			LogUtil.d(TAG, "SimpleListCardItem bindView ---------------2222------ ");
-			if(bean == null) {
+			if(item == null) {
 				customPanel.addView(itemView);
 				continue;
 			}
 
-			setTitleTextView(bean.getTitle(), itemView);
+			setTitleTextView(item.title, itemView);
 //    		setScoreImage(itemView, new String[] { "75" });
-    		setContentView(bean.getContent(), itemView);
-    		setDetailUrlView(bean.getUrl(), itemView);
-			setImage(bean.getImage(), itemView);
+    		setContentView(item.content, itemView);
+    		setDetailUrlView(item.url, itemView);
+			if (item.image != null) {
+				setImage(item.image.src, itemView);
+			}
+			final String url = item.url;
 	        customPanel.addView(itemView);
 		}
 //		customPanel.addView(View.inflate(mContext, R.layout.restaurant_dianping_info, null));
@@ -105,7 +107,6 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 		intent.setData(Uri.fromParts("tel", tel, null));
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-//		Utils.startActivity(mContext, intent);
 		if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 			// TODO: Consider calling
 			//    ActivityCompat#requestPermissions
@@ -116,7 +117,7 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 			// for ActivityCompat#requestPermissions for more details.
 			return;
 		}
-		GnVoiceAssistApplication.getInstance().startActivity(intent);
+		Utils.startActivity(mContext, intent);
 	}
 
     private void setScoreImage(View itemView, String[] score) {
@@ -180,28 +181,20 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 		LogUtil.d(TAG, "SimpleListCardItem setContentView list = " + list);
     }
 
-	private void setImage(ListCardItemBean.Image image, View itemView) {
-		if(image == null) {
+	private void setImage(String imageSrc, View itemView) {
+		if(TextUtils.isEmpty(imageSrc)) {
+			LogUtil.e(TAG, "SimpleListCardItem setImage imageSrc is null");
 			return;
 		}
 
 		ImageButton imageButton = (ImageButton) itemView.findViewById(R.id.image);
 		imageButton.setVisibility(View.VISIBLE);
 		Picasso.with(mContext)
-				.load(image.src)
+				.load(imageSrc)
 				.placeholder(R.drawable.gn_detail_item_icon_phone_normal)
 				.resize(240, 160)
 				.onlyScaleDown()
 				.into(imageButton);
-
-
-//		imageButton.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View arg0) {
-////				telephoneByNum(newTels[0]);
-//			}
-//		});
 	}
     
     private void setDetailUrlView(final String detailUrl, View itemView) {
@@ -209,12 +202,11 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 			LogUtil.d(TAG, "SimpleListCardItem setDetailUrlView addr[0] = " + detailUrl);
 			TextView detailUrlView = (TextView) itemView.findViewById(R.id.moreinfo);
 			detailUrlView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
-			detailUrlView.setText(detailUrl);
+			detailUrlView.setText("更多信息");
 			detailUrlView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-//					telephoneByNum(tel);
-					openWebSite(detailUrl);
+					openLink(detailUrl);
 				}
 			});
 
@@ -224,11 +216,11 @@ public class SimpleListCardItem extends BaseItem implements OnClickListener {
 		}
     }
 
-	private void openWebSite(String url) {
+	private void openLink(String url) {
 		Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 		mIntent.addCategory(Intent.CATEGORY_BROWSABLE);
 		mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
+//		mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
 		GnVoiceAssistApplication.getInstance().startActivity(mIntent);
 	}
 }

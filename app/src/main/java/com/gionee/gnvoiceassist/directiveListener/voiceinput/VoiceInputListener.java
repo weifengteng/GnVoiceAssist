@@ -21,12 +21,17 @@ public class VoiceInputListener extends BaseDirectiveListener implements VoiceIn
     }
 
     @Override
-    public void onStartRecord() {
+    public void onStart() {
         voiceInputEvent.onVoiceInputStart();
     }
 
     @Override
-    public void onFinishRecord() {
+    public void onFinish() {
+        voiceInputEvent.onVoiceInputStop();
+    }
+
+    @Override
+    public void onCancel() {
         voiceInputEvent.onVoiceInputStop();
     }
 

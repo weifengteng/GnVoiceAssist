@@ -92,6 +92,7 @@ public class Constants {
     public static final String SLOT_CONTACTNAME = "contactname";
 
 
+    public static final int MSG_INIT_SUCCESS = 0x1010;
     public static final int MSG_SHOW_QUERY = 0x1011;
     public static final int MSG_SHOW_ANSWER = 0x1012;
     public static final int MSG_SHOW_INFO_PANEL = 0x1013;
