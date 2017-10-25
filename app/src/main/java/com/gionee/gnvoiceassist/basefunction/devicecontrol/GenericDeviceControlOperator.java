@@ -1,16 +1,26 @@
 package com.gionee.gnvoiceassist.basefunction.devicecontrol;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.AirplaneModeController;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.BluetoothController;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.FlashlightController;
-import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.GioneeMobileDataController;
-import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.GioneeNoDisturbController;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.HotspotController;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.LocationController;
+import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.MobileDataController;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.NfcController;
+import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.NoDisturbController;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.ScreenshotController;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.impl.WifiController;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.sysinterface.IAirplaneMode;
@@ -23,14 +33,18 @@ import com.gionee.gnvoiceassist.basefunction.devicecontrol.sysinterface.INfc;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.sysinterface.INoDisturb;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.sysinterface.IScreenshot;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.sysinterface.IWifi;
+import com.gionee.gnvoiceassist.util.LogUtil;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Created by liyingheng on 10/18/17.
  */
 
-public class GioneeDeviceControlOperator extends DeviceControlOperator {
+public class GenericDeviceControlOperator extends DeviceControlOperator {
 
-    public GioneeDeviceControlOperator(IBaseFunction baseFunction) {
+    public GenericDeviceControlOperator(IBaseFunction baseFunction) {
         super(baseFunction);
     }
 
@@ -60,16 +74,16 @@ public class GioneeDeviceControlOperator extends DeviceControlOperator {
 
     @Override
     public void operateNoDisturbMode(boolean mode) {
-        INoDisturb controller = new GioneeNoDisturbController(mAppCtx);
+        //TODO: Throw NOT SUPPORT Exception
+        INoDisturb controller = new NoDisturbController(mAppCtx);
         controller.setNoDisturbEnabled(mode);
     }
 
     @Override
     public void operateMobileData(boolean mode) {
         //TODO: 考虑无Sim卡的情况
-        IMobileData controller = new GioneeMobileDataController(mAppCtx);
+        IMobileData controller = new MobileDataController(mAppCtx);
         controller.setMobileDataEnabled(mode);
-
     }
 
     @Override

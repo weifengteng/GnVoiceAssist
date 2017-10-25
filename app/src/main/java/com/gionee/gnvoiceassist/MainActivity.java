@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,6 +39,8 @@ import com.gionee.gnvoiceassist.util.SharedData;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
 import com.gionee.gnvoiceassist.util.threadpool.ThreadPoolManager;
+import com.gionee.gnvoiceassist.widget.HomeRecyclerView;
+import com.gionee.gnvoiceassist.widget.HomeRecyclerViewAdapter;
 import com.gionee.gnvoiceassist.widget.HomeScrollView;
 import com.gionee.gnvoiceassist.widget.RippleLayout;
 
@@ -78,10 +81,14 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private ImageView anim_outside;
     private ObjectAnimator mRotationor;
     private HomeScrollView sv;
+    private HomeRecyclerView rv;
+    private HomeRecyclerViewAdapter rvAdapter;
+    private LinearLayoutManager rvLayoutManager;
     private ExpandableListView home_listview;
     private RippleLayout rl;
     private TextView tip;
     private ImageButton help;
+
     private VoiceStatus mVoiceStatus = VoiceStatus.INPUT;
     private PermissionsChecker mPermissionsChecker; // 权限检测器
     private boolean needInitFramework = true;
@@ -185,6 +192,11 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         sv_ll = (LinearLayout)findViewById(R.id.sv_ll);
         sv = (HomeScrollView) findViewById(R.id.sv);
         rl = (RippleLayout)findViewById(R.id.ripple_layout);
+        rv = (HomeRecyclerView) findViewById(R.id.rv);
+        rvAdapter = new HomeRecyclerViewAdapter(this);
+        rvLayoutManager = new LinearLayoutManager(this);
+        rv.setAdapter(rvAdapter);
+        rv.setLayoutManager(rvLayoutManager);
         anim_outside = (ImageView)findViewById(R.id.anim_outside);
         mRotationor = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.rotation_animator);
         mRotationor.setTarget(anim_outside);
@@ -343,7 +355,10 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 
         help_command.setVisibility(View.GONE);
         sv.setVisibility(View.VISIBLE);
+        //Implement RecyclerView for better performance
+//        rv.setVisibility(View.VISIBLE);
         sv_ll.addView(showView);
+//        rvAdapter.addChildView(showView);
         final int measuredHeight = sv_ll.getMeasuredHeight();
         LogUtil.d(TAG, "VoiceHomeActivity measuredHeight  = " + measuredHeight);
         sv.post(new Runnable() {

@@ -49,13 +49,21 @@
 					android:id="@+id/sv"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
-					android:layout_marginTop="5dp">
+					android:layout_marginTop="5dp"
+					android:visibility="visible">
 					<LinearLayout
 						android:id="@+id/sv_ll"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:orientation="vertical"/>
 				</com.gionee.gnvoiceassist.widget.HomeScrollView>
+
+				<com.gionee.gnvoiceassist.widget.HomeRecyclerView
+					android:id="@+id/rv"
+					android:layout_height="match_parent"
+					android:layout_width="match_parent"
+					android:layout_marginTop="5dp"
+					android:visibility="gone"/>
 
 				<TextView
 					android:visibility="gone"

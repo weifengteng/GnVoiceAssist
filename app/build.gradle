@@ -79,4 +79,5 @@ dependencies {
     compile(name: 'dueros-sdk', ext: 'aar')
     compile(name: 'dlp', ext: 'aar')
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
 }

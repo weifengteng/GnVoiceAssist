@@ -248,7 +248,8 @@ public class Utils {
             deviceControlKeyValueMap.put(Constants.FUN_SETPHONEMODE, Constants.JSON_KEY_MODE + "," + Constants.JSON_KEY_PHONEMODE);
             deviceControlKeyValueMap.put(Constants.FUN_SETGPS, Constants.JSON_KEY_GPS);
             deviceControlKeyValueMap.put(Constants.FUN_SETCELLULAR, Constants.JSON_KEY_CELLULAR);
-            deviceControlKeyValueMap.put(Constants.FUN_SETPHONEPOWER, Constants.JSON_KEY_MODE + "," + Constants.JSON_KEY_PHONEPOWER);
+            deviceControlKeyValueMap.put(Constants.FUN_SETHOTSPOT, Constants.JSON_KEY_HOTSPOT);
+            deviceControlKeyValueMap.put(Constants.FUN_SETNFC, Constants.JSON_KEY_NFC);
         }
         return deviceControlKeyValueMap;
     }
