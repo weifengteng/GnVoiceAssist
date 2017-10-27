@@ -35,6 +35,7 @@ import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.ContactProcessor;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.PermissionsChecker;
+import com.gionee.gnvoiceassist.util.Preconditions;
 import com.gionee.gnvoiceassist.util.SharedData;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;

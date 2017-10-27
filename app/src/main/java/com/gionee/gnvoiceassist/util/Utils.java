@@ -352,7 +352,13 @@ public class Utils {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> offlineResultMap = new HashMap<>();
         try {
-            Map<String, Object> map1 = mapper.readValue(json, Map.class);
+            JSONObject rootObject = new JSONObject(json);
+            String nluStr = (String) rootObject.get("results_nlu");
+            if (nluStr.startsWith("\ufeff")) {
+                nluStr = nluStr.substring(1);
+            }
+            JSONObject nluObject = new JSONObject(nluStr);
+            Map<String, Object> map1 = mapper.readValue(nluObject.toString(), Map.class);
             String rawText = String.valueOf(map1.get(Constants.SLOT_RAW_TEXT));
             offlineResultMap.put(Constants.SLOT_RAW_TEXT, rawText);
             List<Map<String, Object>> resultList = (List<Map<String, Object>>)map1.get(Constants.SLOT_RESULTS);
@@ -381,6 +387,17 @@ public class Utils {
         } finally {
             return offlineResultMap;
         }
+    }
+
+    public static List<String> getParseOfflineKeyList() {
+        List<String> keyList = new ArrayList<>();
+        keyList.add(Constants.SLOT_APPNAME);
+        keyList.add(Constants.SLOT_CONTACTNAME);
+        keyList.add(Constants.SLOT_CONTACTNAME);
+        keyList.add(Constants.SLOT_CUSTOMACSTATELIST);
+        keyList.add(Constants.SLOT_DEVICELIST);
+        keyList.add(Constants.SLOT_OBJECT);
+        return keyList;
     }
 
     public static void bindKooKongService(ServiceConnection mServiceConnection, Context context){

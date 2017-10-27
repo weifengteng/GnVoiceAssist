@@ -42,6 +42,7 @@ import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncher;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncherImpl;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
@@ -107,9 +108,16 @@ public class SdkManagerImpl implements ISdkManager {
 
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
         String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
+        String appId = "10290022";
+        String apiKey = "bw40xRdDGFclaSIGzgXgNFdG";
+        String secretKey = "AkP1XOuGVlrrML7dTs4WqW6bqj8lvv6C";
         IOauth oauth = new BaiduOauthClientCredentialsImpl(clientId, clientSecret);
         final ASROffLineConfig asrOffLineConfig = new ASROffLineConfig();
         asrOffLineConfig.offlineAsrSlots = getOfflineAsrSlots();
+        asrOffLineConfig.asrAppId = appId;
+        asrOffLineConfig.asrAppKey = apiKey;
+        asrOffLineConfig.asrSecretKey = secretKey;
+
 //        asrOffLineConfig.asrAppId = "dmACD7A1CFFCC2E363";
 //        asrOffLineConfig.asrAppKey = "61CD4C2832107E452B913B7E0668EEC0";
 //        asrOffLineConfig.asrCertificate = "";
@@ -124,7 +132,7 @@ public class SdkManagerImpl implements ISdkManager {
                 .oauth(oauth)
                 .clientId(clientId)
                 .audioRecorder(audioRecorder)
-                .asrMode(DcsConfig.ASR_MODE_ONLINE)
+                .asrMode(DcsConfig.ASR_MODE_OFFLINE)
                 .asrOffLineConfig(asrOffLineConfigProvider)
                 .build();
 
@@ -206,6 +214,10 @@ public class SdkManagerImpl implements ISdkManager {
         LocalAudioPlayerDeviceModule localAudioPlayerDeviceModule = new LocalAudioPlayerDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(localAudioPlayerDeviceModule);
 
+        //初始化离线识别模块
+        OffLineDeviceModule offLineDeviceModule = new OffLineDeviceModule();
+        mDcsSdk.putDeviceModule(offLineDeviceModule);
+
         getInternalApi().getDeviceModule(com.baidu.duer.dcs.devicemodule.custominteraction.ApiConstants.NAMESPACE);
     }
 
@@ -285,72 +297,75 @@ public class SdkManagerImpl implements ISdkManager {
     }
 
     private JSONObject getOfflineAsrSlots() {
-//        long startTimemills = System.currentTimeMillis();
-//        long endTimemills = 0;
-//        JSONObject slotJson = new JSONObject();
-//        try {
-//            {
-//                Map<String, String[]> slotMap = KookongCustomDataHelper.getKookongOfflineAsrSlotMap();
-//
-//                String[] deviceList = slotMap.get(Constants.SLOT_DEVICELIST);
-//                if(deviceList != null) {
-//                    JSONArray slotdataArray1 = new JSONArray(deviceList);
-//                    slotJson.put(Constants.SLOT_DEVICELIST, slotdataArray1);
-//                }
-//
-//                String[] customACStateList = slotMap.get(Constants.SLOT_CUSTOMACSTATELIST);
-//                if(customACStateList != null) {
-//                    JSONArray slotDataArray2 = new JSONArray(customACStateList);
-//                    slotJson.put(Constants.SLOT_CUSTOMACSTATELIST, slotDataArray2);
-//                }
-//
-//                JSONArray slotdataArray = new JSONArray();
-//                slotdataArray.put("相机");
-//                slotdataArray.put("设置");
-//                slotdataArray.put("相册");
-//                slotdataArray.put("联系人");
-//                // 通用识别槽位
-//                slotJson.put(Constants.SLOT_APPNAME, slotdataArray);
-//            }
-//            {
-//                JSONArray slotdataArray = new JSONArray();
-//                ArrayList<String> contactNameList = Utils.getAllContacts(GnVoiceAssistApplication.getInstance());
-//                for(String name : contactNameList) {
-//                    slotdataArray.put(name);
-//                    slotdataArray.put("杨锐");
-//                    slotdataArray.put("曹玉树");
-//                }
-//                // 通用识别槽位
-//                slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            endTimemills = System.currentTimeMillis();
-//            Log.i("liyh","getOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
-//            return slotJson;
-//        }
-        // 离线识别
+        long startTimemills = System.currentTimeMillis();
+        long endTimemills = 0;
         JSONObject slotJson = new JSONObject();
         try {
-            JSONArray slotdataArray = new JSONArray();
-            slotdataArray.put("打开空调");
-            slotdataArray.put("打开电视");
-            slotdataArray.put("关闭空调");
-            slotdataArray.put("今天天气怎么样");
-            // 通用识别槽位
-            slotJson.put("generalslot", slotdataArray);
-            JSONArray slotdPhoneNameArray = new JSONArray();
-            slotdPhoneNameArray.put("张三");
-            slotdPhoneNameArray.put("李四");
-            // 通用识别槽位
-            slotJson.put("phonename", slotdPhoneNameArray);
-        } catch (JSONException e) {
+            {
+                Map<String, String[]> slotMap = KookongCustomDataHelper.getKookongOfflineAsrSlotMap();
+
+                String[] deviceList = slotMap.get(Constants.SLOT_DEVICELIST);
+                if(deviceList != null) {
+                    JSONArray slotdataArray1 = new JSONArray(deviceList);
+                    slotJson.put(Constants.SLOT_DEVICELIST, slotdataArray1);
+                }
+
+                String[] customACStateList = slotMap.get(Constants.SLOT_CUSTOMACSTATELIST);
+                if(customACStateList != null) {
+                    JSONArray slotDataArray2 = new JSONArray(customACStateList);
+                    slotJson.put(Constants.SLOT_CUSTOMACSTATELIST, slotDataArray2);
+                }
+
+                JSONArray slotdataArray = new JSONArray();
+                slotdataArray.put("相机");
+                slotdataArray.put("设置");
+                slotdataArray.put("相册");
+                slotdataArray.put("联系人");
+                // 通用识别槽位
+                slotJson.put(Constants.SLOT_APPNAME, slotdataArray);
+//                slotJson.put("generalslot",slotdataArray);
+            }
+            {
+                JSONArray slotdataArray = new JSONArray();
+                ArrayList<String> contactNameList = Utils.getAllContacts(GnVoiceAssistApplication.getInstance());
+                for(String name : contactNameList) {
+                    slotdataArray.put(name);
+                    slotdataArray.put("杨锐");
+                    slotdataArray.put("曹玉树");
+                }
+                // 通用识别槽位
+                slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
+//                slotJson.put("generalslot",slotdataArray);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            endTimemills = System.currentTimeMillis();
+            Log.i("liyh","getOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
             return slotJson;
         }
+        // 离线识别
+
+//        JSONObject slotJson = new JSONObject();
+//        try {
+//            JSONArray slotdataArray = new JSONArray();
+//            slotdataArray.put("打开空调");
+//            slotdataArray.put("打开电视");
+//            slotdataArray.put("关闭空调");
+//            slotdataArray.put("今天天气怎么样");
+//            // 通用识别槽位
+//            slotJson.put("generalslot", slotdataArray);
+//            JSONArray slotdPhoneNameArray = new JSONArray();
+//            slotdPhoneNameArray.put("张三");
+//            slotdPhoneNameArray.put("李四");
+//            // 通用识别槽位
+//            slotJson.put("phonename", slotdPhoneNameArray);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        } finally {
+//            return slotJson;
+//        }
     }
 
     public IDcsSdk getDcsSdk() {
