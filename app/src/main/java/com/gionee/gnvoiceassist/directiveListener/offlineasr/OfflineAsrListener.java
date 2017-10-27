@@ -2,28 +2,33 @@ package com.gionee.gnvoiceassist.directiveListener.offlineasr;
 
 import android.text.TextUtils;
 
+import com.baidu.duer.dcs.framework.message.Directive;
+import com.baidu.duer.dcs.framework.message.OffLineAsrDirective;
+import com.baidu.duer.dcs.offline.asr.bean.ErrorTranslation;
 import com.baidu.duer.dcs.offline.asr.bean.RecogResult;
 import com.baidu.duer.dcs.offline.asr.listener.IRecogListener;
-import com.baidu.duer.dcs.util.LogUtil;
 import com.baidu.duer.dcs.util.NetWorkUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.gnvoiceassist.util.Constants;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.util.Utils;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by twf on 2017/8/22.
  */
 
-public class OfflineAsrListener extends BaseDirectiveListener implements IRecogListener {
+public class OfflineAsrListener extends BaseDirectiveListener implements IRecogListener,OffLineDeviceModule.IOfflineDirectiveListener {
     public static final String TAG = OfflineAsrListener.class.getSimpleName();
 
     public OfflineAsrListener(IBaseFunction iBaseFunction) {
@@ -156,9 +161,8 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
 
     @Override
     public void onAsrFinish(RecogResult recogResult) {
-        ArrayList<String> keyList = new ArrayList<>();
-        keyList.add(Constants.SLOT_APPNAME);
-        Map<String, String> offlineResultMap = Utils.parseOfflineResult(recogResult.getOrigalJson(), keyList);
+        List<String> keyList = Utils.getParseOfflineKeyList();
+        Map<String, String> offlineResultMap = Utils.parseOfflineResult(recogResult.getOrigalJson(), (ArrayList<String>) keyList);
         if(offlineResultMap != null && !offlineResultMap.isEmpty()) {
             String rawText = offlineResultMap.get(Constants.SLOT_RAW_TEXT);
             String domain = offlineResultMap.get(Constants.SLOT_DOMAIN);
@@ -177,7 +181,7 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
                     }
                 } else if(TextUtils.equals(domain, "music")
                         && TextUtils.equals(intent, "bargin")) {
-                    // TODO: music bargin
+                    // TODO: 实现音乐播放
                     T.showShort("domain: music  intent: bargin");
 
                 }  else if(TextUtils.equals(domain, "app")
@@ -216,7 +220,7 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
                         && TextUtils.equals(intent, "call")) {
                     String contactname = offlineResultMap.get(Constants.SLOT_CONTACTNAME);
                     if(!TextUtils.isEmpty(contactname)) {
-
+                        //TODO: 实现离线打电话功能
                     } else {
                         // TODO: contact name is empty
                     }
@@ -277,6 +281,25 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
     public void onOfflineUnLoaded() {
         if(!NetWorkUtil.isNetworkConnected(GnVoiceAssistApplication.getInstance())) {
             playTTS("没联网我懂得很少，你可以说打电话给小明或打开相机试试看", true);
+        }
+    }
+
+    @Override
+    public void onDirectiveReceived(OffLineAsrDirective directive) {
+
+        String offlineData = directive.offLineData;
+        RecogResult recogResult = RecogResult.parseJson(offlineData);
+        if (recogResult.hasError())
+        {
+            int errorCode = recogResult.getError();
+            LogUtil.e("RecogEventAdapter", "asr error:" + offlineData);
+            this.onAsrFinishError(errorCode, ErrorTranslation.recogError(errorCode), recogResult.getDesc());
+        }
+        else
+        {
+            if (recogResult.isFinalResult()) {
+                this.onAsrFinish(recogResult);
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ import com.gionee.gnvoiceassist.basefunction.alarm.AlarmPresenter;
 import com.gionee.gnvoiceassist.basefunction.alarm.IAlarmPresenter;
 import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactsPresenter;
-import com.gionee.gnvoiceassist.basefunction.devicecontrol.AospDeviceControlOperator;
+import com.gionee.gnvoiceassist.basefunction.devicecontrol.GenericDeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.DeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.GioneeDeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.kookong.KookongOperator;
@@ -118,7 +118,7 @@ public class BaseFunctionManager implements IBaseFunction {
                     deviceControlOperator = new GioneeDeviceControlOperator(this);
                     break;
                 default:
-                    deviceControlOperator = new AospDeviceControlOperator(this);
+                    deviceControlOperator = new GenericDeviceControlOperator(this);
                     break;
             }
         }

@@ -42,6 +42,7 @@ import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncher;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncherImpl;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
@@ -52,6 +53,7 @@ import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -106,9 +108,20 @@ public class SdkManagerImpl implements ISdkManager {
 
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
         String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
+        String appId = "10290022";
+        String apiKey = "bw40xRdDGFclaSIGzgXgNFdG";
+        String secretKey = "AkP1XOuGVlrrML7dTs4WqW6bqj8lvv6C";
         IOauth oauth = new BaiduOauthClientCredentialsImpl(clientId, clientSecret);
         final ASROffLineConfig asrOffLineConfig = new ASROffLineConfig();
         asrOffLineConfig.offlineAsrSlots = getOfflineAsrSlots();
+        asrOffLineConfig.asrAppId = appId;
+        asrOffLineConfig.asrAppKey = apiKey;
+        asrOffLineConfig.asrSecretKey = secretKey;
+
+//        asrOffLineConfig.asrAppId = "dmACD7A1CFFCC2E363";
+//        asrOffLineConfig.asrAppKey = "61CD4C2832107E452B913B7E0668EEC0";
+//        asrOffLineConfig.asrCertificate = "";
+//        asrOffLineConfig.asrSecretKey = "";
         IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
             @Override
             public ASROffLineConfig get() {
@@ -119,7 +132,7 @@ public class SdkManagerImpl implements ISdkManager {
                 .oauth(oauth)
                 .clientId(clientId)
                 .audioRecorder(audioRecorder)
-                .asrMode(DcsConfig.ASR_MODE_ONLINE)
+                .asrMode(DcsConfig.ASR_MODE_OFFLINE)
                 .asrOffLineConfig(asrOffLineConfigProvider)
                 .build();
 
@@ -200,6 +213,10 @@ public class SdkManagerImpl implements ISdkManager {
         //初始化localAudioPlayerDeviceModule
         LocalAudioPlayerDeviceModule localAudioPlayerDeviceModule = new LocalAudioPlayerDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(localAudioPlayerDeviceModule);
+
+        //初始化离线识别模块
+        OffLineDeviceModule offLineDeviceModule = new OffLineDeviceModule();
+        mDcsSdk.putDeviceModule(offLineDeviceModule);
 
         getInternalApi().getDeviceModule(com.baidu.duer.dcs.devicemodule.custominteraction.ApiConstants.NAMESPACE);
     }
@@ -306,6 +323,7 @@ public class SdkManagerImpl implements ISdkManager {
                 slotdataArray.put("联系人");
                 // 通用识别槽位
                 slotJson.put(Constants.SLOT_APPNAME, slotdataArray);
+//                slotJson.put("generalslot",slotdataArray);
             }
             {
                 JSONArray slotdataArray = new JSONArray();
@@ -317,6 +335,7 @@ public class SdkManagerImpl implements ISdkManager {
                 }
                 // 通用识别槽位
                 slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
+//                slotJson.put("generalslot",slotdataArray);
             }
 
         } catch (Exception e) {
@@ -326,6 +345,27 @@ public class SdkManagerImpl implements ISdkManager {
             Log.i("liyh","getOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
             return slotJson;
         }
+        // 离线识别
+
+//        JSONObject slotJson = new JSONObject();
+//        try {
+//            JSONArray slotdataArray = new JSONArray();
+//            slotdataArray.put("打开空调");
+//            slotdataArray.put("打开电视");
+//            slotdataArray.put("关闭空调");
+//            slotdataArray.put("今天天气怎么样");
+//            // 通用识别槽位
+//            slotJson.put("generalslot", slotdataArray);
+//            JSONArray slotdPhoneNameArray = new JSONArray();
+//            slotdPhoneNameArray.put("张三");
+//            slotdPhoneNameArray.put("李四");
+//            // 通用识别槽位
+//            slotJson.put("phonename", slotdPhoneNameArray);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        } finally {
+//            return slotJson;
+//        }
     }
 
     public IDcsSdk getDcsSdk() {

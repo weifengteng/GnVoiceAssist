@@ -40,6 +40,7 @@ import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
@@ -145,6 +146,7 @@ public class DirectiveListenerManager {
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(localAudioPlayerListener);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).addVoiceOutputListener(speakTxtListener);
+        ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).addOfflineDirectiveListener(offlineAsrListener);
     }
 
     public void unRegisterDirectiveListener() {
@@ -182,6 +184,7 @@ public class DirectiveListenerManager {
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(null);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(null);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(speakTxtListener);
+        ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).removeOfflineDirectiveListener(offlineAsrListener);
 //        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(null);
 
     }

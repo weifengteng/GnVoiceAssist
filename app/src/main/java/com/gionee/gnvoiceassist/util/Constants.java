@@ -38,6 +38,8 @@ public class Constants {
     public static final String JSON_KEY_GPS = "gps";
     public static final String JSON_KEY_CELLULAR = "cellular";
     public static final String JSON_KEY_PHONEPOWER = "phonePower";
+    public static final String JSON_KEY_HOTSPOT = "hotspot";
+    public static final String JSON_KEY_NFC = "nfc";
 
 
     // Device control function value
@@ -48,6 +50,8 @@ public class Constants {
     public static final String FUN_SETGPS = "SetGps";
     public static final String FUN_SETCELLULAR = "SetCellular";
     public static final String FUN_SETPHONEPOWER = "SetPhonePower";
+    public static final String FUN_SETHOTSPOT = "SetHotspot";
+    public static final String FUN_SETNFC = "setNfc";
 
     // Device control function value in Payload
     // PhoneMode  key:mode

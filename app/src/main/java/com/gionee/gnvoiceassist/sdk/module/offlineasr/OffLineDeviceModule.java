@@ -23,7 +23,9 @@ import com.baidu.duer.dcs.framework.message.ClientContext;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.OffLineAsrDirective;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 离线识别的DeviceModule
@@ -32,6 +34,8 @@ import java.util.HashMap;
  */
 public class OffLineDeviceModule extends BaseDeviceModule {
     public static final String TAG = "OffLineDeviceModule";
+
+    private List<IOfflineDirectiveListener> listeners = new ArrayList<>();
 
     public OffLineDeviceModule() {
         // 名字固定的
@@ -50,6 +54,9 @@ public class OffLineDeviceModule extends BaseDeviceModule {
             OffLineAsrDirective offLineAsrDirective = (OffLineAsrDirective) directive;
             Log.d(TAG, "handleDirective: " + offLineAsrDirective.type);
             Log.d(TAG, "handleDirective: " + offLineAsrDirective.offLineData);
+            for (IOfflineDirectiveListener listener:listeners) {
+                listener.onDirectiveReceived((OffLineAsrDirective) directive);
+            }
         }
     }
 
@@ -58,8 +65,26 @@ public class OffLineDeviceModule extends BaseDeviceModule {
         return null;
     }
 
+
+
     @Override
     public void release() {
+        listeners.clear();
+    }
 
+    public void addOfflineDirectiveListener(IOfflineDirectiveListener listener) {
+        if (listener != null) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeOfflineDirectiveListener(IOfflineDirectiveListener listener) {
+        if (listeners.contains(listener)) {
+            listeners.remove(listener);
+        }
+    }
+
+    public interface IOfflineDirectiveListener {
+        void onDirectiveReceived(OffLineAsrDirective directive);
     }
 }
