@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.baidu.duer.dcs.util.CommonUtil;
 import com.gionee.gnvoiceassist.basefunction.BaseFunctionManager;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactObserver;
@@ -46,8 +47,6 @@ import com.gionee.gnvoiceassist.widget.HomeScrollView;
 import com.gionee.gnvoiceassist.widget.RippleLayout;
 
 import java.lang.ref.WeakReference;
-
-import static com.gionee.gnvoiceassist.util.Utils.doUserActivity;
 
 /**
  * 没有启动唤醒功能
@@ -175,10 +174,10 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                 if(needInitFramework) {
                     handleUpdateContacts();
                     initDuerSDK();
-//                    initFrameWork();
-//                    TxtSpeakManager.getInstance().playTTS("您好", UTTER_ID_WELCOME, this);
-//                    needInitFramework = false;
-//                    mMainHandler.sendEmptyMessage(Constants.MSG_INIT_SUCCESS);
+                    initFrameWork();
+                    TxtSpeakManager.getInstance().playTTS("您好", UTTER_ID_WELCOME, this);
+                    needInitFramework = false;
+                    mMainHandler.sendEmptyMessage(Constants.MSG_INIT_SUCCESS);
                 }
             }
 
@@ -247,9 +246,6 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 
     private void updateStopRecordingUI() {
         SharedData.getInstance().setStopListenReceiving(false);
-//        voiceButton.setText(getResources().getString(R.string.stop_record));
-//        long t = System.currentTimeMillis() - startTimeStopListen;
-//        textViewTimeStopListen.setText(getResources().getString(R.string.time_record, t));
 
         tip.setVisibility(View.GONE);
         LogUtil.d(TAG, "setUIByClick stopRippleAnimation");
@@ -261,14 +257,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private void updateStartRecordingUI() {
         startTimeStopListen = System.currentTimeMillis();
         SharedData.getInstance().setStopListenReceiving(true);
-//        DcsSdkImpl.getInstance().getSystemDeviceModule().getProvider().userActivity();
-//        ((SystemDeviceModule)(mDcsSdk.getInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
-//                .getProvider().userActivity();
-//        voiceButton.setText(getResources().getString(R.string.start_record));
-//        textViewTimeStopListen.setText("");
-//        textViewRenderVoiceInputText.setText("");
 
-        LogUtil.e(TAG, "setUIByClick startRippleAnimation");
+        LogUtil.i(TAG, "setUIByClick startRippleAnimation");
         rl.startRippleAnimation();
         /*if(myService != null && myService.needShowTip() && help_command.getVisibility() != View.VISIBLE){
             LogUtil.e(TAG, "setUIByClick needShowTip");
@@ -338,9 +328,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void addView(String recordResult,String backResult,View view) {
-        /*if(myService != null && myService.needShowTip()){
-            myService.setNeedShowTip(false);
-        }*/
+
         View showView = view;
         if(!TextUtils.isEmpty(recordResult)){
             showView = View.inflate(this, R.layout.reco_result, null);
@@ -404,7 +392,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         // TODO:
         switch (v.getId()) {
             case R.id.help :
-//                Log.e("onClick help help_command.getVisibility() = " + help_command.getVisibility());
+                LogUtil.i(TAG,"onClick help help_command.getVisibility() = " + help_command.getVisibility());
+                //TODO Implement click help operate
 //                if(help_command.getVisibility() == View.GONE){
 //                    visibleListView();
 //                }else{
@@ -414,20 +403,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                 break;
             case R.id.ripple_layout :
                 LogUtil.e(TAG, "onClick ripple_layout");
-                /*if(rl.isRippleAnimationRunning()){
-                    LogUtil.e(TAG, "onClick ripple_layout stopRecognize() ");
-                    // TODO:
-                    stopCurOperation();
-//                    stopRecognize();
-                }else{
-                    if(!myService.isReco())
-                        myService.startReco(new Intent());
-                }*/
 
-//            case R.id.voiceBtn:
-//                if(CommonUtil.isFastDoubleClick()) {
-//                    return;
-//                }
 //                if(SharedData.getInstance().isStopListenReceiving()) {
 //                    baseFunctionManager.getRecordController().stopRecord();
 //                    SharedData.getInstance().setStopListenReceiving(false);
@@ -440,24 +416,11 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 ////                ((SystemDeviceModule)
 ////                        (DcsSdkImpl.getInstance().getInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
 ////                        .release();
-////                baseFunctionManager.getRecordController().startRecordOfflineOnly();
-//                baseFunctionManager.getRecordController().startRecordOfflinePrior();
-////                baseFunctionManager.getRecordController().startRecordOnline();
-//                doUserActivity();
+                if(CommonUtil.isFastDoubleClick()) {
+                    return;
+                }
                 startVoiceCommand();
                 break;
-//            case R.id.openLogBtn:
-//
-//                break;
-//            case R.id.previousSongBtn:
-//
-//                break;
-//            case R.id.nextSongBtn:
-//
-//                break;
-//            case R.id.pauseOrPlayBtn:
-//
-//                break;
             default:
                 break;
         }
@@ -514,19 +477,9 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private void handleUpdateContacts() {
         LogUtil.d(TAG, "handleUpdateContacts");
         long startTs = System.currentTimeMillis();
-//        Runnable r = new Runnable() {
-//            @Override
-//            public void run() {
-//                Utils.uploadContacts();
-//                boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
-//            }
-//        };
-
-//        ThreadPoolManager.getInstance().executeTask(r);
         Utils.uploadContacts();
         boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
         long endTs = System.currentTimeMillis();
-
         LogUtil.i("liyh","handleUpdateContacts() duration = " + (endTs - startTs));
     }
 
@@ -548,6 +501,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         super.onDestroy();
         if(!needInitFramework) {
             mSdkManager.destroy();
+
         }
     }
 

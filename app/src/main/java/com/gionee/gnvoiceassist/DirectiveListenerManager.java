@@ -13,7 +13,10 @@ import com.baidu.duer.dcs.devicemodule.ttsoutput.TtsOutputDeviceModule;
 import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
 import com.baidu.duer.dcs.framework.BaseDeviceModule;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
+import com.baidu.duer.dcs.framework.internalApi.IDcsRequestBodySentListener;
 import com.baidu.duer.dcs.framework.internalApi.IDirectiveReceivedListener;
+import com.baidu.duer.dcs.framework.internalApi.IErrorListener;
+import com.baidu.duer.dcs.framework.message.DcsRequestBody;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
@@ -45,6 +48,7 @@ import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.gnvoiceassist.tts.SpeakTxtListener;
+import com.gionee.gnvoiceassist.util.T;
 
 /**
  * Created by twf on 2017/8/24.
@@ -80,26 +84,8 @@ public class DirectiveListenerManager {
     }
 
     public  void registerDirectiveListener() {
-//        DcsSDK.getInstance().getSpeak().addTTSStateListener(speakTxtListener);
-//        DcsSDK.getInstance().getAudioPlayerDeviceModule().addAudioPlayListener(audioPlayerListener);
-//        DcsSDK.getInstance().getSystemDeviceModule().addModuleListener(deviceModuleListener);
-//        DcsSDK.getInstance().getPhoneCallDeviceModule().addDirectiveListener(phoneCallDirectiveListener);
-//        DcsSDK.getInstance().getSmsDeviceModule().addDirectiveListener(smsDirectiveListener);
-//        DcsSDK.getInstance().getContactsDeviceModule().addDirectiveListener(contactsDirectiveListener);
-//        DcsSDK.getInstance().getAppLauncherDeviceModule().addDirectiveListener(appLauncherListener);
-//        DcsSDK.getInstance().getWebBrowserDeviceModule().addDirectiveListener(webBrowserListener);
-//        DcsSDK.getInstance().getAlarmsDeviceModule().addDirectiveListener(alarmDirectiveListener);
-//        DcsSDK.getInstance().getDeviceControlDeviceModule().addDirectiveListener(deviceControlListener);
-//        DcsSDK.getInstance().getScreenDeviceModule().addDirectiveListener(screenDirectiveListener);
-//        DcsSDK.getInstance().getTeleControllerDeviceModule().addDirectiveListener(teleControllerListener);
-//        DcsSDK.getInstance().getTvLiveDeviceModule().addDirectiveListener(tvLiveListener);
-//        DcsSDK.getInstance().getLocation().registerLocationHandler(locationHandler);
-//        DcsSDK.getInstance().getAsr().registAsrVoiceInputListener(asrVoiceInputListener);
 //        DcsSDK.getInstance().getAsr().registOfflineListener(offlineAsrListener);
 //        DcsSDK.getInstance().getAudioRecord().registerRecordListener(voiceInputVolumeListener);
-//        DcsSDK.getInstance().getCustomUserInteractionDeviceModule().setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
-//        // 音乐指令相关
-//        DcsSDK.getInstance().getLocalAudioPlayerDeviceModule().addLocalAudioPlayerListener(localAudioPlayerListener);
 
         SdkManagerImpl.getInstance().getInternalApi().addDirectiveReceivedListener(new IDirectiveReceivedListener() {
             @Override
@@ -113,25 +99,38 @@ public class DirectiveListenerManager {
                 Log.v(TAG, "directive-name:" + name);
                 Payload payload = directive.getPayload();
                 if ("StopListen".equals(name)) {
-//                    voiceButton.setText("点击说话");
+
+                }
+            }
+        });
+
+        //初始化错误回调接口
+        SdkManagerImpl.getInstance().getInternalApi().addErrorListener(new IErrorListener() {
+            @Override
+            public void onErrorCode(ErrorCode errorCode) {
+                T.showShort("SDK出现错误" + errorCode.getMessage());
+            }
+        });
+
+        //初始化事件监听回调接口
+        SdkManagerImpl.getInstance().getInternalApi().addRequestBodySentListener(new IDcsRequestBodySentListener() {
+            @Override
+            public void onDcsRequestBody(DcsRequestBody event) {
+                String eventName = event.getEvent().getHeader().getName();
+                Log.v(TAG, "eventName:" + eventName);
+
+                //处理TTS状态回调
+                if (eventName.equals("SpeechStarted")) {
+                    // online tts start
+                } else if (eventName.equals("SpeechFinished")) {
+                    // online tts finish
                 }
             }
         });
 
         //初始化对话回调接口
         SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
-
-        //        ((TtsOutputDeviceModule)getInternalApi().getDeviceModule(ApiConstants.NAMESPACE)).addVoiceOutputListener(new TtsOutputDeviceModule.ITtsOutputListener() {
-//            @Override
-//            public void onTtsOutputStarted() {
-//                T.showShort("onTtsOutputStarted");
-//            }
-//
-//            @Override
-//            public void onTtsOutputFinished() {
-//                T.showShort("onTtsOutputFinished");
-
-//        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(locationHandler);
+        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(locationHandler);
         ((AudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.audio_player")).addAudioPlayListener(audioPlayerListener);
         ((SystemDeviceModule)getDeviceModule("ai.dueros.device_interface.system")).addModuleListener(deviceModuleListener);
         ((PhoneCallDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.telephone")).addDirectiveListener(phoneCallDirectiveListener);
@@ -150,25 +149,8 @@ public class DirectiveListenerManager {
     }
 
     public void unRegisterDirectiveListener() {
-//        DcsSDK.getInstance().getSpeak().addTTSStateListener(null);
-//        DcsSDK.getInstance().getAudioPlayerDeviceModule().removeAudioPlayListener(audioPlayerListener);
-//        DcsSDK.getInstance().getSystemDeviceModule().addModuleListener(null);
-//        DcsSDK.getInstance().getPhoneCallDeviceModule().addDirectiveListener(null);
-//        DcsSDK.getInstance().getSmsDeviceModule().addDirectiveListener(null);
-//        DcsSDK.getInstance().getContactsDeviceModule().removeDirectiveListener(contactsDirectiveListener);
-//        DcsSDK.getInstance().getAppLauncherDeviceModule().addDirectiveListener(null);
-//        DcsSDK.getInstance().getWebBrowserDeviceModule().addDirectiveListener(null);
-//        DcsSDK.getInstance().getAlarmsDeviceModule().removeDirectiveLIstener(alarmDirectiveListener);
-//        DcsSDK.getInstance().getDeviceControlDeviceModule().removeDirectiveListener(deviceControlListener);
-//        DcsSDK.getInstance().getScreenDeviceModule().addDirectiveListener(screenDirectiveListener);
-//        DcsSDK.getInstance().getTeleControllerDeviceModule().addDirectiveListener(null);
-//        DcsSDK.getInstance().getTvLiveDeviceModule().addDirectiveListener(null);
-//        DcsSDK.getInstance().getLocation().registerLocationHandler(null);
 //        DcsSDK.getInstance().getAsr().registAsrVoiceInputListener(null);
 //        DcsSDK.getInstance().getAsr().registOfflineListener(null);
-//        DcsSDK.getInstance().getAudioRecord().registerRecordListener(null);
-//        DcsSDK.getInstance().getCustomUserInteractionDeviceModule().setCustomUserInteractionDirectiveListener(null);
-//        DcsSDK.getInstance().getLocalAudioPlayerDeviceModule().addLocalAudioPlayerListener(null);
 
         ((AudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.audio_player")).removeAudioPlayListener(audioPlayerListener);
         ((SystemDeviceModule)getDeviceModule("ai.dueros.device_interface.system")).removeListener(deviceModuleListener);
@@ -185,7 +167,7 @@ public class DirectiveListenerManager {
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(null);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(speakTxtListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).removeOfflineDirectiveListener(offlineAsrListener);
-//        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(null);
+        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(null);
 
     }
 
@@ -228,7 +210,7 @@ public class DirectiveListenerManager {
         localAudioPlayerListener = new LocalAudioPlayerListener(baseFunctionManager);
 
         //位置回调
-//        locationHandler = new LocationHandler(baseFunctionManager);
+        locationHandler = new LocationHandler(baseFunctionManager);
 
         //自定义多伦交互回调
         cuiDirectiveListener = new CUIDirectiveListener();

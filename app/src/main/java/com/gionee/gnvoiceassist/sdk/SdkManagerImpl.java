@@ -89,10 +89,6 @@ public class SdkManagerImpl implements ISdkManager {
     @Override
     public void init() {
         initSdk(mAppCtx);
-//        initDirectiveReceivedListener();
-//        initLocationHandler();
-        initErrorListener();
-        initSendEventListener();
     }
 
     @Override
@@ -102,8 +98,6 @@ public class SdkManagerImpl implements ISdkManager {
 
     private void initSdk(Context context) {
         // 第一步初始化sdk
-//        mDcsSdk = DcsSdkImpl.getInstance();
-
         IAudioRecorder audioRecorder = new AudioRecordImpl();
 
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
@@ -118,10 +112,6 @@ public class SdkManagerImpl implements ISdkManager {
         asrOffLineConfig.asrAppKey = apiKey;
         asrOffLineConfig.asrSecretKey = secretKey;
 
-//        asrOffLineConfig.asrAppId = "dmACD7A1CFFCC2E363";
-//        asrOffLineConfig.asrAppKey = "61CD4C2832107E452B913B7E0668EEC0";
-//        asrOffLineConfig.asrCertificate = "";
-//        asrOffLineConfig.asrSecretKey = "";
         IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
             @Override
             public ASROffLineConfig get() {
@@ -132,21 +122,9 @@ public class SdkManagerImpl implements ISdkManager {
                 .oauth(oauth)
                 .clientId(clientId)
                 .audioRecorder(audioRecorder)
-                .asrMode(DcsConfig.ASR_MODE_OFFLINE)
+                .asrMode(DcsConfig.ASR_MODE_OFFLINE_PRIORITY)
                 .asrOffLineConfig(asrOffLineConfigProvider)
                 .build();
-
-//        ((TtsOutputDeviceModule)getInternalApi().getDeviceModule(ApiConstants.NAMESPACE)).addVoiceOutputListener(new TtsOutputDeviceModule.ITtsOutputListener() {
-//            @Override
-//            public void onTtsOutputStarted() {
-//                T.showShort("onTtsOutputStarted");
-//            }
-//
-//            @Override
-//            public void onTtsOutputFinished() {
-//                T.showShort("onTtsOutputFinished");
-//            }
-//        });
 
         initDeviceModule(context);
 
@@ -163,14 +141,6 @@ public class SdkManagerImpl implements ISdkManager {
         IMessageSender messageSender = ((DcsSdkImpl) mDcsSdk).getInternalApi().getMessageSender();
         AppLauncherDeviceModule appLauncherDeviceModule = new AppLauncherDeviceModule(appLauncher, messageSender);
         mDcsSdk.putDeviceModule(appLauncherDeviceModule);
-
-        //初始化音频播放器模块AudioPlayerDeviceModule
-//        AudioPlayerDeviceModule audioPlayerDeviceModule = new AudioPlayerDeviceModule(new MediaPlayerImpl(),messageSender);
-//        mDcsSdk.setDeviceModule(audioPlayerDeviceModule);
-
-        //初始化SystemDeviceModule
-//        SystemDeviceModule systemDeviceModule = new SystemDeviceModule(messageSender);
-//        mDcsSdk.setDeviceModule(systemDeviceModule);
 
         //初始化电话模块PhonecallDeviceModule
         PhoneCallDeviceModule phoneCallDeviceModule = new PhoneCallDeviceModule(new IPhoneCallImpl(),messageSender);
@@ -206,10 +176,6 @@ public class SdkManagerImpl implements ISdkManager {
         TeleControllerDeviceModule teleControllerDeviceModule = new TeleControllerDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(teleControllerDeviceModule);
 
-        //初始化customInteractionDeviceModule
-//        CustomUserInteractionDeviceModule customUserInteractionDeviceModule = new CustomUserInteractionDeviceModule(new ICustomUserInteractionImpl(), messageSender, new DialogRequestIdHandler());
-//        mDcsSdk.setDeviceModule(customUserInteractionDeviceModule);
-
         //初始化localAudioPlayerDeviceModule
         LocalAudioPlayerDeviceModule localAudioPlayerDeviceModule = new LocalAudioPlayerDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(localAudioPlayerDeviceModule);
@@ -219,81 +185,6 @@ public class SdkManagerImpl implements ISdkManager {
         mDcsSdk.putDeviceModule(offLineDeviceModule);
 
         getInternalApi().getDeviceModule(com.baidu.duer.dcs.devicemodule.custominteraction.ApiConstants.NAMESPACE);
-    }
-
-    private void initErrorListener() {
-        getInternalApi().addErrorListener(new IErrorListener() {
-            @Override
-            public void onErrorCode(ErrorCode errorCode) {
-//                if (errorCode == ErrorCode.VOICE_REQUEST_FAILED) {
-//                    Toast.makeText(MainActivity.this,
-//                            getResources().getString(R.string.voice_err_msg),
-//                            Toast.LENGTH_SHORT)
-//                            .show();
-//                } else if (errorCode == ErrorCode.OPEN_MICROPHONE_ERROR) {
-////                    Toast.makeText(MainActivity.this, "录音机打开失败，请保证录音权限打开!", Toast.LENGTH_SHORT).show();
-//                }
-            }
-        });
-    }
-
-    private void initSendEventListener() {
-        getInternalApi().addRequestBodySentListener(new IDcsRequestBodySentListener() {
-            @Override
-            public void onDcsRequestBody(DcsRequestBody event) {
-                String eventName = event.getEvent().getHeader().getName();
-                Log.v(TAG, "eventName:" + eventName);
-
-                if (eventName.equals("SpeechStarted")) {
-                    // online tts start
-//                    T.showLong("SpeechStarted");
-                } else if (eventName.equals("SpeechFinished")) {
-                    // online tts finish
-//                    T.showLong("SpeechFinished");
-                }
-            }
-        });
-    }
-
-    private void initDirectiveReceivedListener() {
-        getInternalApi().addDirectiveReceivedListener(new IDirectiveReceivedListener() {
-            @Override
-            public void onDirective(Directive directive) {
-                if (!TextUtils.isEmpty(directive.rawMessage)) {
-                    Log.v(TAG, "directive-rawMessage:" + directive.rawMessage);
-                }
-                String name = directive.getName();
-                Log.v(TAG, "directive-name:" + name);
-                Payload payload = directive.getPayload();
-                if ("StopListen".equals(name)) {
-//                    voiceButton.setText("点击说话");
-                }
-            }
-        });
-    }
-
-    private void initLocationHandler() {
-        getInternalApi().setLocationHandler(new Location.LocationHandler() {
-            @Override
-            public double getLongitude() {
-                return 0;
-            }
-
-            @Override
-            public double getLatitude() {
-                return 0;
-            }
-
-            @Override
-            public String getCity() {
-                return null;
-            }
-
-            @Override
-            public Location.EGeoCoordinateSystem getGeoCoordinateSystem() {
-                return Location.EGeoCoordinateSystem.WGS84;
-            }
-        });
     }
 
     private JSONObject getOfflineAsrSlots() {
@@ -323,7 +214,6 @@ public class SdkManagerImpl implements ISdkManager {
                 slotdataArray.put("联系人");
                 // 通用识别槽位
                 slotJson.put(Constants.SLOT_APPNAME, slotdataArray);
-//                slotJson.put("generalslot",slotdataArray);
             }
             {
                 JSONArray slotdataArray = new JSONArray();
@@ -335,7 +225,6 @@ public class SdkManagerImpl implements ISdkManager {
                 }
                 // 通用识别槽位
                 slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
-//                slotJson.put("generalslot",slotdataArray);
             }
 
         } catch (Exception e) {
