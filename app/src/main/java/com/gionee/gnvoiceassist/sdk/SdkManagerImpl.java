@@ -122,7 +122,7 @@ public class SdkManagerImpl implements ISdkManager {
                 .oauth(oauth)
                 .clientId(clientId)
                 .audioRecorder(audioRecorder)
-                .asrMode(DcsConfig.ASR_MODE_OFFLINE_PRIORITY)
+                .asrMode(DcsConfig.ASR_MODE_ONLINE)
                 .asrOffLineConfig(asrOffLineConfigProvider)
                 .build();
 

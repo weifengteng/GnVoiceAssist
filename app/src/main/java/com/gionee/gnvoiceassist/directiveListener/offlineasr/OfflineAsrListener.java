@@ -8,12 +8,15 @@ import com.baidu.duer.dcs.offline.asr.bean.ErrorTranslation;
 import com.baidu.duer.dcs.offline.asr.bean.RecogResult;
 import com.baidu.duer.dcs.offline.asr.listener.IRecogListener;
 import com.baidu.duer.dcs.util.NetWorkUtil;
+import com.gionee.gnvoiceassist.DirectiveListenerManager;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.ContactInfo;
 import com.gionee.gnvoiceassist.util.Constants;
+import com.gionee.gnvoiceassist.util.ContactProcessor;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.util.Utils;
@@ -21,6 +24,7 @@ import com.gionee.gnvoiceassist.util.Utils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -210,17 +214,31 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
 
                 }  else if(TextUtils.equals(domain, "msg")
                         && TextUtils.equals(intent, "send")) {
+                    String contactname = offlineResultMap.get(Constants.SLOT_CONTACTNAME);
+                    if (!TextUtils.isEmpty(contactname)) {
+                        //TODO: 发送短信
+                    }
                     // TODO: msg send
-
                 }  else if(TextUtils.equals(domain, "msg")
                         && TextUtils.equals(intent, "cancel")) {
                     // TODO:
 
                 }  else if(TextUtils.equals(domain, "telephone")
                         && TextUtils.equals(intent, "call")) {
-                    String contactname = offlineResultMap.get(Constants.SLOT_CONTACTNAME);
-                    if(!TextUtils.isEmpty(contactname)) {
-                        //TODO: 实现离线打电话功能
+                    String contactName = offlineResultMap.get(Constants.SLOT_CONTACTNAME);
+                    HashMap<String,ArrayList<String>> phoneNumsMap = ContactProcessor.getContactProcessor().getNumberByName(contactName);
+                    List<String> phoneNumList = new ArrayList<>();
+                    for (String name:phoneNumsMap.keySet()) {
+                        phoneNumList.addAll(phoneNumsMap.get(name));
+                    }
+                    //TODO: 实现选联系人、选卡多轮交互
+                    if(!TextUtils.isEmpty(contactName)) {
+                        //TODO: 实现离线打电话功能选卡
+                        //若phoneNums为空值怎么办？
+                        if (phoneNumList.size() > 0) {
+                            iBaseFunction.getPhoneCallPresenter().setContactInfo(phoneNumList.get(0), "1");
+                            iBaseFunction.getPhoneCallPresenter().readyToCallPhone();
+                        }
                     } else {
                         // TODO: contact name is empty
                     }
@@ -228,7 +246,8 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
 
                 }  else if(TextUtils.equals(domain, "telephone")
                         && TextUtils.equals(intent, "cancel")) {
-
+                    //TODO: 实现取消打电话的功能
+                    iBaseFunction.getPhoneCallPresenter().cancelCallPhone();
                 }  else if(TextUtils.equals(domain, "select")
                         && TextUtils.equals(intent, "operate")) {
 

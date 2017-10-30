@@ -28,13 +28,19 @@ import java.util.List;
 
 /**
  * Created by twf on 2017/8/28.
+ *
+ * 处理打电话操作
+ * 类中进行的操作
+ * （1）底层实现拨打电话
+ * （2）控制选号、选卡显示的渲染
+ *
  */
 
 public class PhoneCallPresenter extends BasePresenter {
     public static final String TAG = PhoneCallPresenter.class.getSimpleName();
     public static final String UTTER_READY_TO_CALL = "utter_ready_to_call";
     private RecordController recordController;
-    private PhoneCallDirectiveListener.PhoneSimQueryInterface mPhoneSimQueryInterface;
+    private PhoneCallDirectiveListener.PhoneCardSelectCallback mPhoneSimQueryInterface;
     private boolean isContactSelectViewCanClick = false;
     private boolean isSimCardSelectViewCanClick = false;
     private HashMap<String, Integer> mSimNameMap = new HashMap<String, Integer>();
@@ -48,6 +54,10 @@ public class PhoneCallPresenter extends BasePresenter {
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
     }
 
+    public void setPhoneCardSelectCallback(PhoneCallDirectiveListener.PhoneCardSelectCallback simSelectInterface) {
+        this.mPhoneSimQueryInterface = simSelectInterface;
+    }
+
     @Override
     public void onSpeakFinish(String utterId) {
         super.onSpeakFinish(utterId);
@@ -57,16 +67,76 @@ public class PhoneCallPresenter extends BasePresenter {
 
     }
 
+    public void setContactInfo(String phoneNumber, String simId) {
+        if(!TextUtils.isEmpty(phoneNumber)) {
+            this.mPhoneNumber = phoneNumber;
+        }
+        this.mPhoneNumber = phoneNumber;
+        if(!TextUtils.isEmpty(simId)) {
+            this.mSimId = simId;
+        }
+    }
+
+    public void readyToCallPhone() {
+        playAndRenderText("正在为您呼叫", UTTER_READY_TO_CALL, this, true);
+    }
+
+    public void cancelCallPhone() {
+        disableSelectContact();
+        disableSelectSimCard();
+        CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
+    }
+
     public void showPhoneContactSelectView(List<ContactInfo> contactInfos) {
         resetCallPhoneParam();
         showContacts(convertContactsStructure(contactInfos));
+    }
+
+    public void showPhoneSimChooseView() {
+        mSimNameMap.put("卡1", 1);
+        mSimNameMap.put("卡2", 2);
+        showSimCardListView();
+    }
+
+    public void procMultiNameContact(String[] names) {
+        LogUtil.d(TAG, "FocusTelephone procMultiNameContact names[0] = " + names[0]);
+        HashMap<String, HashMap<String, ArrayList<String>>> availableNumList = new HashMap<>();
+        ContactProcessor cp = ContactProcessor.getContactProcessor();
+        for (String name : names) {
+            availableNumList.put(name, cp.getNumberByName(name));
+        }
+
+        showContacts(availableNumList);
+        /*if(availableNumList.size() < 1) {
+            showNoContact();
+        } else {
+            if(getTelephoneNumbCount(availableNumList) > 0) {
+                showContacts(availableNumList);
+            } else {
+                notifyByInfo(mAppCtx.getString(R.string.rsp_no_phone_number_for_call), "", this);
+            }
+        }*/
+    }
+
+    public boolean isNeedChoosePhoneSim() {
+        // TODO:
+        return true;
     }
 
     public void disableSelectContact() {
         isContactSelectViewCanClick = false;
     }
 
-    public void callPhone() {
+    public void disableSelectSimCard() {
+        isSimCardSelectViewCanClick = false;
+    }
+
+    private void resetCallPhoneParam() {
+        mPhoneNumber = "";
+        mSimId = "";
+    }
+
+    private void callPhone() {
 
         if (!TextUtils.isEmpty(mPhoneNumber) && mAppCtx != null) {
             Uri uri = Uri.parse("tel:" + mPhoneNumber);
@@ -80,44 +150,6 @@ public class PhoneCallPresenter extends BasePresenter {
         resetCallPhoneParam();
         isContactSelectViewCanClick = false;
         isSimCardSelectViewCanClick = false;
-    }
-
-    public void setPhoneSimSelectInterface(PhoneCallDirectiveListener.PhoneSimQueryInterface simSelectInterface) {
-        this.mPhoneSimQueryInterface = simSelectInterface;
-    }
-
-    public void setContactInfo(String phoneNumber, String simId) {
-        if(!TextUtils.isEmpty(phoneNumber)) {
-            this.mPhoneNumber = phoneNumber;
-        }
-        this.mPhoneNumber = phoneNumber;
-        if(!TextUtils.isEmpty(simId)) {
-            this.mSimId = simId;
-        }
-    }
-
-    public boolean isNeedChoosePhoneSim() {
-        // TODO:
-        return true;
-    }
-
-    public void showPhoneSimChooseView() {
-        mSimNameMap.put("卡1", 1);
-        mSimNameMap.put("卡2", 2);
-        showSimCardListView();
-    }
-
-    public void readyToCallPhone() {
-        playAndRenderText("正在为您呼叫", UTTER_READY_TO_CALL, this, true);
-    }
-
-    public void disableSelectSimCard() {
-        isSimCardSelectViewCanClick = false;
-    }
-
-    private void resetCallPhoneParam() {
-        mPhoneNumber = "";
-        mSimId = "";
     }
 
     public void onDestroy() {
@@ -146,26 +178,6 @@ public class PhoneCallPresenter extends BasePresenter {
             availableNumList.put(name, phoneTypeNumberMap);
         }
         return availableNumList;
-    }
-
-    public void procMultiNameContact(String[] names) {
-        LogUtil.d(TAG, "FocusTelephone procMultiNameContact names[0] = " + names[0]);
-        HashMap<String, HashMap<String, ArrayList<String>>> availableNumList = new HashMap<>();
-        ContactProcessor cp = ContactProcessor.getContactProcessor();
-        for (String name : names) {
-            availableNumList.put(name, cp.getNumberByName(name));
-        }
-
-        showContacts(availableNumList);
-        /*if(availableNumList.size() < 1) {
-            showNoContact();
-        } else {
-            if(getTelephoneNumbCount(availableNumList) > 0) {
-                showContacts(availableNumList);
-            } else {
-                notifyByInfo(mAppCtx.getString(R.string.rsp_no_phone_number_for_call), "", this);
-            }
-        }*/
     }
 
     long lastClickTime1;
@@ -202,7 +214,7 @@ public class PhoneCallPresenter extends BasePresenter {
         boolean isNeedChoosePhoneSim = isNeedChoosePhoneSim();
         if(isNeedChoosePhoneSim) {
             if(mPhoneSimQueryInterface != null) {
-                mPhoneSimQueryInterface.queryPhoneSim(mPhoneNumber);
+                mPhoneSimQueryInterface.onSelectContact(mPhoneNumber);
             }
         } else {
 //            playAndRenderText("正在为您呼叫", UTTER_READY_TO_CALL, PhoneCallPresenter.this, true);

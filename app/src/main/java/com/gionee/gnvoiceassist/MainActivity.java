@@ -371,7 +371,12 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     public void onSpeakFinish(String utterId) {
         LogUtil.d(TAG, "onSpeakFinish");
         if(TextUtils.equals(utterId, UTTER_ID_WELCOME)) {
-            rl.callOnClick();
+            rl.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    rl.callOnClick();
+                }
+            },100);
         }
     }
 

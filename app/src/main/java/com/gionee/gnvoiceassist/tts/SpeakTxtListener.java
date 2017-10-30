@@ -1,6 +1,7 @@
 package com.gionee.gnvoiceassist.tts;
 
 
+import com.baidu.duer.dcs.devicemodule.ttsoutput.TtsOutputDeviceModule;
 import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
 import com.baidu.duer.dcs.offline.tts.ITts;
 
@@ -8,7 +9,7 @@ import com.baidu.duer.dcs.offline.tts.ITts;
  * Created by twf on 2017/8/26.
  */
 
-public class SpeakTxtListener implements VoiceOutputDeviceModule.IVoiceOutputListener {
+public class SpeakTxtListener implements VoiceOutputDeviceModule.IVoiceOutputListener,TtsOutputDeviceModule.ITtsOutputListener {
     public static final String TAG = SpeakTxtListener.class.getSimpleName();
 
 //    @Override
@@ -52,6 +53,22 @@ public class SpeakTxtListener implements VoiceOutputDeviceModule.IVoiceOutputLis
 
     @Override
     public void onVoiceOutputFinished() {
+        TxtSpeakManager.getInstance().setPlayingState(false);
+        ISpeakTxtEventListener listener = TxtSpeakManager.getInstance().getSpeakTxtCallbackListener();
+        if(listener != null) {
+            listener.onSpeakFinish(TxtSpeakManager.getInstance().getCurrUtterId());
+        } else {
+            // TODO:
+        }
+    }
+
+    @Override
+    public void onTtsOutputStarted() {
+        TxtSpeakManager.getInstance().setPlayingState(true);
+    }
+
+    @Override
+    public void onTtsOutputFinished() {
         TxtSpeakManager.getInstance().setPlayingState(false);
         ISpeakTxtEventListener listener = TxtSpeakManager.getInstance().getSpeakTxtCallbackListener();
         if(listener != null) {

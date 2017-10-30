@@ -39,18 +39,23 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     public static final String CUI_SELECT_PHONE_SIM = "cui_select_phone_sim";
     private List<ContactInfo> mContactInfos;
     private PhoneCallPresenter mPhoneCallPresenter;
-    private PhoneSimQueryInterface mPhoneSimQueryInterface;
+    private PhoneCardSelectCallback mCardSelectCallback;
 
     public PhoneCallDirectiveListener(IBaseFunction iBaseFunction) {
         super(iBaseFunction);
         mPhoneCallPresenter = iBaseFunction.getPhoneCallPresenter();
-        mPhoneSimQueryInterface = new PhoneSimQueryInterface() {
+        mCardSelectCallback = new PhoneCardSelectCallback() {
             @Override
-            public void queryPhoneSim(String phoneNumber) {
-                PhoneCallDirectiveListener.this.queryPhoneSim(phoneNumber);
+            public void onSelectContact(String phoneNumber) {
+                PhoneCallDirectiveListener.this.initiatePhoneSimSelect(phoneNumber);
+            }
+
+            @Override
+            public void onSelectSimCard(String simSlot) {
+
             }
         };
-        mPhoneCallPresenter.setPhoneSimSelectInterface(mPhoneSimQueryInterface);
+        mPhoneCallPresenter.setPhoneCardSelectCallback(mCardSelectCallback);
     }
 
     @Override
@@ -62,7 +67,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
 //        mPhoneCallPresenter.procMultiNameContact((String[]) callees.toArray());
 
         mContactInfos = list;
-        selectPhoneContact(mContactInfos);
+        initiatePhoneContactSelect(mContactInfos);
     }
 
     @Override
@@ -109,7 +114,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
                 mPhoneCallPresenter.disableSelectContact();
                 mPhoneCallPresenter.setContactInfo(phoneNumber, null);
                 if(mPhoneCallPresenter.isNeedChoosePhoneSim()) {
-                    queryPhoneSim(phoneNumber);
+                    initiatePhoneSimSelect(phoneNumber);
                 } else {
                     CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
 //                    mPhoneCallPresenter.callPhone(phoneNumber, "1");
@@ -174,7 +179,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     /**
      * 选联系人适配，此处需要手动进行语音识别开启，并提示打给谁的tts播报。
      */
-    private void selectPhoneContact(final List<ContactInfo> contactInfos) {
+    private void initiatePhoneContactSelect(final List<ContactInfo> contactInfos) {
         CustomUserInteractionDeviceModule.PayLoadGenerator generator = new CustomUserInteractionDeviceModule.PayLoadGenerator() {
             @Override
             public Payload generateContextPayloadByInteractionState(CustomClicentContextMachineState state) {
@@ -208,7 +213,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
                                 url += "#" + "carrier=" + carrier;
 
                             }
-                            LogUtil.d(TAG, "selectPhoneContact url= " + url + " index= " + index);
+                            LogUtil.d(TAG, "initiatePhoneContactSelect url= " + url + " index= " + index);
                             CustomClientContextHyperUtterace customClientContextHyperUtterace =
                                     new CustomClientContextHyperUtterace(utterances, url);
                             hyperUtterances.add(customClientContextHyperUtterace);
@@ -226,7 +231,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     }
 
     //打电话场景的选卡
-    private void queryPhoneSim(final String phoneNumber) {
+    private void initiatePhoneSimSelect(final String phoneNumber) {
         CustomUserInteractionDeviceModule.PayLoadGenerator generator =
                 new CustomUserInteractionDeviceModule.PayLoadGenerator(){
 
@@ -269,7 +274,9 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     }
 
 
-    public interface PhoneSimQueryInterface {
-        void queryPhoneSim(String phoneNumber);
+    //PhonecallPresenter的回调接口
+    public interface PhoneCardSelectCallback {
+        void onSelectContact(String phoneNumber);
+        void onSelectSimCard(String simSlot);
     }
 }
