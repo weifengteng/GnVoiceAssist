@@ -107,7 +107,6 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
             // messageContent
             String msgContent = contents[1].substring(contents[1].indexOf("=") + 1);
             try {
-//                msgContent = URLDecoder.decode(msgContent, "ISO8859-1");
                 msgContent = URLDecoder.decode(msgContent, "utf-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
