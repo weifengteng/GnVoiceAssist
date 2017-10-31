@@ -22,6 +22,7 @@ import com.gionee.gnvoiceassist.util.SharedData;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +107,8 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
             // messageContent
             String msgContent = contents[1].substring(contents[1].indexOf("=") + 1);
             try {
-                msgContent = URLDecoder.decode(msgContent, "ISO8859-1");
+//                msgContent = URLDecoder.decode(msgContent, "ISO8859-1");
+                msgContent = URLDecoder.decode(msgContent, "utf-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -195,9 +197,15 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
                             String phoneNumber = numberInfos.get(j).getPhoneNumber();
                             String simIndex = smsInfo.getSimIndex();
                             String carrier = smsInfo.getCarrierOprator();
+                            String msg = "";
+                            try {
+                                msg = URLEncoder.encode(smsInfo.getMessageContent(),"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
                             String url = CustomLinkSchema.LINK_SMS +
                                     "num=" + phoneNumber +
-                                    "#msg=" + smsInfo.getMessageContent();
+                                    "#msg=" + msg;
 
                             if(!TextUtils.isEmpty(simIndex)) {
                                 url += "#" + "sim=" + simIndex;
@@ -251,7 +259,11 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
 
                     String url = CustomLinkSchema.LINK_SMS;
                     url += "num=" + phoneNumber;
-                    url += "#msg=" + msgContent.trim();
+                    try {
+                        url += "#msg=" + URLEncoder.encode(msgContent.trim(),"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     url += "#sim=" + i;
                     CustomClientContextHyperUtterace customClientContextHyperUtterance =
                             new CustomClientContextHyperUtterace(utterances, url);

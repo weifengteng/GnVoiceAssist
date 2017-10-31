@@ -220,8 +220,6 @@ public class SdkManagerImpl implements ISdkManager {
                 ArrayList<String> contactNameList = Utils.getAllContacts(GnVoiceAssistApplication.getInstance());
                 for(String name : contactNameList) {
                     slotdataArray.put(name);
-                    slotdataArray.put("杨锐");
-                    slotdataArray.put("曹玉树");
                 }
                 // 通用识别槽位
                 slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
