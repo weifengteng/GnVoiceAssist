@@ -70,7 +70,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
         LogUtil.d("DCSF", TAG + " s= " + s + " s1= " + s1 + " deeplink= " + deeplink);
 
 //        DcsSDK.getInstance().getAppLauncher().
-//                launchAppByDeepLink(iBaseFunction.getMainActivity(), deeplink);
+//                launchAppByDeepLink(iBaseFunction.getHomeActivity(), deeplink);
         mAppLaunchPresenter.launchAppByDeepLink(deeplink);
     }
 

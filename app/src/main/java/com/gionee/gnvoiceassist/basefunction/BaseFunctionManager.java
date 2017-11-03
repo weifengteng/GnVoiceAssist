@@ -3,7 +3,7 @@ package com.gionee.gnvoiceassist.basefunction;
 import android.os.Build;
 import android.os.Handler;
 
-import com.gionee.gnvoiceassist.MainActivity;
+import com.gionee.gnvoiceassist.home.HomeActivity;
 import com.gionee.gnvoiceassist.basefunction.alarm.AlarmPresenter;
 import com.gionee.gnvoiceassist.basefunction.alarm.IAlarmPresenter;
 import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
@@ -27,7 +27,7 @@ import com.gionee.gnvoiceassist.directiveListener.voiceinput.IVoiceInputEventLis
 
 public class BaseFunctionManager implements IBaseFunction {
     private Handler mMainHandler;
-    private MainActivity mainActivity;
+    private HomeActivity homeActivity;
     private PhoneCallPresenter phoneCallPresenter;
     private SmsSendPresenter smsSendPresenter;
     private RecordController recordController;
@@ -46,12 +46,12 @@ public class BaseFunctionManager implements IBaseFunction {
         this.mMainHandler = handler;
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public void setHomeActivity(HomeActivity homeActivity) {
+        this.homeActivity = homeActivity;
     }
 
-    public MainActivity getMainActivity() {
-        return mainActivity;
+    public HomeActivity getHomeActivity() {
+        return homeActivity;
     }
 
     @Override
@@ -152,18 +152,20 @@ public class BaseFunctionManager implements IBaseFunction {
 
     @Override
     public IVoiceInputEventListener getVoiceInputEventListener() {
-        if(voiceInputEventListener == null && mainActivity != null
-                && (mainActivity instanceof IVoiceInputEventListener)) {
-            voiceInputEventListener = mainActivity;
+        if(voiceInputEventListener == null && homeActivity != null
+                && (homeActivity instanceof IVoiceInputEventListener)) {
+//            voiceInputEventListener = homeActivity;
+            //TODO return VoiceInputEventListener
         }
         return voiceInputEventListener;
     }
 
     @Override
     public IAudioPlayerStateListener getAudioPlayerStateListener() {
-        if(audioPlayerStateListener == null && mainActivity != null
-                && (mainActivity instanceof IAudioPlayerStateListener)) {
-            audioPlayerStateListener = mainActivity;
+        if(audioPlayerStateListener == null && homeActivity != null
+                && (homeActivity instanceof IAudioPlayerStateListener)) {
+//            audioPlayerStateListener = homeActivity;
+            //TODO return AudioPlayerStateListener
         }
         return audioPlayerStateListener;
     }

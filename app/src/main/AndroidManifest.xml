@@ -35,7 +35,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".GNOAuthActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
+        <activity android:name=".home.HomeActivity"
             android:theme="@style/HomeVoiceFullScreenThemeWallpaper"
             android:screenOrientation="portrait">
             <intent-filter>

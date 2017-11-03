@@ -2,7 +2,7 @@ package com.gionee.gnvoiceassist.basefunction;
 
 import android.os.Handler;
 
-import com.gionee.gnvoiceassist.MainActivity;
+import com.gionee.gnvoiceassist.home.HomeActivity;
 import com.gionee.gnvoiceassist.basefunction.alarm.IAlarmPresenter;
 import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactsPresenter;
@@ -25,7 +25,7 @@ public interface IBaseFunction {
 
     void setHandler(Handler handler);
 
-    void setMainActivity(MainActivity mainActivity);
+    void setHomeActivity(HomeActivity homeActivity);
 
     void onDestroy();
 
@@ -41,7 +41,7 @@ public interface IBaseFunction {
 
     TimeQuery getTimerQuery();
 
-    MainActivity getMainActivity();
+    HomeActivity getHomeActivity();
 
     PhoneCallPresenter getPhoneCallPresenter();
 

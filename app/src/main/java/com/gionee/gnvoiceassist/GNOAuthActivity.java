@@ -29,6 +29,7 @@ import com.baidu.duer.dcs.oauth.api.grant.BaiduDialogError;
 import com.baidu.duer.dcs.oauth.api.grant.BaiduException;
 import com.baidu.duer.dcs.oauth.api.grant.BaiduOauthImplicitGrantIml;
 import com.baidu.duer.dcs.systeminterface.IOauth;
+import com.gionee.gnvoiceassist.home.HomeActivity;
 
 import java.util.HashMap;
 
@@ -131,7 +132,7 @@ public class GNOAuthActivity extends GNBaseActivity implements View.OnClickListe
     }
 
     private void startMainActivity() {
-        Intent intent = new Intent(GNOAuthActivity.this, MainActivity.class);
+        Intent intent = new Intent(GNOAuthActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
     }

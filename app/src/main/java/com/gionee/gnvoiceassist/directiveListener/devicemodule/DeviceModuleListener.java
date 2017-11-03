@@ -9,7 +9,7 @@ import com.baidu.duer.dcs.devicemodule.system.message.SetEndPointPayload;
 import com.baidu.duer.dcs.devicemodule.system.message.ThrowExceptionPayload;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GNOAuthActivity;
-import com.gionee.gnvoiceassist.MainActivity;
+import com.gionee.gnvoiceassist.home.HomeActivity;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 
@@ -22,7 +22,7 @@ public class DeviceModuleListener extends BaseDirectiveListener implements Syste
 
     public DeviceModuleListener(IBaseFunction baseFunction) {
         super(baseFunction);
-        this.activityContext = baseFunction.getMainActivity();
+        this.activityContext = baseFunction.getHomeActivity();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DeviceModuleListener extends BaseDirectiveListener implements Syste
     public void onThrowException(ThrowExceptionPayload throwExceptionPayload) {
         if(throwExceptionPayload.getCode() == ThrowExceptionPayload.Code.UNAUTHORIZED_REQUEST_EXCEPTION) {
             GNOAuthActivity.startActivity(activityContext);
-            if(activityContext instanceof MainActivity) {
+            if(activityContext instanceof HomeActivity) {
                 Activity mainActivity = (Activity) activityContext;
                 mainActivity.finish();
             }
