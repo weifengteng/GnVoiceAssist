@@ -10,6 +10,7 @@ import com.gionee.gnvoiceassist.sdk.module.alarms.message.SetAlarmPayload;
 import com.gionee.gnvoiceassist.sdk.module.alarms.message.SetTimerPayload;
 import com.gionee.gnvoiceassist.sdk.module.alarms.message.ShowAlarmsPayload;
 import com.gionee.gnvoiceassist.sdk.module.alarms.message.ShowTimersPayload;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.LogUtil;
 
 import java.util.ArrayList;
@@ -24,11 +25,8 @@ public class AlarmDirectiveListener extends BaseDirectiveListener implements Ala
     public static final String TAG = AlarmDirectiveListener.class.getSimpleName();
     public IAlarmPresenter mAlarmPresenter;
 
-
-
-    public AlarmDirectiveListener(IBaseFunction baseFunction) {
-        super(baseFunction);
-        mAlarmPresenter = baseFunction.getAlarmPresenter();
+    public AlarmDirectiveListener(IDirectiveListenerCallback callback) {
+        super(callback);
     }
 
     @Override

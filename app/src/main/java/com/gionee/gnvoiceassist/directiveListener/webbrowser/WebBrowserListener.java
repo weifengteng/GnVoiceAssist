@@ -9,6 +9,7 @@ import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 
 /**
  * Created by twf on 2017/8/16.
@@ -18,8 +19,8 @@ public class WebBrowserListener extends BaseDirectiveListener implements WebBrow
     public static final String TAG = WebBrowserListener.class.getSimpleName();
     private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 
-    public WebBrowserListener(IBaseFunction baseFunction) {
-        super(baseFunction);
+    public WebBrowserListener(IDirectiveListenerCallback callback) {
+        super(callback);
     }
 
     @Override

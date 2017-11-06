@@ -19,6 +19,7 @@ import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.SharedData;
 
 import java.util.ArrayList;
@@ -41,9 +42,8 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
 
     private AppLaunchPresenter mAppLaunchPresenter;
 
-    public AppLauncherListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
-        mAppLaunchPresenter = iBaseFunction.getAppLaunchPresenter();
+    public AppLauncherListener(IDirectiveListenerCallback callback) {
+        super(callback);
     }
 
     @Override

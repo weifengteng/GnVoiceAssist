@@ -34,6 +34,7 @@ import com.gionee.gnvoiceassist.sdk.module.screen.message.RenderHintPayload;
 import com.gionee.gnvoiceassist.sdk.module.screen.message.RenderVoiceInputTextPayload;
 import com.gionee.gnvoiceassist.sdk.module.screen.message.StandardCardPayload;
 import com.gionee.gnvoiceassist.sdk.module.screen.message.TextCardPayload;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.widget.SimpleImageListItem;
@@ -55,13 +56,12 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
     private ScreenRender screenRender;
     private Context mAppCtx;
 
-    public ScreenDirectiveListener(IBaseFunction baseFunction) {
-        super(baseFunction);
+    public ScreenDirectiveListener(IDirectiveListenerCallback callback) {
+        super(callback);
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
-        screenRender = baseFunction.getScreenRender();
     }
 
-//    @Override
+    //    @Override
 //    public void onRenderVoicePartial(Directive directive) {
 //        Payload payload = directive.getPayload();
 //        if(payload instanceof RenderVoiceInputTextPayload) {

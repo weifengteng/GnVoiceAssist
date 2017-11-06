@@ -9,6 +9,7 @@ import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class ContactsDirectiveListener extends BaseDirectiveListener implements 
     public static final String SEARCHCONTACT = "SearchContact";
     public static final String CREATECONTACT = "CreateContact";
 
-    public ContactsDirectiveListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
+    public ContactsDirectiveListener(IDirectiveListenerCallback callback) {
+        super(callback);
     }
 
     @Override

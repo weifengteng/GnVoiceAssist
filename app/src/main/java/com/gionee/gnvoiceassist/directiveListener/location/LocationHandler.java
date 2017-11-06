@@ -12,6 +12,7 @@ import com.baidu.duer.dcs.framework.location.Location;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 
 /**
  * Created by twf on 2017/8/16.
@@ -20,15 +21,14 @@ import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
  *
  */
 
-public class LocationHandler extends BaseDirectiveListener implements Location.LocationHandler {
+public class LocationHandler implements Location.LocationHandler {
     private double mLongitude;
     private double mLatitude;
 
     private LocationManager mLocationManager;
     private Context mAppCtx;
 
-    public LocationHandler(IBaseFunction baseFunction) {
-        super(baseFunction);
+    public LocationHandler() {
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
         mLocationManager = (LocationManager) mAppCtx.getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
@@ -128,7 +128,6 @@ public class LocationHandler extends BaseDirectiveListener implements Location.L
     /**
      * 释放资源
      */
-    @Override
     public void onDestroy() {
 
     }

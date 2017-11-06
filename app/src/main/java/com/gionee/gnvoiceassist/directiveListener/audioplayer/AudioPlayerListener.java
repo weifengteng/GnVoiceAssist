@@ -3,6 +3,7 @@ package com.gionee.gnvoiceassist.directiveListener.audioplayer;
 import com.baidu.duer.dcs.systeminterface.IMediaPlayer;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 
 /**
  * Created by twf on 2017/8/18.
@@ -11,11 +12,10 @@ import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 public class AudioPlayerListener extends BaseDirectiveListener implements IMediaPlayer.IMediaPlayerListener{
     private IAudioPlayerStateListener iAudioPlayerState;
 
-    public AudioPlayerListener(IBaseFunction baseFunction) {
-        super(baseFunction);
-        this.iAudioPlayerState = baseFunction.getAudioPlayerStateListener();
+    public AudioPlayerListener(IDirectiveListenerCallback callback) {
+        super(callback);
+//        this.iAudioPlayerState = baseFunction.getAudioPlayerStateListener();
     }
-
 
     @Override
     public void onInit() {

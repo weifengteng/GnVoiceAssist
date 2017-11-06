@@ -18,6 +18,7 @@ import com.gionee.gnvoiceassist.basefunction.smssend.SmsSendPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.SharedData;
 
 import java.io.UnsupportedEncodingException;
@@ -45,9 +46,10 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
     private SmsSendPresenter smsSendPresenter;
     private SmsSimQueryInterface smsSimQueryInterface;
 
-    public SmsDirectiveListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
-        smsSendPresenter = iBaseFunction.getSmsSendPresenter();
+    public SmsDirectiveListener(IDirectiveListenerCallback callback) {
+        super(callback);
+        // TODO 原本下面的smsSimQueryInterface是通过SmsSendPresenter.setSmsSimQueryInterface()传递到SmsSendPresenter中的。
+        // 是为了响应自定义交互屏幕点击事件
         smsSimQueryInterface = new SmsSimQueryInterface() {
             @Override
             public void querySmsSim(String phoneNumber, String smsContent) {
@@ -59,7 +61,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
 
     @Override
     public void smsDirectiveReceived(List<SmsInfo> list, Directive directive) {
-        //TODO: 此处依赖了SDK的SmsInfo，应封装成自己的
+        // TODO 将SmsDirective解析成自己的协议
         LogUtil.d(TAG, "smsDirectiveReceived!");
         mSmsInfos = list;
         selectSmsContact(mSmsInfos);
@@ -68,6 +70,8 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
     @Override
     public void handleCUInteractionUnknownUtterance(String id) {
         super.handleCUInteractionUnknownUtterance(id);
+        //TODO 将自定义交互接收到的错误解析成自己的协议
+
         String alert = "";
         MaxUpriseCounter.increaseUpriseCount();
 
@@ -97,6 +101,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
     @Override
     public void handleCUInteractionTargetUrl(String id, String url) {
         super.handleCUInteractionTargetUrl(id, url);
+        //TODO 将自定义交互的回复解析成自己协议
         if(url.startsWith(CustomLinkSchema.LINK_SMS)) {
             // 短信协议：sms://{num=phonenumber}#{msg=messageContent}#{sim=sim_idx(可选字段)}#{carrier=carrier(可选字段)}
             int beginIdx = url.indexOf(":");
@@ -141,6 +146,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
 
     @Override
     public void onSpeakFinish(String utterId) {
+        // TODO 说话完成后（一般是多轮交互的场景），执行相应的多轮交互操作（开始录音）
         if(TextUtils.equals(utterId, UTTER_SHOW_SELECT_SMS_CONTACT_VIEW)) {
 //            smsSendPresenter.showSmsContactSelectView(mSmsInfos);
         } else if(TextUtils.equals(utterId, UTTER_SHOW_SELECT_SMS_SIM_VIEW)) {

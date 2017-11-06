@@ -6,6 +6,7 @@ import com.baidu.duer.dcs.framework.message.Directive;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.Utils;
 
@@ -16,8 +17,8 @@ import com.gionee.gnvoiceassist.util.Utils;
 public class TeleControllerListener extends BaseDirectiveListener implements TeleControllerDeviceModule.ITeleControllerDirectiveListener{
     private String customCmd;
 
-    public TeleControllerListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
+    public TeleControllerListener(IDirectiveListenerCallback callback) {
+        super(callback);
     }
 
     /**

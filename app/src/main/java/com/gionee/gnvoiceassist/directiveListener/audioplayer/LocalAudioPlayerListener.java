@@ -8,6 +8,7 @@ import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDevi
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayMusicPayload;
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayRadioPayload;
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayUnicastPayload;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.T;
 
 /**
@@ -17,8 +18,8 @@ import com.gionee.gnvoiceassist.util.T;
 public class LocalAudioPlayerListener extends BaseDirectiveListener implements LocalAudioPlayerDeviceModule.ILocalAudioPlayerListener {
     private GNMusicOperator mGnMusicOperator;
 
-    public LocalAudioPlayerListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
+    public LocalAudioPlayerListener(IDirectiveListenerCallback callback) {
+        super(callback);
         mGnMusicOperator = iBaseFunction.getGNMusicOperattor();
     }
 

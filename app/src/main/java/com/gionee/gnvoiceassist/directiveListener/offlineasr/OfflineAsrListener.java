@@ -15,6 +15,7 @@ import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.phonecall.message.ContactInfo;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.ContactProcessor;
 import com.gionee.gnvoiceassist.util.LogUtil;
@@ -35,11 +36,11 @@ import java.util.Map;
 public class OfflineAsrListener extends BaseDirectiveListener implements IRecogListener,OffLineDeviceModule.IOfflineDirectiveListener {
     public static final String TAG = OfflineAsrListener.class.getSimpleName();
 
-    public OfflineAsrListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
+    public OfflineAsrListener(IDirectiveListenerCallback callback) {
+        super(callback);
     }
 
-//    @Override
+    //    @Override
 //    public void onEvent(AsrInterface.OfflineEvent offlineEvent, JSONObject eventJson) {
 //        LogUtil.i(TAG, "DCSF-- 离线asr：event=" + offlineEvent + " " + eventJson.toString());
 //        MaxUpriseCounter.resetUpriseCount();

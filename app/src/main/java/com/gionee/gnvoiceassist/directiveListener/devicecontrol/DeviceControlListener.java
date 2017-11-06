@@ -6,6 +6,7 @@ import com.baidu.duer.dcs.framework.message.Directive;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.Utils;
 
@@ -17,8 +18,9 @@ import java.util.Map;
 
 public class DeviceControlListener extends BaseDirectiveListener implements DeviceControlDeviceModule.IDeviceControlDirectiveListener {
     public static final String TAG = DeviceControlListener.class.getSimpleName();
-    public DeviceControlListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
+
+    public DeviceControlListener(IDirectiveListenerCallback callback) {
+        super(callback);
     }
 
     @Override

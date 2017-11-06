@@ -47,6 +47,7 @@ import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.tts.SpeakTxtListener;
 import com.gionee.gnvoiceassist.util.T;
 
@@ -57,7 +58,7 @@ import com.gionee.gnvoiceassist.util.T;
 public class DirectiveListenerManager {
     public final String TAG = DirectiveListenerManager.class.getSimpleName();
 
-    private IBaseFunction baseFunctionManager;
+    private IDirectiveListenerCallback mCallback;
     private PhoneCallDirectiveListener phoneCallDirectiveListener;
     private SmsDirectiveListener smsDirectiveListener;
     private SpeakTxtListener speakTxtListener;
@@ -79,8 +80,9 @@ public class DirectiveListenerManager {
     private LocalAudioPlayerListener localAudioPlayerListener;
 
 
-    public DirectiveListenerManager(IBaseFunction baseFunctionManager) {
-        this.baseFunctionManager = baseFunctionManager;
+    public DirectiveListenerManager(IDirectiveListenerCallback callback) {
+        mCallback = callback;
+        initDirectiveListener();
     }
 
     public  void registerDirectiveListener() {
@@ -105,28 +107,28 @@ public class DirectiveListenerManager {
         });
 
         //初始化错误回调接口
-        SdkManagerImpl.getInstance().getInternalApi().addErrorListener(new IErrorListener() {
-            @Override
-            public void onErrorCode(ErrorCode errorCode) {
-                T.showShort("SDK出现错误" + errorCode.getMessage());
-            }
-        });
+//        SdkManagerImpl.getInstance().getInternalApi().addErrorListener(new IErrorListener() {
+//            @Override
+//            public void onErrorCode(ErrorCode errorCode) {
+//                T.showShort("SDK出现错误" + errorCode.getMessage());
+//            }
+//        });
 
         //初始化事件监听回调接口
-        SdkManagerImpl.getInstance().getInternalApi().addRequestBodySentListener(new IDcsRequestBodySentListener() {
-            @Override
-            public void onDcsRequestBody(DcsRequestBody event) {
-                String eventName = event.getEvent().getHeader().getName();
-                Log.v(TAG, "eventName:" + eventName);
-
-                //处理TTS状态回调
-                if (eventName.equals("SpeechStarted")) {
-                    // online tts start
-                } else if (eventName.equals("SpeechFinished")) {
-                    // online tts finish
-                }
-            }
-        });
+//        SdkManagerImpl.getInstance().getInternalApi().addRequestBodySentListener(new IDcsRequestBodySentListener() {
+//            @Override
+//            public void onDcsRequestBody(DcsRequestBody event) {
+//                String eventName = event.getEvent().getHeader().getName();
+//                Log.v(TAG, "eventName:" + eventName);
+//
+//                //处理TTS状态回调
+//                if (eventName.equals("SpeechStarted")) {
+//                    // online tts start
+//                } else if (eventName.equals("SpeechFinished")) {
+//                    // online tts finish
+//                }
+//            }
+//        });
 
         //初始化对话回调接口
         SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
@@ -144,8 +146,7 @@ public class DirectiveListenerManager {
         ((TeleControllerDeviceModule)getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.voiceassist")).addDirectiveListener(teleControllerListener);
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(localAudioPlayerListener);
-        ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).addVoiceOutputListener(speakTxtListener);
-        ((TtsOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.tts_output")).addVoiceOutputListener(speakTxtListener);
+
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).addOfflineDirectiveListener(offlineAsrListener);
     }
 
@@ -176,43 +177,40 @@ public class DirectiveListenerManager {
     public void initDirectiveListener() {
 
         //语音识别、TTS监听器
-        speakTxtListener = new SpeakTxtListener();
 
-        offlineAsrListener = new OfflineAsrListener(baseFunctionManager);
 
-        asrVoiceInputListener = new AsrVoiceInputListener(baseFunctionManager);
+        offlineAsrListener = new OfflineAsrListener(mCallback);
+
+        asrVoiceInputListener = new AsrVoiceInputListener(mCallback);
 
         //端功能监听器
-        phoneCallDirectiveListener = new PhoneCallDirectiveListener(baseFunctionManager);
+        phoneCallDirectiveListener = new PhoneCallDirectiveListener(mCallback);
 
-        smsDirectiveListener = new SmsDirectiveListener(baseFunctionManager);
+        smsDirectiveListener = new SmsDirectiveListener(mCallback);
 
-        voiceInputVolumeListener = new VoiceInputVolumeListener(baseFunctionManager);
+        contactsDirectiveListener = new ContactsDirectiveListener(mCallback);
 
-        contactsDirectiveListener = new ContactsDirectiveListener(baseFunctionManager);
+        appLauncherListener = new AppLauncherListener(mCallback);
 
-        appLauncherListener = new AppLauncherListener(baseFunctionManager);
+        webBrowserListener = new WebBrowserListener(mCallback);
 
-        webBrowserListener = new WebBrowserListener(baseFunctionManager);
+        alarmDirectiveListener = new AlarmDirectiveListener(mCallback);
 
-        alarmDirectiveListener = new AlarmDirectiveListener(baseFunctionManager);
+        deviceControlListener = new DeviceControlListener(mCallback);
 
-        deviceControlListener = new DeviceControlListener(baseFunctionManager);
+        screenDirectiveListener = new ScreenDirectiveListener(mCallback);
 
-        screenDirectiveListener = new ScreenDirectiveListener(baseFunctionManager);
+        teleControllerListener = new TeleControllerListener(mCallback);
 
-        teleControllerListener = new TeleControllerListener(baseFunctionManager);
+        tvLiveListener = new TvLiveListener(mCallback);
 
-        tvLiveListener = new TvLiveListener(baseFunctionManager);
+        audioPlayerListener = new AudioPlayerListener(mCallback);
 
-        audioPlayerListener = new AudioPlayerListener(baseFunctionManager);
+        deviceModuleListener = new DeviceModuleListener(mCallback);
 
-        deviceModuleListener = new DeviceModuleListener(baseFunctionManager);
-
-        localAudioPlayerListener = new LocalAudioPlayerListener(baseFunctionManager);
+        localAudioPlayerListener = new LocalAudioPlayerListener(mCallback);
 
         //位置回调
-        locationHandler = new LocationHandler(baseFunctionManager);
 
         //自定义多伦交互回调
         cuiDirectiveListener = new CUIDirectiveListener();
@@ -237,10 +235,10 @@ public class DirectiveListenerManager {
             appLauncherListener.onDestroy();
         }
 
-        if(baseFunctionManager != null) {
-            baseFunctionManager.onDestroy();
-            baseFunctionManager = null;
-        }
+//        if(baseFunctionManager != null) {
+//            baseFunctionManager.onDestroy();
+//            baseFunctionManager = null;
+//        }
     }
 
     private BaseDeviceModule getDeviceModule(String namespace) {

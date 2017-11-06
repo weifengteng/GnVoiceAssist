@@ -62,6 +62,7 @@ public class TxtSpeakManager {
 //        DcsSDK.getInstance().getSpeak().speakTxt(ttsText, SpeakInterface.SpeakTxtMixMode.MIX_MODE_DEFAULT);
 //        SdkManagerImpl.getInstance().getInternalApi().speakRequest(ttsText);
         SdkManagerImpl.getInstance().getInternalApi().speakOfflineQuery(ttsText);
+
     }
 
     public void playTTS(String ttsText) {

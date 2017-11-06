@@ -5,6 +5,7 @@ import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.sdk.module.tvlive.TvLiveDeviceModule;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.Utils;
 
 /**
@@ -15,8 +16,8 @@ public class TvLiveListener extends BaseDirectiveListener implements TvLiveDevic
     public static final String TAG = TvLiveListener.class.getSimpleName();
     String tvCmd;
 
-    public TvLiveListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
+    public TvLiveListener(IDirectiveListenerCallback callback) {
+        super(callback);
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.SharedData;
 
 import java.util.ArrayList;
@@ -41,9 +42,9 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     private PhoneCallPresenter mPhoneCallPresenter;
     private PhoneCardSelectCallback mCardSelectCallback;
 
-    public PhoneCallDirectiveListener(IBaseFunction iBaseFunction) {
-        super(iBaseFunction);
-        mPhoneCallPresenter = iBaseFunction.getPhoneCallPresenter();
+    public PhoneCallDirectiveListener(IDirectiveListenerCallback callback) {
+        super(callback);
+        // 原版本将此回调接口使用PhonecallPresenter.setPhoneCardSelectCallback()方法传递给Presenter
         mCardSelectCallback = new PhoneCardSelectCallback() {
             @Override
             public void onSelectContact(String phoneNumber) {
@@ -55,7 +56,6 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
 
             }
         };
-        mPhoneCallPresenter.setPhoneCardSelectCallback(mCardSelectCallback);
     }
 
     @Override

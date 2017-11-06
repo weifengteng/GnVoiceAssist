@@ -2,8 +2,10 @@ package com.gionee.gnvoiceassist.directiveListener;
 
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.ICUIDirectiveReceivedInterface;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
 import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
+import static com.gionee.gnvoiceassist.util.Preconditions.checkNotNull;
 
 /**
  * Created by twf on 2017/8/14.
@@ -12,12 +14,10 @@ import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
 public abstract class BaseDirectiveListener
         implements ISpeakTxtEventListener, ICUIDirectiveReceivedInterface{
     protected IBaseFunction iBaseFunction;
+    protected IDirectiveListenerCallback mCallback;
 
-    public BaseDirectiveListener(IBaseFunction iBaseFunction) {
-        if(iBaseFunction == null) {
-            throw new IllegalArgumentException("iBaseFunction cannot be null!");
-        }
-        this.iBaseFunction = iBaseFunction;
+    public BaseDirectiveListener(IDirectiveListenerCallback callback) {
+        mCallback = checkNotNull(callback,"DirectiveListenerCallback cannot be null");
     }
 
     @Override
@@ -56,7 +56,8 @@ public abstract class BaseDirectiveListener
     protected void playTTS(String ttsText, String utterId, ISpeakTxtEventListener listener, boolean showPlayTextInScreen) {
         TxtSpeakManager.getInstance().playTTS(ttsText, utterId, listener);
         if(showPlayTextInScreen) {
-            iBaseFunction.getScreenRender().renderAnswerInScreen(ttsText);
+//            iBaseFunction.getScreenRender().renderAnswerInScreen(ttsText);
+            //TODO 是否需要在此处朗读tts，并将文字显示在界面上
         }
     }
 
@@ -67,7 +68,8 @@ public abstract class BaseDirectiveListener
     protected void playTTS(String ttsText, boolean showPlayTextInScreen) {
         TxtSpeakManager.getInstance().playTTS(ttsText);
         if(showPlayTextInScreen) {
-            iBaseFunction.getScreenRender().renderAnswerInScreen(ttsText);
+//            iBaseFunction.getScreenRender().renderAnswerInScreen(ttsText);
+            //TODO 是否需要在此处朗读tts，并将文字显示在界面上？
         }
     }
 

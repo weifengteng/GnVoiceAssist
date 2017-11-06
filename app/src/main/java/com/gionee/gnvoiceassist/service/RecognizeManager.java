@@ -13,14 +13,24 @@ import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.devicemodule.contacts.ContactsDeviceModule;
 import com.baidu.duer.dcs.devicemodule.phonecall.PhoneCallDeviceModule;
 import com.baidu.duer.dcs.devicemodule.sms.SmsDeviceModule;
+import com.baidu.duer.dcs.devicemodule.ttsoutput.TtsOutputDeviceModule;
+import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.IMessageSender;
+import com.baidu.duer.dcs.framework.InternalApi;
 import com.baidu.duer.dcs.framework.internalApi.DcsConfig;
+import com.baidu.duer.dcs.framework.internalApi.IDcsRequestBodySentListener;
+import com.baidu.duer.dcs.framework.internalApi.IErrorListener;
+import com.baidu.duer.dcs.framework.message.DcsRequestBody;
 import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
 import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
 import com.baidu.duer.dcs.systeminterface.IAudioRecorder;
 import com.baidu.duer.dcs.systeminterface.IOauth;
+import com.gionee.gnvoiceassist.DirectiveListenerManager;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
+import com.gionee.gnvoiceassist.directiveListener.location.LocationHandler;
+import com.gionee.gnvoiceassist.directiveListener.voiceinputvolume.VoiceInputVolumeListener;
+import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncher;
@@ -32,16 +42,20 @@ import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
+import com.gionee.gnvoiceassist.tts.SpeakTxtListener;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.Constants.EngineState;
 import com.gionee.gnvoiceassist.util.ContactProcessor;
+import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
+import com.gionee.gnvoiceassist.util.Preconditions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,17 +64,32 @@ import java.util.Map;
 
 public class RecognizeManager {
 
+    private static final String TAG = RecognizeManager.class.getSimpleName();
     private static final int MSG_INNER_ENGINEINIT_SUCCESS = 0x1000;
 
 
     private static RecognizeManager sINSTANCE;
     private IDcsSdk mDcsSdk;
     private RecognizeManagerHandler mLocalHandler;
-    private EngineState mEngineStatus;
+    private List<IRecognizeManagerCallback> mExportCallbacks;
+    private EngineState mEngineStatus = EngineState.UNINIT;
+    private InitEngineTask mInitTask;
+
+    //各种监听器
+    private IErrorListener errorListener;
+    private IDcsRequestBodySentListener requestBodySentListener;
+    private LocationHandler locationHandler;
+    private SpeakTxtListener ttsListener;
+    private VoiceInputVolumeListener voiceInputVolumeListener;
+    private DirectiveListenerManager directiveListenerManager;
+
+    //回调
+    private IDirectiveListenerCallback mDirectiveCallback;
 
     private RecognizeManager() {
-        mEngineStatus = EngineState.UNINIT;
+        updateEngineState(EngineState.UNINIT);
         mLocalHandler = new RecognizeManagerHandler();
+        mExportCallbacks = new ArrayList<>();
     }
 
     public static synchronized RecognizeManager getInstance() {
@@ -79,6 +108,9 @@ public class RecognizeManager {
         // 语音识别状态、TTS状态）的注册、位置组件的注册
 
         initSdk();
+        registerEssentialListener();
+        registerDirectiveListener();
+
     }
 
     /**
@@ -88,7 +120,14 @@ public class RecognizeManager {
         // 释放（销毁）完成的工作：
         // SDK中DeviceModule的销毁、SDK基础监听器(DialogStateListener、ErrorListener、
         // 语音识别状态、TTS状态）的注销、位置组件的注销。最后释放SDK。
-
+        releaseDeviceModule();
+        unregisterEssentialListener();
+        unregisterDirectiveListener();
+        //若AsyncTask未完成工作，打断
+        if (mInitTask != null && mInitTask.getStatus() != AsyncTask.Status.FINISHED) {
+            mInitTask.cancel(true);
+        }
+        releaseSdk();
         // 释放Handler
         if (mLocalHandler != null) {
             mLocalHandler.removeCallbacksAndMessages(null);
@@ -96,11 +135,55 @@ public class RecognizeManager {
         }
     }
 
+
+    public void startRecord() {
+        // true代表自动听音模式，即用户结束说话后，能识别句尾并自动停止
+        if (mEngineStatus == EngineState.INITED) {
+            //TODO 判断状态的if()语句，日后通过Annotation去掉
+            mDcsSdk.getVoiceRequest().beginVoiceRequest(true);
+        }
+    }
+
+    /**
+     * 打断语音识别
+     * @param abortRecognize 是否上传打断前的识别结果
+     */
+    public void abortRecord(boolean abortRecognize) {
+        if (abortRecognize) {
+            mDcsSdk.getVoiceRequest().cancelVoiceRequest();
+        } else {
+            mDcsSdk.getVoiceRequest().endVoiceRequest();
+        }
+    }
+
+    /**
+     * 播报TTS
+     * @param text 需要播报的文字
+     */
+    public void startTts (String text) {
+        if (mEngineStatus == EngineState.INITED) {
+            SdkManagerImpl.getInstance().getInternalApi().speakOfflineQuery(text);
+        }
+    }
+
+    /**
+     * 播报TTS
+     * @param text 需要播报的文字
+     * @param utteranceId
+     */
+    public void startTts(String text, int utteranceId) {
+        // TODO 处理UtteranceId。UtteranceId主要用作区分具体用途的TTS播报用。
+        // 如在多轮交互下，播完tts后还会自动开始录音。
+        if (mEngineStatus == EngineState.INITED) {
+            SdkManagerImpl.getInstance().getInternalApi().speakOfflineQuery(text);
+        }
+    }
+
     /**
      * 更新离线语音指令
      */
     public void updateOfflineCommand() {
-
+        //TODO 更新离线命令
     }
 
     /**
@@ -111,9 +194,34 @@ public class RecognizeManager {
         return mEngineStatus;
     }
 
-    private void initSdk() {
-        mEngineStatus = EngineState.INITING;
+    /**
+     * 注册外界与RecognizeManager的回调监听
+     * @param callback
+     */
+    public void addCallback(IRecognizeManagerCallback callback) {
+        if (!mExportCallbacks.contains(callback)) {
+            mExportCallbacks.add(callback);
+        }
+    }
 
+    /**
+     * 注销外界与RecognizeManager的回调监听
+     * @param callback
+     */
+    public void removeCallback(IRecognizeManagerCallback callback) {
+        if (!mExportCallbacks.contains(callback)) {
+            mExportCallbacks.remove(callback);
+        }
+    }
+
+    private void initSdk() {
+        if (mEngineStatus == EngineState.UNINIT) {
+            updateEngineState(EngineState.INITING);
+            if (mInitTask == null) {
+                mInitTask = new InitEngineTask();
+            }
+            mInitTask.execute();
+        }
     }
 
     private void initDeviceModule() {
@@ -168,27 +276,106 @@ public class RecognizeManager {
     }
 
     private void registerEssentialListener() {
+        //TODO 初始化基础监听
+
+        //注册SDK事件监听器
+        if (requestBodySentListener == null) {
+            requestBodySentListener = new IDcsRequestBodySentListener() {
+                @Override
+                public void onDcsRequestBody(DcsRequestBody event) {
+                    String eventName = event.getEvent().getHeader().getName();
+                    Log.v(TAG, "eventName:" + eventName);
+
+                    //处理TTS状态回调
+                    if (eventName.equals("SpeechStarted")) {
+                        // online tts start
+                    } else if (eventName.equals("SpeechFinished")) {
+                        // online tts finish
+                    }
+                }
+            };
+        }
+        getSdkInternalApi().addRequestBodySentListener(requestBodySentListener);
+
+        //注册SDK错误信息监听器
+        if (errorListener == null) {
+            errorListener = new IErrorListener() {
+                @Override
+                public void onErrorCode(ErrorCode errorCode) {
+                    T.showShort("SDK出现错误" + errorCode.getMessage());
+                }
+            };
+        }
+        getSdkInternalApi().addErrorListener(errorListener);
+
+        //注册SDK位置监听器（LocationHandler）
+        locationHandler = new LocationHandler();
+        getSdkInternalApi().setLocationHandler(locationHandler);
+
+        //注册在线TTS监听器（SpeakTxtListener）
+        ttsListener = new SpeakTxtListener();
+        ((VoiceOutputDeviceModule)getSdkInternalApi()
+                .getDeviceModule("ai.dueros.device_interface.voice_output"))
+                .addVoiceOutputListener(ttsListener);
+
+        //注册离线TTS监听器（AsrVoiceInputListener）
+        ((TtsOutputDeviceModule)getSdkInternalApi()
+                .getDeviceModule("ai.dueros.device_interface.tts_output"))
+                .addVoiceOutputListener(ttsListener);
+
+        //注册声音音量监听器（voiceInputVolumeListener）
+        voiceInputVolumeListener = new VoiceInputVolumeListener();
+        //TODO 如何监听输入声音音量的变化？
 
     }
 
     private void registerDirectiveListener() {
-
+        if (directiveListenerManager == null) {
+            directiveListenerManager = new DirectiveListenerManager(mDirectiveCallback);
+        }
+        directiveListenerManager.registerDirectiveListener();
     }
 
     private void releaseDeviceModule() {
-
+        //AppLauncher
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.app_launcher");
+        //PhonecallDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.extensions.telephone");
+        //SmsDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.extensions.sms");
+        //ContactsDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.extensions.contacts");
+        //WebBrowserDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.web_browser");
+        //AlarmDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.android.alerts");
+        //DeviceControlDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.extensions.device_control");
+        //ScreenDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.screen");
+        //TelecontrollerDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.thirdparty.gionee.voiceassist");
+        //LocalAudioPlayerDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.extensions.local_audio_player");
+        //OfflineDeviceModule
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.offline");
     }
 
     private void unregisterEssentialListener() {
-
+        getSdkInternalApi().removeErrorListener(errorListener);
+        getSdkInternalApi().removeRequestBodySentListener(requestBodySentListener);
     }
 
     private void unregisterDirectiveListener() {
-
+        directiveListenerManager.unRegisterDirectiveListener();
     }
 
     private void releaseSdk() {
-
+        if (mInitTask != null && mInitTask.getStatus() != AsyncTask.Status.FINISHED) {
+            mInitTask.cancel(true);
+        }
+        updateEngineState(EngineState.UNINIT);
+        mDcsSdk.release();
     }
 
     private JSONObject getOfflineAsrSlots() {
@@ -239,7 +426,15 @@ public class RecognizeManager {
     }
 
     private void initSuccess() {
+        updateEngineState(EngineState.INITED);
+        mInitTask = null;
+    }
 
+    private void updateEngineState(EngineState state) {
+        mEngineStatus = state;
+        for (IRecognizeManagerCallback callback:mExportCallbacks) {
+            callback.onEngineState(state);
+        }
     }
 
     private void handleUpdateContacts() {
@@ -289,7 +484,7 @@ public class RecognizeManager {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-
+            mLocalHandler.sendEmptyMessage(MSG_INNER_ENGINEINIT_SUCCESS);
         }
     }
 
@@ -304,6 +499,11 @@ public class RecognizeManager {
             }
         }
     }
+
+    private InternalApi getSdkInternalApi() {
+        return ((DcsSdkImpl)Preconditions.checkNotNull(mDcsSdk)).getInternalApi();
+    }
+
 
 
 }

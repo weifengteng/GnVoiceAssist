@@ -9,14 +9,14 @@ import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
  * Created by twf on 2017/8/16.
  */
 
-public class VoiceInputVolumeListener extends BaseDirectiveListener implements IAudioRecorder.IRecorderListener {
+public class VoiceInputVolumeListener implements IAudioRecorder.IRecorderListener {
     public static final String TAG = VoiceInputVolumeListener.class.getSimpleName();
     private ScreenRender screenRender;
 
 
-    public VoiceInputVolumeListener(IBaseFunction baseFunction) {
-        super(baseFunction);
-        screenRender = baseFunction.getScreenRender();
+    public VoiceInputVolumeListener() {
+        //TODO 处理音频输入音量的显示
+//        screenRender = baseFunction.getScreenRender();
     }
 
     @Override
@@ -35,7 +35,6 @@ public class VoiceInputVolumeListener extends BaseDirectiveListener implements I
 
     }
 
-    @Override
     public void onDestroy() {
         if(screenRender != null) {
             screenRender.onDestroy();

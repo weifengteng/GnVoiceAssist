@@ -12,6 +12,7 @@ import com.gionee.gnvoiceassist.GNOAuthActivity;
 import com.gionee.gnvoiceassist.home.HomeActivity;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 
 /**
  * Created by twf on 2017/8/18.
@@ -20,9 +21,9 @@ import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 public class DeviceModuleListener extends BaseDirectiveListener implements SystemDeviceModule.IDeviceModuleListener {
     private Context activityContext;
 
-    public DeviceModuleListener(IBaseFunction baseFunction) {
-        super(baseFunction);
-        this.activityContext = baseFunction.getHomeActivity();
+    public DeviceModuleListener(IDirectiveListenerCallback callback) {
+        super(callback);
+//        this.activityContext = baseFunction.getHomeActivity();
     }
 
     @Override

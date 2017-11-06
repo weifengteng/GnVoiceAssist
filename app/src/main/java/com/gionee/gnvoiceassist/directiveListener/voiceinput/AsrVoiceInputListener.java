@@ -3,6 +3,7 @@ package com.gionee.gnvoiceassist.directiveListener.voiceinput;
 import com.baidu.duer.dcs.api.IDialogStateListener;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.LogUtil;
 
 /**
@@ -13,11 +14,12 @@ public class AsrVoiceInputListener extends BaseDirectiveListener implements IDia
     public static final String TAG = AsrVoiceInputListener.class.getSimpleName();
     private IVoiceInputEventListener voiceInputEventListener;
 
-    public AsrVoiceInputListener(IBaseFunction baseFunction) {
-        super(baseFunction);
-        this.voiceInputEventListener = baseFunction.getVoiceInputEventListener();
+    public AsrVoiceInputListener(IDirectiveListenerCallback callback) {
+        super(callback);
+//        this.voiceInputEventListener = baseFunction.getVoiceInputEventListener();
     }
-//
+
+    //
 //    @Override
 //    public void onStartRecord() {
 //        LogUtil.d(TAG, "onStartRecord");
