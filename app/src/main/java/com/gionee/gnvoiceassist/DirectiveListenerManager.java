@@ -61,9 +61,9 @@ public class DirectiveListenerManager {
     private IDirectiveListenerCallback mCallback;
     private PhoneCallDirectiveListener phoneCallDirectiveListener;
     private SmsDirectiveListener smsDirectiveListener;
-    private SpeakTxtListener speakTxtListener;
+//    private SpeakTxtListener speakTxtListener;
     private CUIDirectiveListener cuiDirectiveListener;
-    private VoiceInputVolumeListener voiceInputVolumeListener;
+//    private VoiceInputVolumeListener voiceInputVolumeListener;
     private AudioPlayerListener audioPlayerListener;
     private DeviceModuleListener deviceModuleListener;
     private ContactsDirectiveListener contactsDirectiveListener;
@@ -74,9 +74,7 @@ public class DirectiveListenerManager {
     private ScreenDirectiveListener screenDirectiveListener;
     private TeleControllerListener teleControllerListener;
     private TvLiveListener tvLiveListener;
-    private LocationHandler locationHandler;
     private OfflineAsrListener offlineAsrListener;
-    private AsrVoiceInputListener asrVoiceInputListener;
     private LocalAudioPlayerListener localAudioPlayerListener;
 
 
@@ -106,33 +104,7 @@ public class DirectiveListenerManager {
             }
         });
 
-        //初始化错误回调接口
-//        SdkManagerImpl.getInstance().getInternalApi().addErrorListener(new IErrorListener() {
-//            @Override
-//            public void onErrorCode(ErrorCode errorCode) {
-//                T.showShort("SDK出现错误" + errorCode.getMessage());
-//            }
-//        });
-
-        //初始化事件监听回调接口
-//        SdkManagerImpl.getInstance().getInternalApi().addRequestBodySentListener(new IDcsRequestBodySentListener() {
-//            @Override
-//            public void onDcsRequestBody(DcsRequestBody event) {
-//                String eventName = event.getEvent().getHeader().getName();
-//                Log.v(TAG, "eventName:" + eventName);
-//
-//                //处理TTS状态回调
-//                if (eventName.equals("SpeechStarted")) {
-//                    // online tts start
-//                } else if (eventName.equals("SpeechFinished")) {
-//                    // online tts finish
-//                }
-//            }
-//        });
-
         //初始化对话回调接口
-        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
-        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(locationHandler);
         ((AudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.audio_player")).addAudioPlayListener(audioPlayerListener);
         ((SystemDeviceModule)getDeviceModule("ai.dueros.device_interface.system")).addModuleListener(deviceModuleListener);
         ((PhoneCallDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.telephone")).addDirectiveListener(phoneCallDirectiveListener);
@@ -146,7 +118,6 @@ public class DirectiveListenerManager {
         ((TeleControllerDeviceModule)getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.voiceassist")).addDirectiveListener(teleControllerListener);
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(localAudioPlayerListener);
-
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).addOfflineDirectiveListener(offlineAsrListener);
     }
 
@@ -167,10 +138,9 @@ public class DirectiveListenerManager {
         ((TeleControllerDeviceModule)getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.voiceassist")).addDirectiveListener(null);
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(null);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(null);
-        ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(speakTxtListener);
-        ((TtsOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.tts_output")).removeVoiceOutputListener(speakTxtListener);
+//        ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(speakTxtListener);
+//        ((TtsOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.tts_output")).removeVoiceOutputListener(speakTxtListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).removeOfflineDirectiveListener(offlineAsrListener);
-        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(null);
 
     }
 
@@ -180,8 +150,6 @@ public class DirectiveListenerManager {
 
 
         offlineAsrListener = new OfflineAsrListener(mCallback);
-
-        asrVoiceInputListener = new AsrVoiceInputListener(mCallback);
 
         //端功能监听器
         phoneCallDirectiveListener = new PhoneCallDirectiveListener(mCallback);
@@ -230,15 +198,6 @@ public class DirectiveListenerManager {
         if(appLauncherListener != null) {
             appLauncherListener.onDestroy();
         }
-
-        if(asrVoiceInputListener != null) {
-            appLauncherListener.onDestroy();
-        }
-
-//        if(baseFunctionManager != null) {
-//            baseFunctionManager.onDestroy();
-//            baseFunctionManager = null;
-//        }
     }
 
     private BaseDeviceModule getDeviceModule(String namespace) {

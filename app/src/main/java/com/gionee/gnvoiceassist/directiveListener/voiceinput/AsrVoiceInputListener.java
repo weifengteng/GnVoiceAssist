@@ -10,13 +10,23 @@ import com.gionee.gnvoiceassist.util.LogUtil;
  * Created by twf on 2017/8/25.
  */
 
-public class AsrVoiceInputListener extends BaseDirectiveListener implements IDialogStateListener {
+public class AsrVoiceInputListener implements IDialogStateListener {
     public static final String TAG = AsrVoiceInputListener.class.getSimpleName();
     private IVoiceInputEventListener voiceInputEventListener;
 
-    public AsrVoiceInputListener(IDirectiveListenerCallback callback) {
-        super(callback);
+    public AsrVoiceInputListener() {
+//        super(callback);
 //        this.voiceInputEventListener = baseFunction.getVoiceInputEventListener();
+    }
+
+    public void setVoiceInputEventListener(IVoiceInputEventListener listener) {
+        voiceInputEventListener = listener;
+    }
+
+    public void removeVoiceInputEventListener() {
+        if (voiceInputEventListener != null) {
+            voiceInputEventListener = null;
+        }
     }
 
     //
@@ -65,7 +75,6 @@ public class AsrVoiceInputListener extends BaseDirectiveListener implements IDia
     /**
      * 释放资源
      */
-    @Override
     public void onDestroy() {
         voiceInputEventListener = null;
     }

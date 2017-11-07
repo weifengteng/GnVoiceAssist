@@ -29,6 +29,8 @@ import com.baidu.duer.dcs.systeminterface.IOauth;
 import com.gionee.gnvoiceassist.DirectiveListenerManager;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.directiveListener.location.LocationHandler;
+import com.gionee.gnvoiceassist.directiveListener.voiceinput.AsrVoiceInputListener;
+import com.gionee.gnvoiceassist.directiveListener.voiceinput.IVoiceInputEventListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinputvolume.VoiceInputVolumeListener;
 import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
@@ -45,7 +47,6 @@ import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.gnvoiceassist.tts.SpeakTxtListener;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.Constants.EngineState;
-import com.gionee.gnvoiceassist.util.ContactProcessor;
 import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
@@ -54,41 +55,55 @@ import com.gionee.gnvoiceassist.util.Preconditions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liyingheng on 11/2/17.
+ * 上层服务与SDK层交互的接口。
+ * 对SDK的生命周期进行管理，调用SDK实现相应的操作。
  */
 
 public class RecognizeManager {
 
     private static final String TAG = RecognizeManager.class.getSimpleName();
-    private static final int MSG_INNER_ENGINEINIT_SUCCESS = 0x1000;
+    private static final int MSG_INNER_ENGINEINIT_BEGIN = 0x1000;
+    private static final int MSG_INNER_ENGINEINIT_SUCCESS = 0x1001;
+    private static final int MSG_INNER_OFFLINECOMMAND_GENERATED = 0x1002;
+    private static final int MSG_INNER_DIRECTIVE_RECEIVED = 0x1003;
 
 
     private static RecognizeManager sINSTANCE;
     private IDcsSdk mDcsSdk;
-    private RecognizeManagerHandler mLocalHandler;
-    private List<IRecognizeManagerCallback> mExportCallbacks;
-    private EngineState mEngineStatus = EngineState.UNINIT;
+
     private InitEngineTask mInitTask;
+    private LoadOfflineCommandTask mLoadOfflineCommandTask;
 
     //各种监听器
     private IErrorListener errorListener;
     private IDcsRequestBodySentListener requestBodySentListener;
     private LocationHandler locationHandler;
     private SpeakTxtListener ttsListener;
+    private AsrVoiceInputListener asrVoiceInputListener;
+    private IVoiceInputEventListener voiceInputEventListener;
     private VoiceInputVolumeListener voiceInputVolumeListener;
     private DirectiveListenerManager directiveListenerManager;
 
     //回调
     private IDirectiveListenerCallback mDirectiveCallback;
 
+    //消息传递
+    private RecognizeManagerHandler mLocalHandler;
+    private List<IRecognizeManagerCallback> mExportCallbacks;
+
+    //状态
+    private EngineState mEngineStatus = EngineState.UNINIT;
+
+
     private RecognizeManager() {
         updateEngineState(EngineState.UNINIT);
-        mLocalHandler = new RecognizeManagerHandler();
+        mLocalHandler = new RecognizeManagerHandler(this);
         mExportCallbacks = new ArrayList<>();
     }
 
@@ -106,11 +121,7 @@ public class RecognizeManager {
         // 初始化完成的工作：
         // SDK初始化、SDK中DeviceModule的装入、SDK基础监听器(DialogStateListener、ErrorListener、
         // 语音识别状态、TTS状态）的注册、位置组件的注册
-
-        initSdk();
-        registerEssentialListener();
-        registerDirectiveListener();
-
+        mLocalHandler.sendEmptyMessage(MSG_INNER_ENGINEINIT_BEGIN);
     }
 
     /**
@@ -180,10 +191,11 @@ public class RecognizeManager {
     }
 
     /**
-     * 更新离线语音指令
+     * 外部传入离线语音指令
      */
-    public void updateOfflineCommand() {
+    public void updateOfflineCommand(JSONObject offlineCommand) {
         //TODO 更新离线命令
+        injectOfflineSlot(offlineCommand);
     }
 
     /**
@@ -214,6 +226,10 @@ public class RecognizeManager {
         }
     }
 
+    public void setDirectiveCallback(IDirectiveListenerCallback callback) {
+        mDirectiveCallback = callback;
+    }
+
     private void initSdk() {
         if (mEngineStatus == EngineState.UNINIT) {
             updateEngineState(EngineState.INITING);
@@ -222,6 +238,14 @@ public class RecognizeManager {
             }
             mInitTask.execute();
         }
+    }
+
+    private void initSuccess() {
+        registerEssentialListener();
+        registerDirectiveListener();
+        loadOfflineAsrSlots();
+        updateEngineState(EngineState.INITED);
+        mInitTask = null;
     }
 
     private void initDeviceModule() {
@@ -325,6 +349,23 @@ public class RecognizeManager {
 
         //注册声音音量监听器（voiceInputVolumeListener）
         voiceInputVolumeListener = new VoiceInputVolumeListener();
+
+        //注册状态监听器
+        asrVoiceInputListener = new AsrVoiceInputListener();
+        voiceInputEventListener = new IVoiceInputEventListener() {
+            @Override
+            public void onVoiceInputStart() {
+
+            }
+
+            @Override
+            public void onVoiceInputStop() {
+
+            }
+        };
+        asrVoiceInputListener.setVoiceInputEventListener(voiceInputEventListener);
+        mDcsSdk.getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
+
         //TODO 如何监听输入声音音量的变化？
 
     }
@@ -362,8 +403,12 @@ public class RecognizeManager {
     }
 
     private void unregisterEssentialListener() {
+        getSdkInternalApi().setLocationHandler(null);
         getSdkInternalApi().removeErrorListener(errorListener);
         getSdkInternalApi().removeRequestBodySentListener(requestBodySentListener);
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.voice_output");
+        getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.tts_output");
+        mDcsSdk.getVoiceRequest().removeDialogStateListener(asrVoiceInputListener);
     }
 
     private void unregisterDirectiveListener() {
@@ -378,56 +423,15 @@ public class RecognizeManager {
         mDcsSdk.release();
     }
 
-    private JSONObject getOfflineAsrSlots() {
-        long startTimemills = System.currentTimeMillis();
-        long endTimemills = 0;
-        JSONObject slotJson = new JSONObject();
-        try {
-            {
-                Map<String, String[]> slotMap = KookongCustomDataHelper.getKookongOfflineAsrSlotMap();
-
-                String[] deviceList = slotMap.get(Constants.SLOT_DEVICELIST);
-                if(deviceList != null) {
-                    JSONArray slotdataArray1 = new JSONArray(deviceList);
-                    slotJson.put(Constants.SLOT_DEVICELIST, slotdataArray1);
-                }
-
-                String[] customACStateList = slotMap.get(Constants.SLOT_CUSTOMACSTATELIST);
-                if(customACStateList != null) {
-                    JSONArray slotDataArray2 = new JSONArray(customACStateList);
-                    slotJson.put(Constants.SLOT_CUSTOMACSTATELIST, slotDataArray2);
-                }
-
-                JSONArray slotdataArray = new JSONArray();
-                slotdataArray.put("相机");
-                slotdataArray.put("设置");
-                slotdataArray.put("相册");
-                slotdataArray.put("联系人");
-                // 通用识别槽位
-                slotJson.put(Constants.SLOT_APPNAME, slotdataArray);
-            }
-            {
-                JSONArray slotdataArray = new JSONArray();
-                ArrayList<String> contactNameList = Utils.getAllContacts(GnVoiceAssistApplication.getInstance());
-                for(String name : contactNameList) {
-                    slotdataArray.put(name);
-                }
-                // 通用识别槽位
-                slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            endTimemills = System.currentTimeMillis();
-            Log.i("liyh","getOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
-            return slotJson;
+    /**
+     * (Asynchronously) Load dynamic offline recognition command. And send a Message to the
+     * local Handler to inform when finished.
+     */
+    private void loadOfflineAsrSlots() {
+        if (mLoadOfflineCommandTask == null) {
+            mLoadOfflineCommandTask = new LoadOfflineCommandTask();
         }
-    }
-
-    private void initSuccess() {
-        updateEngineState(EngineState.INITED);
-        mInitTask = null;
+        mLoadOfflineCommandTask.execute();
     }
 
     private void updateEngineState(EngineState state) {
@@ -437,10 +441,13 @@ public class RecognizeManager {
         }
     }
 
-    private void handleUpdateContacts() {
-        Utils.uploadContacts();
-        boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
-        long endTs = System.currentTimeMillis();
+    private void injectOfflineSlot(JSONObject offlineSlot) {
+        if (mLoadOfflineCommandTask != null) {
+            mLoadOfflineCommandTask.cancel(true);
+            mLoadOfflineCommandTask = null;
+        }
+        //TODO 注入动态离线识别语法
+
     }
 
     private class InitEngineTask extends AsyncTask<Void,Void,Boolean> {
@@ -455,7 +462,7 @@ public class RecognizeManager {
             String secretKey = "AkP1XOuGVlrrML7dTs4WqW6bqj8lvv6C";
             IOauth oauth = new BaiduOauthClientCredentialsImpl(clientId, clientSecret);
             final ASROffLineConfig asrOffLineConfig = new ASROffLineConfig();
-            asrOffLineConfig.offlineAsrSlots = getOfflineAsrSlots();
+//            asrOffLineConfig.offlineAsrSlots = loadOfflineAsrSlots();
             asrOffLineConfig.asrAppId = appId;
             asrOffLineConfig.asrAppKey = apiKey;
             asrOffLineConfig.asrSecretKey = secretKey;
@@ -488,13 +495,85 @@ public class RecognizeManager {
         }
     }
 
-    private class RecognizeManagerHandler extends Handler {
+    private class LoadOfflineCommandTask extends AsyncTask<Void,Void,JSONObject> {
+
+        @Override
+        protected JSONObject doInBackground(Void... voids) {
+            long startTimemills = System.currentTimeMillis();
+            long endTimemills = 0;
+            JSONObject slotJson = new JSONObject();
+            try {
+                {
+                    Map<String, String[]> slotMap = KookongCustomDataHelper.getKookongOfflineAsrSlotMap();
+
+                    String[] deviceList = slotMap.get(Constants.SLOT_DEVICELIST);
+                    if(deviceList != null) {
+                        JSONArray slotdataArray1 = new JSONArray(deviceList);
+                        slotJson.put(Constants.SLOT_DEVICELIST, slotdataArray1);
+                    }
+
+                    String[] customACStateList = slotMap.get(Constants.SLOT_CUSTOMACSTATELIST);
+                    if(customACStateList != null) {
+                        JSONArray slotDataArray2 = new JSONArray(customACStateList);
+                        slotJson.put(Constants.SLOT_CUSTOMACSTATELIST, slotDataArray2);
+                    }
+
+                    JSONArray slotdataArray = new JSONArray();
+                    slotdataArray.put("相机");
+                    slotdataArray.put("设置");
+                    slotdataArray.put("相册");
+                    slotdataArray.put("联系人");
+                    // 通用识别槽位
+                    slotJson.put(Constants.SLOT_APPNAME, slotdataArray);
+                }
+                {
+                    JSONArray slotdataArray = new JSONArray();
+                    ArrayList<String> contactNameList = Utils.getAllContacts(GnVoiceAssistApplication.getInstance());
+                    for(String name : contactNameList) {
+                        slotdataArray.put(name);
+                    }
+                    // 通用识别槽位
+                    slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                endTimemills = System.currentTimeMillis();
+                Log.i("liyh","loadOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
+                return slotJson;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            Message msg = mLocalHandler.obtainMessage(MSG_INNER_OFFLINECOMMAND_GENERATED,jsonObject);
+            mLocalHandler.sendMessage(msg);
+        }
+    }
+
+    private static class RecognizeManagerHandler extends Handler {
+
+        WeakReference<RecognizeManager> mRecognizeManagerRef;
+
+        RecognizeManagerHandler(RecognizeManager recognizeManager) {
+            mRecognizeManagerRef = new WeakReference<RecognizeManager>(recognizeManager);
+        }
 
         @Override
         public void handleMessage(Message msg) {
+            RecognizeManager mRecognizeManager = mRecognizeManagerRef.get();
             switch (msg.what) {
+                case MSG_INNER_ENGINEINIT_BEGIN:
+                    mRecognizeManager.initSdk();
+                    break;
                 case MSG_INNER_ENGINEINIT_SUCCESS:
-                    initSuccess();
+                    mRecognizeManager.initSuccess();
+                    break;
+                case MSG_INNER_OFFLINECOMMAND_GENERATED:
+                    mRecognizeManager.injectOfflineSlot((JSONObject) msg.obj);
+                    break;
+                case MSG_INNER_DIRECTIVE_RECEIVED:
                     break;
             }
         }

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -14,33 +15,96 @@ import android.telephony.TelephonyManager;
 
 import com.gionee.gnvoiceassist.basefunction.contact.ContactObserver;
 import com.gionee.gnvoiceassist.util.Constants;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.gionee.gnvoiceassist.util.Preconditions.checkNotNull;
 
-public class GnVoiceService extends Service {
+public class GnVoiceService extends Service implements IDirectiveListenerCallback{
 
-    private static final int MSG_ENGINE_STATUS_RESULT = 0x1100;
+    private static final String TAG = GnVoiceService.class.getSimpleName();
     private static final int MSG_CONTACT_UPDATE = Constants.MSG_UPDATE_CONTACTS;
 
     private RecognizeManager mRecognizeManager;
     private ContactObserver mContactObserver;
     private ContentResolver mContentResolver;
     private TelephonyManager mTelephonyManager;
+    private AudioManager mAudioManager;
+    private AudioManager.OnAudioFocusChangeListener mAudioFocusChangeCallback;
     private GnVoiceServiceBinder mBinder;
-    private List<IVoiceServiceListener> mExportCallbacks;
 
-    private InnerHandler mInnerHandler;
+    //消息传递
+    private List<IVoiceServiceListener> mExportCallbacks;   //对外回调接口
+    private IRecognizeManagerCallback mRmCallback = new IRecognizeManagerCallback() {
+        @Override
+        public void onEngineState(Constants.EngineState state) {
+
+        }
+
+        @Override
+        public void onRecordStart() {
+
+        }
+
+        @Override
+        public void onRecordStop() {
+
+        }
+
+        @Override
+        public void onRecordError() {
+
+        }
+
+        @Override
+        public void onRecordState(Constants.RecognitionState state) {
+
+        }
+
+        @Override
+        public void onTtsStart() {
+
+        }
+
+        @Override
+        public void onTtsEnd() {
+
+        }
+
+        @Override
+        public void onTtsState(boolean speaking) {
+
+        }
+
+        @Override
+        public void onVolume(int volumeLevel) {
+
+        }
+
+        @Override
+        public void onResult() {
+
+        }
+    };
+
+    private InnerHandler mLocalHandler;
     private InnerPhoneStateListener mPhoneStateListener;
-
 
     public GnVoiceService() {
         mBinder = new GnVoiceServiceBinder();
         mExportCallbacks = new ArrayList<>();
-        mInnerHandler = new InnerHandler();
+        mLocalHandler = new InnerHandler(this);
+        mAudioManager = (AudioManager) getApplicationContext().getSystemService(AUDIO_SERVICE);
+        mAudioFocusChangeCallback = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusChange) {
+                LogUtil.i(TAG, "onAudioFocusChange() focusChange = " + focusChange);
+            }
+        };
     }
 
     @Override
@@ -54,6 +118,7 @@ public class GnVoiceService extends Service {
         initEssentialComponent();
         initAdditionalComponent();
         initRecognizeManager();
+        requestAudioFocus();    //TODO 处理焦点获取失败的情况
     }
 
     @Override
@@ -66,20 +131,30 @@ public class GnVoiceService extends Service {
         super.onDestroy();
         destroyEssentialComponent();
         destroyAdditionalComponent();
+        destroyRecognizeManager();
+        abandonAudioFocus();
     }
 
     /**
      * 开始录音
      */
     public void fireRecord() {
-
+        mRecognizeManager.startRecord();
+        //TODO 获得音频焦点
     }
 
     /**
      * 打断录音
      */
     public void abortRecord() {
+        mRecognizeManager.abortRecord(true);
+        //TODO 恢复音频焦点
 
+    }
+
+    public void stopRecord() {
+        mRecognizeManager.abortRecord(false);
+        //TODO 恢复音频焦点
     }
 
     /**
@@ -87,14 +162,14 @@ public class GnVoiceService extends Service {
      * @param text
      */
     public void playTts(String text) {
-
+        mRecognizeManager.startTts(text);
     }
 
     /**
      * 停止所有TTS朗读
      */
     public void stopTts() {
-
+        mRecognizeManager.abortRecord(true);
     }
 
     /**
@@ -123,6 +198,8 @@ public class GnVoiceService extends Service {
         if (mRecognizeManager == null) {
             mRecognizeManager = RecognizeManager.getInstance();
         }
+        mRecognizeManager.addCallback(mRmCallback);
+        mRecognizeManager.setDirectiveCallback(this);
         mRecognizeManager.init();
     }
 
@@ -132,12 +209,12 @@ public class GnVoiceService extends Service {
         // 初始化ContentResolver
         mContentResolver = getContentResolver();    //是否要判断ContentResolver为空的情况？是否要使用ApplicationContext？
         // 初始化ContactObserver
-        mContactObserver = new ContactObserver(mInnerHandler,GnVoiceService.this.getApplicationContext());
+        mContactObserver = new ContactObserver(mLocalHandler,GnVoiceService.this.getApplicationContext());
         mContentResolver.registerContentObserver(ContactsContract.Contacts.CONTENT_URI,true,mContactObserver);
         // TODO 初始化Telephony监听器
         mTelephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(mPhoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
-        // TODO 初始化音频播放焦点
+        // TODO 初始化音频播放焦点监听
 
     }
 
@@ -150,9 +227,6 @@ public class GnVoiceService extends Service {
         //初始化广播接收器
         //需要接收以下广播：开机启动完成
 
-        //初始化JobScheduler
-        //JobScheduler监测以下场景：联系人变化（当联系人改变时，调用ContactsUploadService进行联系人上传操作）
-
 
     }
 
@@ -160,6 +234,8 @@ public class GnVoiceService extends Service {
         if (mRecognizeManager != null) {
             mRecognizeManager.release();
         }
+        mRecognizeManager.setDirectiveCallback(null);
+        mRecognizeManager.removeCallback(mRmCallback);
     }
 
     private void destroyEssentialComponent() {
@@ -186,6 +262,33 @@ public class GnVoiceService extends Service {
 
     }
 
+    private void startUpdateContacts() {
+        Intent intent = new Intent(GnVoiceService.this,ContactsUploadService.class);
+        startService(intent);
+    }
+
+    private boolean requestAudioFocus() {
+        int result = mAudioManager.requestAudioFocus
+                (mAudioFocusChangeCallback,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
+
+        return (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
+    }
+
+    private boolean abandonAudioFocus() {
+        int result = mAudioManager.abandonAudioFocus(mAudioFocusChangeCallback);
+        return (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
+    }
+
+    @Override
+    public void onDirectiveResponse() {
+
+    }
+
+    @Override
+    public void onVoiceInputVolume(int level) {
+
+    }
+
     /**
      * VoiceService的通信接口
      * 用于与建立连接的客户端进行通信
@@ -205,15 +308,15 @@ public class GnVoiceService extends Service {
         }
 
         public void startRecord() {
-
+            fireRecord();
         }
 
         public void abortRecord() {
-
+            GnVoiceService.this.abortRecord();
         }
 
         public void stopRecord() {
-
+            GnVoiceService.this.stopRecord();
         }
 
         public void sendRequestMessage() {
@@ -222,10 +325,20 @@ public class GnVoiceService extends Service {
     }
 
     private static class InnerHandler extends Handler{
+
+        private WeakReference<GnVoiceService> mVoiceService;
+
+        InnerHandler(GnVoiceService service) {
+            mVoiceService = new WeakReference<GnVoiceService>(service);
+        }
+
         @Override
         public void handleMessage(Message msg) {
+            GnVoiceService service = mVoiceService.get();
             switch (msg.what) {
-
+                case MSG_CONTACT_UPDATE:
+                    service.startUpdateContacts();
+                    break;
             }
         }
     }

@@ -10,13 +10,9 @@ import com.gionee.gnvoiceassist.util.Utils;
 /**
  * 上传联系人服务。
  * 当第一次打开应用，或每次联系人条目变化的时候，会触发此服务。
- * 第一次打开应用的时候，云端没有本机联系人条目。因此通过判断SharedPreference中的键值，判断是否要上传联系人。
- * 当第一次上传成功后，SharedPreference中的键值会置true。
  *
- * 在{@link GnVoiceService}中，会针对Android系统版本设定触发此服务的方法。
- * 若Android 7.0及以上的版本，则使用Framework中的JobScheduler API{@link android.app.job.JobScheduler}
- * 监听联系人URI变化，触发此服务。
- * 若Android 7.0以下的版本，则通过注册联系人广播监听，触发此服务。
+ * 每次打开应用时，会调用此方法上传一次联系人。同时，注册ContentObserver针对联系人URI进行监听。当联系人发生变化时
+ * 会再次触发此服务上传联系人。
  *
  */
 public class ContactsUploadService extends IntentService {
