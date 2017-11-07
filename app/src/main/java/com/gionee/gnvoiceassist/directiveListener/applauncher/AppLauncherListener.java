@@ -18,6 +18,7 @@ import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.SharedData;
@@ -39,6 +40,8 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
     public static final String UTTER_ENTER_DOWNLOAD_CONFIRM_CUI = "utter_enter_download_confirm_cui";
     public static final String CUI_QUERY_DOWNLOAD_APP = "cui_query_download_app";
 
+    public static final String USECASE_NAME = "applaunch";
+
 
     private AppLaunchPresenter mAppLaunchPresenter;
 
@@ -49,19 +52,28 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
     @Override
     public void appLauncherDirectiveReceived(String appName, String packageName, Directive directive) {
 
-        LogUtil.d("DCSF", TAG + " appName= " + appName + " packageName= " + packageName);
-        boolean isLaunchSuccess = false;
-        if(!TextUtils.isEmpty(packageName)) {
-            isLaunchSuccess = mAppLaunchPresenter.launchAppByPackageName(packageName);
-        } else if(!TextUtils.isEmpty(appName)) {
-            isLaunchSuccess = mAppLaunchPresenter.launchAppByName(appName);
-        }
+//        LogUtil.d("DCSF", TAG + " appName= " + appName + " packageName= " + packageName);
+//        boolean isLaunchSuccess = false;
+//        if(!TextUtils.isEmpty(packageName)) {
+//            isLaunchSuccess = mAppLaunchPresenter.launchAppByPackageName(packageName);
+//        } else if(!TextUtils.isEmpty(appName)) {
+//            isLaunchSuccess = mAppLaunchPresenter.launchAppByName(appName);
+//        }
+//
+//        if(isLaunchSuccess) {
+//            playTTS("正在为您打开" + appName, true);
+//        } else {
+//            confirmDownloadOrNot(appName);
+//        }
 
-        if(isLaunchSuccess) {
-            playTTS("正在为您打开" + appName, true);
-        } else {
-            confirmDownloadOrNot(appName);
-        }
+        DirectiveResponseEntity.Builder builder = new DirectiveResponseEntity.Builder(USECASE_NAME);
+        DirectiveResponseEntity response = builder
+                .setAction("launch_app")
+                .setInCustomInteractive(false)
+                .setShouldRender(false)
+                .setShouldSpeak(false)
+                .build();
+        mCallback.onDirectiveResponse(response);
     }
 
     @Override

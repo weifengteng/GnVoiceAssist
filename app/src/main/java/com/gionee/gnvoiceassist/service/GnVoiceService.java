@@ -14,6 +14,8 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.gionee.gnvoiceassist.basefunction.contact.ContactObserver;
+import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
+import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
@@ -99,12 +101,6 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         mExportCallbacks = new ArrayList<>();
         mLocalHandler = new InnerHandler(this);
         mAudioManager = (AudioManager) getApplicationContext().getSystemService(AUDIO_SERVICE);
-        mAudioFocusChangeCallback = new AudioManager.OnAudioFocusChangeListener() {
-            @Override
-            public void onAudioFocusChange(int focusChange) {
-                LogUtil.i(TAG, "onAudioFocusChange() focusChange = " + focusChange);
-            }
-        };
     }
 
     @Override
@@ -140,7 +136,6 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
      */
     public void fireRecord() {
         mRecognizeManager.startRecord();
-        //TODO 获得音频焦点
     }
 
     /**
@@ -214,7 +209,13 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         // TODO 初始化Telephony监听器
         mTelephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(mPhoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
-        // TODO 初始化音频播放焦点监听
+        //初始化音频焦点监听
+        mAudioFocusChangeCallback = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusChange) {
+                LogUtil.i(TAG, "onAudioFocusChange() focusChange = " + focusChange);
+            }
+        };
 
     }
 
@@ -279,14 +280,20 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         return (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
     }
 
+
     @Override
-    public void onDirectiveResponse() {
+    public void onDirectiveResponse(DirectiveResponseEntity response) {
 
     }
 
     @Override
     public void onVoiceInputVolume(int level) {
 
+    }
+
+    @Override
+    public void onRenderResponse(RenderEntity response) {
+        
     }
 
     /**
