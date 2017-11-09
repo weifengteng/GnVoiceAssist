@@ -1,16 +1,15 @@
 package com.gionee.gnvoiceassist.message.model.metadata;
 
+import java.util.List;
+
 /**
  * Created by liyingheng on 11/7/17.
  */
 
 public class PhonecallMetadata extends Metadata{
 
-    //姓名
-    private String name;
-
-    //电话号码
-    private String[] number;
+    //联系人信息
+    private List<ContactsMetadata> contacts;
 
     //卡槽
     private String simSlot;
@@ -18,20 +17,12 @@ public class PhonecallMetadata extends Metadata{
     //运营商名称
     private String carrier;
 
-    public String getName() {
-        return name;
+    public List<ContactsMetadata> getContacts() {
+        return contacts;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String[] getNumber() {
-        return number;
-    }
-
-    public void setNumber(String[] number) {
-        this.number = number;
+    public void setContacts(List<ContactsMetadata> contacts) {
+        this.contacts = contacts;
     }
 
     public String getSimSlot() {
@@ -49,4 +40,5 @@ public class PhonecallMetadata extends Metadata{
     public void setCarrier(String carrier) {
         this.carrier = carrier;
     }
+
 }
