@@ -10,6 +10,28 @@ import org.json.JSONObject;
 
 public class UsecaseResponseEntity {
 
+    public UsecaseResponseEntity(String usecase,
+                                 String action,
+                                 boolean inCustomInteractive,
+                                 boolean shouldRender,
+                                 boolean shouldSpeak,
+                                 RenderEntity renderContent,
+                                 String speakText,
+                                 boolean shouldOperateAfterSpeak,
+                                 String metadata,
+                                 CUIEntity customInteract) {
+        this.usecase = usecase;
+        this.action = action;
+        this.inCustomInteractive = inCustomInteractive;
+        this.shouldRender = shouldRender;
+        this.shouldSpeak = shouldSpeak;
+        this.renderContent = renderContent;
+        this.speakText = speakText;
+        this.shouldOperateAfterSpeak = shouldOperateAfterSpeak;
+        this.metadata = metadata;
+        this.customInteract = customInteract;
+    }
+
     //用例场景
     private String usecase;
 
@@ -35,6 +57,88 @@ public class UsecaseResponseEntity {
     private boolean shouldOperateAfterSpeak;
 
     //用例具体元数据
-    private JSONObject metadata;
+    private String metadata;
 
+    //自定义交互元数据
+    private CUIEntity customInteract;
+
+    public String getUsecase() {
+        return usecase;
+    }
+
+    public void setUsecase(String usecase) {
+        this.usecase = usecase;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public boolean isInCustomInteractive() {
+        return inCustomInteractive;
+    }
+
+    public void setInCustomInteractive(boolean inCustomInteractive) {
+        this.inCustomInteractive = inCustomInteractive;
+    }
+
+    public boolean isShouldRender() {
+        return shouldRender;
+    }
+
+    public void setShouldRender(boolean shouldRender) {
+        this.shouldRender = shouldRender;
+    }
+
+    public boolean isShouldSpeak() {
+        return shouldSpeak;
+    }
+
+    public void setShouldSpeak(boolean shouldSpeak) {
+        this.shouldSpeak = shouldSpeak;
+    }
+
+    public RenderEntity getRenderContent() {
+        return renderContent;
+    }
+
+    public void setRenderContent(RenderEntity renderContent) {
+        this.renderContent = renderContent;
+    }
+
+    public String getSpeakText() {
+        return speakText;
+    }
+
+    public void setSpeakText(String speakText) {
+        this.speakText = speakText;
+    }
+
+    public boolean isShouldOperateAfterSpeak() {
+        return shouldOperateAfterSpeak;
+    }
+
+    public void setShouldOperateAfterSpeak(boolean shouldOperateAfterSpeak) {
+        this.shouldOperateAfterSpeak = shouldOperateAfterSpeak;
+    }
+
+    public String getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
+    }
+
+    public CUIEntity getCustomInteract() {
+        return customInteract;
+    }
+
+    public void setCustomInteract(CUIEntity customInteract) {
+        this.customInteract = customInteract;
+    }
 }

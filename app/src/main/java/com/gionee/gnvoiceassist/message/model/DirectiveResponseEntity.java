@@ -27,6 +27,9 @@ public class DirectiveResponseEntity {
     //命令
     private String action;
 
+    //二级命令（如确认/取消）
+    private String subAction;
+
     //是否为自定义交互指令
     private boolean inCustomInteractive;
 
@@ -42,27 +45,124 @@ public class DirectiveResponseEntity {
     //需要朗读的文字
     private String speakText;
 
-    //用例具体元数据
-    private JSONObject metadata;
+    //用例具体元数据(json格式)
+    private String metadata;
+
+    //多轮交互请求信息
+    private CUIEntity customInteract;
+
+    public String getUsecase() {
+        return usecase;
+    }
+
+    public void setUsecase(String usecase) {
+        this.usecase = usecase;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getSubAction() {
+        return subAction;
+    }
+
+    public void setSubAction(String subAction) {
+        this.subAction = subAction;
+    }
+
+    public boolean isInCustomInteractive() {
+        return inCustomInteractive;
+    }
+
+    public void setInCustomInteractive(boolean inCustomInteractive) {
+        this.inCustomInteractive = inCustomInteractive;
+    }
+
+    public boolean isShouldRender() {
+        return shouldRender;
+    }
+
+    public void setShouldRender(boolean shouldRender) {
+        this.shouldRender = shouldRender;
+    }
+
+    public boolean isShouldSpeak() {
+        return shouldSpeak;
+    }
+
+    public void setShouldSpeak(boolean shouldSpeak) {
+        this.shouldSpeak = shouldSpeak;
+    }
+
+    public RenderEntity getRenderContent() {
+        return renderContent;
+    }
+
+    public void setRenderContent(RenderEntity renderContent) {
+        this.renderContent = renderContent;
+    }
+
+    public String getSpeakText() {
+        return speakText;
+    }
+
+    public void setSpeakText(String speakText) {
+        this.speakText = speakText;
+    }
+
+    public String getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
+    }
+
+
+    public CUIEntity getCustomInteract() {
+        return customInteract;
+    }
+
+    public void setCustomInteract(CUIEntity customInteract) {
+        this.customInteract = customInteract;
+    }
 
     public static class Builder {
         private String useCase = "";
         private String action = "";
+        private String subAction = "";
         private boolean inCustomInteractive = false;
         private boolean shouldRender = false;
         private boolean shouldSpeak = false;
         private RenderEntity renderEntity;
-        private String speakText = "";
-        private JSONObject metadata;
+        private String speakText;
+        private String metadata;
+        private String customInteract;
 
         public Builder(String usecase) {
             this.useCase = usecase;
+            action = "";
+            subAction = "";
+            speakText = "";
+            metadata = "";
+            customInteract = "";
         }
 
         public Builder setAction(String action) {
             this.action = action;
             return this;
         }
+
+        public Builder setSubAction(String subAction) {
+            this.subAction = subAction;
+            return this;
+        }
+
         public Builder setInCustomInteractive(boolean inCustomInteractive) {
             this.inCustomInteractive = inCustomInteractive;
             return this;
@@ -83,7 +183,7 @@ public class DirectiveResponseEntity {
             return this;
         }
 
-        public Builder setMetadata(JSONObject metadata) {
+        public Builder setMetadata(String metadata) {
             this.metadata = metadata;
             return this;
         }

@@ -293,7 +293,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
 
     @Override
     public void onRenderResponse(RenderEntity response) {
-        
+
     }
 
     /**
