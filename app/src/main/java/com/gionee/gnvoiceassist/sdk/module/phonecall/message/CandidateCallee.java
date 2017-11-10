@@ -16,34 +16,36 @@
  */
 package com.gionee.gnvoiceassist.sdk.module.phonecall.message;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 
 /**
  * Created by caoyushu01 on 17/7/6.
  */
 
-public class CandidateCallee {
+public class CandidateCallee implements Serializable {
     public String contactName;
     public String pinYin;
 
-    public CandidateCallee (@JsonProperty("contactName") String contactName, @JsonProperty("pinyin") String pinYin) {
+    public CandidateCallee(@JsonProperty("contactName") String contactName, @JsonProperty("pinyin") String pinYin) {
         this.contactName = contactName;
         this.pinYin = pinYin;
     }
 
-    public String getContactName () {
+    public String getContactName() {
         return contactName;
     }
 
-    public void setContactName (String contactName) {
+    public void setContactName(String contactName) {
         this.contactName = contactName;
     }
 
-    public String getPinYin () {
+    public String getPinYin() {
         return pinYin;
     }
 
-    public void setPinYin (String pinYin) {
+    public void setPinYin(String pinYin) {
         this.pinYin = pinYin;
     }
 }

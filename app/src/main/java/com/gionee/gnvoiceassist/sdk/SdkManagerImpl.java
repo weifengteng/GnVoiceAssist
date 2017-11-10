@@ -5,49 +5,44 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.baidu.duer.dcs.androidsystemimpl.AudioRecordImpl;
-import com.baidu.duer.dcs.androidsystemimpl.custominteraction.ICustomUserInteractionImpl;
-import com.baidu.duer.dcs.androidsystemimpl.phonecall.IPhoneCallImpl;
 import com.baidu.duer.dcs.androidsystemimpl.player.MediaPlayerImpl;
-import com.baidu.duer.dcs.androidsystemimpl.sms.ISmsImpl;
-import com.baidu.duer.dcs.api.IASROffLineConfigProvider;
+import com.baidu.duer.dcs.api.DcsSdkBuilder;
 import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.devicemodule.audioplayer.AudioPlayerDeviceModule;
-import com.baidu.duer.dcs.devicemodule.contacts.ContactsDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
-import com.baidu.duer.dcs.devicemodule.phonecall.PhoneCallDeviceModule;
-import com.baidu.duer.dcs.devicemodule.sms.SmsDeviceModule;
 import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.DialogRequestIdHandler;
+import com.baidu.duer.dcs.framework.ILoginListener;
 import com.baidu.duer.dcs.framework.IMessageSender;
 import com.baidu.duer.dcs.framework.InternalApi;
-import com.baidu.duer.dcs.framework.internalApi.DcsConfig;
-import com.baidu.duer.dcs.framework.internalApi.IDcsConfigProvider;
-import com.baidu.duer.dcs.framework.internalApi.IDcsInternalProvider;
-import com.baidu.duer.dcs.framework.internalApi.IDcsRequestBodySentListener;
-import com.baidu.duer.dcs.framework.internalApi.IDirectiveReceivedListener;
-import com.baidu.duer.dcs.framework.internalApi.IErrorListener;
+import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
+import com.baidu.duer.dcs.framework.internalapi.IASROffLineConfigProvider;
 import com.baidu.duer.dcs.framework.location.Location;
 import com.baidu.duer.dcs.framework.message.DcsRequestBody;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
 import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
-import com.baidu.duer.dcs.systeminterface.IAudioRecorder;
+import com.baidu.duer.dcs.systeminterface.BaseAudioRecorder;
 import com.baidu.duer.dcs.systeminterface.IOauth;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncher;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncherImpl;
+import com.gionee.gnvoiceassist.sdk.module.contacts.ContactsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.sms.SmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.gnvoiceassist.util.Constants;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
@@ -98,7 +93,7 @@ public class SdkManagerImpl implements ISdkManager {
 
     private void initSdk(Context context) {
         // 第一步初始化sdk
-        IAudioRecorder audioRecorder = new AudioRecordImpl();
+        BaseAudioRecorder audioRecorder = new AudioRecordImpl();
 
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
         String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
@@ -114,24 +109,41 @@ public class SdkManagerImpl implements ISdkManager {
 
         IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
             @Override
-            public ASROffLineConfig get() {
+            public ASROffLineConfig getOfflineConfig() {
                 return asrOffLineConfig;
             }
         };
-        mDcsSdk = new DcsSdkImpl.Builder()
-                .oauth(oauth)
-                .clientId(clientId)
-                .audioRecorder(audioRecorder)
-                .asrMode(DcsConfig.ASR_MODE_ONLINE)
-                .asrOffLineConfig(asrOffLineConfigProvider)
+
+        mDcsSdk = new DcsSdkBuilder()
+                .withClientId(clientId)
+                .withOauth(oauth)
+                .withAudioRecorder(audioRecorder)
                 .build();
 
+        getInternalApi().setDebug(true);
+        getInternalApi().setAsrMode(GnVoiceAssistApplication.ASR_MODE);
+        getInternalApi().setAsrOffLineConfigProvider(asrOffLineConfigProvider);
+
+        //配置自定义端能力
         initDeviceModule(context);
 
-
         // 第三步，将sdk跑起来
-        mDcsSdk.run();
+        getInternalApi().login(new ILoginListener() {
+            @Override
+            public void onSucceed(String s) {
+                mDcsSdk.run();
+            }
 
+            @Override
+            public void onFailed(String s) {
+                LogUtil.e(TAG,"SDK Login failed! Message = " + s);
+            }
+
+            @Override
+            public void onCancel() {
+                LogUtil.w(TAG,"SDK login cancel!");
+            }
+        });
 
     }
 
@@ -143,11 +155,11 @@ public class SdkManagerImpl implements ISdkManager {
         mDcsSdk.putDeviceModule(appLauncherDeviceModule);
 
         //初始化电话模块PhonecallDeviceModule
-        PhoneCallDeviceModule phoneCallDeviceModule = new PhoneCallDeviceModule(new IPhoneCallImpl(),messageSender);
+        PhoneCallDeviceModule phoneCallDeviceModule = new PhoneCallDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(phoneCallDeviceModule);
 
         //初始化短信模块SmsDeviceModule
-        SmsDeviceModule smsDeviceModule = new SmsDeviceModule(new ISmsImpl(),messageSender);
+        SmsDeviceModule smsDeviceModule = new SmsDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(smsDeviceModule);
 
         //初始化联系人模块ContactsDeviceModule
@@ -179,6 +191,10 @@ public class SdkManagerImpl implements ISdkManager {
         //初始化localAudioPlayerDeviceModule
         LocalAudioPlayerDeviceModule localAudioPlayerDeviceModule = new LocalAudioPlayerDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(localAudioPlayerDeviceModule);
+
+        //初始化CustomInteraction多轮交互模块
+        CustomUserInteractionDeviceModule customUserInteractionDeviceModule = new CustomUserInteractionDeviceModule(messageSender,new DialogRequestIdHandler());
+        mDcsSdk.putDeviceModule(customUserInteractionDeviceModule);
 
         //初始化离线识别模块
         OffLineDeviceModule offLineDeviceModule = new OffLineDeviceModule();

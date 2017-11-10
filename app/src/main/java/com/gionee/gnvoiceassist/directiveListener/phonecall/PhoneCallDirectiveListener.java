@@ -6,18 +6,24 @@ import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDe
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
-import com.baidu.duer.dcs.devicemodule.phonecall.PhoneCallDeviceModule;
-import com.baidu.duer.dcs.devicemodule.phonecall.message.ContactInfo;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.CommonUtil;
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.IPhoneCallImpl;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.PhoneCallDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.CandidateCallee;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.CandidateCalleeNumber;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.ContactInfo;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.PhonecallByNamePayload;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.PhonecallByNumberPayload;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.SelectCalleePayload;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.SharedData;
 
 import java.util.ArrayList;
@@ -29,7 +35,7 @@ import static com.gionee.gnvoiceassist.util.Utils.doUserActivity;
  * Created by twf on 2017/8/26.
  */
 
-public class PhoneCallDirectiveListener extends BaseDirectiveListener implements PhoneCallDeviceModule.IPhoneCallDirectiveListener {
+public class PhoneCallDirectiveListener extends BaseDirectiveListener implements PhoneCallDeviceModule.IPhoneCallListener {
     public static final String TAG = PhoneCallDirectiveListener.class.getSimpleName();
     public static final String UTTER_SHOW_SELECT_PHONE_CONTACT_VIEW = "utter_show_select_phone_contact_view";
     public static final String UTTER_SHOW_SELECT_PHONE_SIM_VIEW = "utter_show_select_phone_sim_view";
@@ -40,9 +46,11 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     private List<ContactInfo> mContactInfos;
     private PhoneCallPresenter mPhoneCallPresenter;
     private PhoneCardSelectCallback mCardSelectCallback;
+    private IPhoneCallImpl mPhonecallImpl;
 
     public PhoneCallDirectiveListener(IBaseFunction iBaseFunction) {
         super(iBaseFunction);
+        mPhonecallImpl = new IPhoneCallImpl();
         mPhoneCallPresenter = iBaseFunction.getPhoneCallPresenter();
         mCardSelectCallback = new PhoneCardSelectCallback() {
             @Override
@@ -59,7 +67,25 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     }
 
     @Override
-    public void phoneCallDirectiveReceived(List<ContactInfo> list, Directive directive) {
+    public void onPhoneCallByName(PhonecallByNamePayload payload) {
+        LogUtil.d(TAG,"onPhoneCallByName(), payload = " + payload);
+        phoneCallDirectiveReceived(assembleContactInfoByName(payload));
+    }
+
+    @Override
+    public void onSelectCallee(SelectCalleePayload payload) {
+        LogUtil.d(TAG,"onSelectCallee(), payload = " + payload);
+        phoneCallDirectiveReceived(assembleContactInfoByNumber(payload));
+    }
+
+    @Override
+    public void onPhoneCallByNumber(PhonecallByNumberPayload payload) {
+        LogUtil.d(TAG,"onPhoneCallByNumber(), payload = " + payload);
+        phoneCallDirectiveReceived(assembleContactInfoBySingleNumber(payload));
+    }
+
+    //TODO Deprecated. Should migrate to new SDK
+    public void phoneCallDirectiveReceived(List<ContactInfo> list) {
         LogUtil.d(TAG, "phoneCallDirectiveReceived: " + list.toString());
 //        directive.getName();
 //        PhonecallByNamePayload namePayload = (PhonecallByNamePayload) directive.getPayload();
@@ -273,6 +299,80 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
         playTTS("卡1呼叫还是卡2？", UTTER_SHOW_SELECT_PHONE_SIM_VIEW,this, true);
     }
 
+    private List<ContactInfo> assembleContactInfoByName(Payload payload) {
+        List<ContactInfo> infos = new ArrayList();
+        if ((payload instanceof PhonecallByNamePayload))
+        {
+            List<CandidateCallee> recommendNames = ((PhonecallByNamePayload)payload).getCandidateCallees();
+
+            String simCard = ((PhonecallByNamePayload)payload).getUseSimIndex();
+
+            String carrierInfo = ((PhonecallByNamePayload)payload).getUseCarrier();
+            for (int i = 0; i < recommendNames.size(); i++)
+            {
+                List<ContactInfo> oneTmpInfo = this.mPhonecallImpl.getPhoneContactsByName(recommendNames.get(i), simCard, carrierInfo);
+                infos.addAll(oneTmpInfo);
+            }
+        }
+        return infos;
+    }
+
+    private List<ContactInfo> assembleContactInfoByNumber(Payload payload) {
+        List<ContactInfo> infos = new ArrayList();
+        if ((payload instanceof SelectCalleePayload))
+        {
+            List<CandidateCalleeNumber> numbers = ((SelectCalleePayload)payload).getCandidateCallees();
+            String simIndex = ((SelectCalleePayload)payload).getUseSimIndex();
+            String carrierInfo = ((SelectCalleePayload)payload).getUseCarrier();
+            for (int i = 0; i < numbers.size(); i++)
+            {
+                ContactInfo contactInfo = new ContactInfo();
+                contactInfo.setType(ContactInfo.TYPE_NUMBER);
+                contactInfo.setName(((CandidateCalleeNumber)numbers.get(i)).getDisplayName());
+
+                List<ContactInfo.NumberInfo> numberList = new ArrayList();
+                ContactInfo.NumberInfo numberInfo = new ContactInfo.NumberInfo();
+                numberInfo.setPhoneNumber(((CandidateCalleeNumber)numbers.get(i)).getPhoneNumber());
+                numberList.add(numberInfo);
+                contactInfo.setPhoneNumbersList(numberList);
+                if (!TextUtils.isEmpty(simIndex)) {
+                    contactInfo.setSimIndex(simIndex);
+                }
+                if (!TextUtils.isEmpty(carrierInfo)) {
+                    contactInfo.setCarrierOprator(carrierInfo);
+                }
+                infos.add(contactInfo);
+            }
+        }
+        return infos;
+    }
+
+    private List<ContactInfo> assembleContactInfoBySingleNumber(Payload payload) {
+        List<ContactInfo> infos = new ArrayList();
+        if ((payload instanceof PhonecallByNumberPayload))
+        {
+            CandidateCalleeNumber callee = ((PhonecallByNumberPayload)payload).getCallee();
+            String simIndex = ((PhonecallByNumberPayload)payload).getUseSimIndex();
+            String carrierInfo = ((PhonecallByNumberPayload)payload).getUseCarrier();
+            ContactInfo contactInfo = new ContactInfo();
+            contactInfo.setType(ContactInfo.TYPE_NUMBER);
+            contactInfo.setName(callee.getDisplayName());
+
+            List<ContactInfo.NumberInfo> numberList = new ArrayList();
+            ContactInfo.NumberInfo numberInfo = new ContactInfo.NumberInfo();
+            numberInfo.setPhoneNumber(callee.getPhoneNumber());
+            numberList.add(numberInfo);
+            contactInfo.setPhoneNumbersList(numberList);
+            if (!TextUtils.isEmpty(simIndex)) {
+                contactInfo.setSimIndex(simIndex);
+            }
+            if (!TextUtils.isEmpty(carrierInfo)) {
+                contactInfo.setCarrierOprator(carrierInfo);
+            }
+            infos.add(contactInfo);
+        }
+        return infos;
+    }
 
     //PhonecallPresenter的回调接口
     public interface PhoneCardSelectCallback {

@@ -2,6 +2,7 @@ package com.gionee.gnvoiceassist;
 
 import android.app.Application;
 
+import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.directiveListener.telecontroller.TeleControllerListener;
 import com.squareup.leakcanary.LeakCanary;
@@ -45,4 +46,8 @@ public class GnVoiceAssistApplication extends Application{
         }
         return customDirectiveCmdMap;
     }
+
+    //全局控制
+    public static final int ASR_MODE = DcsConfig.ASR_MODE_OFFLINE_PRIORITY;
+
 }

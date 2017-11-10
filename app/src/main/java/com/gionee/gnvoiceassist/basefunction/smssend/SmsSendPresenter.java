@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.duer.dcs.devicemodule.sms.message.SmsInfo;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.BasePresenter;
@@ -16,6 +15,7 @@ import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.recordcontrol.RecordController;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.gnvoiceassist.directiveListener.sms.SmsDirectiveListener;
+import com.gionee.gnvoiceassist.sdk.module.sms.message.SmsInfo;
 import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.widget.ContactsListItem;
 import com.gionee.gnvoiceassist.widget.SimCardListItem;

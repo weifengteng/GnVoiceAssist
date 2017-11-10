@@ -4,18 +4,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.baidu.duer.dcs.devicemodule.audioplayer.AudioPlayerDeviceModule;
-import com.baidu.duer.dcs.devicemodule.contacts.ContactsDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
-import com.baidu.duer.dcs.devicemodule.phonecall.PhoneCallDeviceModule;
-import com.baidu.duer.dcs.devicemodule.sms.SmsDeviceModule;
 import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
-import com.baidu.duer.dcs.devicemodule.ttsoutput.TtsOutputDeviceModule;
 import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
 import com.baidu.duer.dcs.framework.BaseDeviceModule;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
-import com.baidu.duer.dcs.framework.internalApi.IDcsRequestBodySentListener;
-import com.baidu.duer.dcs.framework.internalApi.IDirectiveReceivedListener;
-import com.baidu.duer.dcs.framework.internalApi.IErrorListener;
+import com.baidu.duer.dcs.framework.internalapi.IDcsRequestBodySentListener;
+import com.baidu.duer.dcs.framework.internalapi.IDirectiveReceivedListener;
+import com.baidu.duer.dcs.framework.internalapi.IErrorListener;
 import com.baidu.duer.dcs.framework.message.DcsRequestBody;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
@@ -41,10 +37,13 @@ import com.gionee.gnvoiceassist.directiveListener.webbrowser.WebBrowserListener;
 import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.contacts.ContactsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.sms.SmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.gnvoiceassist.tts.SpeakTxtListener;
@@ -97,10 +96,6 @@ public class DirectiveListenerManager {
                 }
                 String name = directive.getName();
                 Log.v(TAG, "directive-name:" + name);
-                Payload payload = directive.getPayload();
-                if ("StopListen".equals(name)) {
-
-                }
             }
         });
 
@@ -133,9 +128,9 @@ public class DirectiveListenerManager {
         SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(locationHandler);
         ((AudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.audio_player")).addAudioPlayListener(audioPlayerListener);
         ((SystemDeviceModule)getDeviceModule("ai.dueros.device_interface.system")).addModuleListener(deviceModuleListener);
-        ((PhoneCallDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.telephone")).addDirectiveListener(phoneCallDirectiveListener);
-        ((SmsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.sms")).addDirectiveListener(smsDirectiveListener);
-        ((ContactsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.contacts")).addDirectiveListener(contactsDirectiveListener);
+        ((PhoneCallDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.telephone")).addPhoneCallListener(phoneCallDirectiveListener);
+        ((SmsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.sms")).addSmsListener(smsDirectiveListener);
+        ((ContactsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.contacts")).addContactsListener(contactsDirectiveListener);
         ((AppLauncherDeviceModule)getDeviceModule("ai.dueros.device_interface.app_launcher")).addAppLauncherDirectiveListener(appLauncherListener);
         ((WebBrowserDeviceModule)getDeviceModule("ai.dueros.device_interface.web_browser")).addDirectiveListener(webBrowserListener);
         ((AlarmsDeviceModule)getDeviceModule("ai.dueros.device_interface.android.alerts")).addDirectiveListener(alarmDirectiveListener);
@@ -145,7 +140,6 @@ public class DirectiveListenerManager {
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(localAudioPlayerListener);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).addVoiceOutputListener(speakTxtListener);
-        ((TtsOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.tts_output")).addVoiceOutputListener(speakTxtListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).addOfflineDirectiveListener(offlineAsrListener);
     }
 
@@ -155,9 +149,9 @@ public class DirectiveListenerManager {
 
         ((AudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.audio_player")).removeAudioPlayListener(audioPlayerListener);
         ((SystemDeviceModule)getDeviceModule("ai.dueros.device_interface.system")).removeListener(deviceModuleListener);
-        ((PhoneCallDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.telephone")).addDirectiveListener(null);
-        ((SmsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.sms")).addDirectiveListener(null);
-        ((ContactsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.contacts")).removeDirectiveListener(contactsDirectiveListener);
+        ((PhoneCallDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.telephone")).removePhoneCallListener(phoneCallDirectiveListener);
+        ((SmsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.sms")).removeSmsListener(smsDirectiveListener);
+        ((ContactsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.contacts")).removeContactsListener(contactsDirectiveListener);
         ((AppLauncherDeviceModule)getDeviceModule("ai.dueros.device_interface.app_launcher")).addAppLauncherDirectiveListener(null);
         ((WebBrowserDeviceModule)getDeviceModule("ai.dueros.device_interface.web_browser")).addDirectiveListener(null);
         ((AlarmsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.alert_smartphone")).removeDirectiveLIstener(alarmDirectiveListener);
@@ -167,7 +161,6 @@ public class DirectiveListenerManager {
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(null);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(null);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(speakTxtListener);
-        ((TtsOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.tts_output")).removeVoiceOutputListener(speakTxtListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).removeOfflineDirectiveListener(offlineAsrListener);
         SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(null);
 

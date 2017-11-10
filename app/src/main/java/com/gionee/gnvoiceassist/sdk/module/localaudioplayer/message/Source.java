@@ -1,6 +1,6 @@
 package com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Source
 {

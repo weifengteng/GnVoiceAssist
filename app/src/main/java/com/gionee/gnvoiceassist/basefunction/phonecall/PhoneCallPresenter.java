@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.devicemodule.phonecall.message.ContactInfo;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
@@ -17,6 +16,7 @@ import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.recordcontrol.RecordController;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.gnvoiceassist.directiveListener.phonecall.PhoneCallDirectiveListener;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.ContactInfo;
 import com.gionee.gnvoiceassist.util.ContactProcessor;
 import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.widget.ContactsListItem;

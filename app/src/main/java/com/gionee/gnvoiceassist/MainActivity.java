@@ -458,6 +458,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 //                        .release();
 //                baseFunctionManager.getRecordController().startRecordOfflineOnly();
 //        baseFunctionManager.getRecordController().startRecordOfflinePrior();
+
         baseFunctionManager.getRecordController().startRecordOnline();
     }
 

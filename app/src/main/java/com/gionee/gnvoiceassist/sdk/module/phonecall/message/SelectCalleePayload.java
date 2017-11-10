@@ -16,7 +16,6 @@
  */
 package com.gionee.gnvoiceassist.sdk.module.phonecall.message;
 
-import com.baidu.duer.dcs.devicemodule.phonecall.message.CandidateCalleeNumber;
 import com.baidu.duer.dcs.framework.message.Payload;
 
 import java.io.Serializable;

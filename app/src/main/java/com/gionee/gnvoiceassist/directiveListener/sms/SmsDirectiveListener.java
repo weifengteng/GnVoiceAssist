@@ -6,18 +6,24 @@ import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDe
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
-import com.baidu.duer.dcs.devicemodule.sms.SmsDeviceModule;
-import com.baidu.duer.dcs.devicemodule.sms.message.SmsInfo;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.CommonUtil;
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.basefunction.smssend.SmsSendPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.sdk.module.sms.ISmsImpl;
+import com.gionee.gnvoiceassist.sdk.module.sms.SmsDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.sms.message.CandidateRecipient;
+import com.gionee.gnvoiceassist.sdk.module.sms.message.CandidateRecipientNumber;
+import com.gionee.gnvoiceassist.sdk.module.sms.message.SelectRecipientPayload;
+import com.gionee.gnvoiceassist.sdk.module.sms.message.SendSmsByNamePayload;
+import com.gionee.gnvoiceassist.sdk.module.sms.message.SendSmsByNumberPayload;
+import com.gionee.gnvoiceassist.sdk.module.sms.message.SmsInfo;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.SharedData;
 
 import java.io.UnsupportedEncodingException;
@@ -32,7 +38,7 @@ import static com.gionee.gnvoiceassist.util.Utils.doUserActivity;
  * Created by twf on 2017/8/26.
  */
 
-public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDeviceModule.ISmsDirectiveListener {
+public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDeviceModule.ISmsListener {
     public static final String TAG = SmsDirectiveListener.class.getSimpleName();
     public static final String UTTER_SHOW_SELECT_SMS_CONTACT_VIEW = "utter_show_select_sms_contact_view";
     public static final String UTTER_SHOW_SELECT_SMS_SIM_VIEW = "utter_show_select_sms_sim_view";
@@ -44,9 +50,11 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
     private List<SmsInfo> mSmsInfos;
     private SmsSendPresenter smsSendPresenter;
     private SmsSimQueryInterface smsSimQueryInterface;
+    private ISmsImpl mSmsImpl;
 
     public SmsDirectiveListener(IBaseFunction iBaseFunction) {
         super(iBaseFunction);
+        mSmsImpl = new ISmsImpl();
         smsSendPresenter = iBaseFunction.getSmsSendPresenter();
         smsSimQueryInterface = new SmsSimQueryInterface() {
             @Override
@@ -58,7 +66,24 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
     }
 
     @Override
-    public void smsDirectiveReceived(List<SmsInfo> list, Directive directive) {
+    public void onSendSmsByName(SendSmsByNamePayload payload) {
+        LogUtil.d(TAG,"onSendSmsByName(), payload = " + payload);
+        smsDirectiveReceived(assembleSmsInfoByName(payload));
+    }
+
+    @Override
+    public void onSelectRecipient(SelectRecipientPayload payload) {
+        LogUtil.d(TAG,"onSelectRecipient(), payload = " + payload);
+        smsDirectiveReceived(assembleSmsInfoByNumber(payload));
+    }
+
+    @Override
+    public void onSendSmsByNumber(SendSmsByNumberPayload payload) {
+        LogUtil.d(TAG,"onSendSmsByNumber(), payload = " + payload);
+        smsDirectiveReceived(assembleSmsInfoBySingleNumber(payload));
+    }
+
+    public void smsDirectiveReceived(List<SmsInfo> list) {
         //TODO: 此处依赖了SDK的SmsInfo，应封装成自己的
         LogUtil.d(TAG, "smsDirectiveReceived!");
         mSmsInfos = list;
@@ -276,6 +301,87 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
         CustomUserInteractionManager.getInstance().startCustomUserInteraction(generator, CUI_SELECT_SMS_SIM, this);
         smsSendPresenter.showPhoneSimChooseView();
         playTTS("卡1发送还是卡2？", UTTER_SHOW_SELECT_SMS_SIM_VIEW, this, true);
+    }
+
+    private List<SmsInfo> assembleSmsInfoByName(Payload payload)
+    {
+        List<SmsInfo> infos = new ArrayList();
+        if ((payload instanceof SendSmsByNamePayload))
+        {
+            List<CandidateRecipient> recommendNames = ((SendSmsByNamePayload)payload).getCandidateRecipients();
+
+            String simCard = ((SendSmsByNamePayload)payload).getUseSimIndex();
+
+            String carrierInfo = ((SendSmsByNamePayload)payload).getUseCarrier();
+            for (int i = 0; i < recommendNames.size(); i++)
+            {
+                List<SmsInfo> oneTmpInfo = this.mSmsImpl.getSmsContactsByName((CandidateRecipient)recommendNames.get(i), simCard, carrierInfo, ((SendSmsByNamePayload)payload)
+                        .getMessageContent());
+                infos.addAll(oneTmpInfo);
+            }
+        }
+        return infos;
+    }
+
+    private List<SmsInfo> assembleSmsInfoByNumber(Payload payload)
+    {
+        List<SmsInfo> infos = new ArrayList();
+        if ((payload instanceof SelectRecipientPayload))
+        {
+            List<CandidateRecipientNumber> numbers = ((SelectRecipientPayload)payload).getCandidateRecipients();
+            String simIndex = ((SelectRecipientPayload)payload).getUseSimIndex();
+            String carrierInfo = ((SelectRecipientPayload)payload).getUseCarrier();
+            for (int i = 0; i < numbers.size(); i++)
+            {
+                SmsInfo smsInfo = new SmsInfo();
+                smsInfo.setType(SmsInfo.TYPE_NUMBER);
+                smsInfo.setName(((CandidateRecipientNumber)numbers.get(i)).getDisplayName());
+
+                List<SmsInfo.NumberInfo> numberList = new ArrayList();
+                SmsInfo.NumberInfo numberInfo = new SmsInfo.NumberInfo();
+                numberInfo.setPhoneNumber(((CandidateRecipientNumber)numbers.get(i)).getPhoneNumber());
+                numberList.add(numberInfo);
+                smsInfo.setPhoneNumbersList(numberList);
+                smsInfo.setMessageContent(((SelectRecipientPayload)payload).getMessageContent());
+                if (!TextUtils.isEmpty(simIndex)) {
+                    smsInfo.setSimIndex(simIndex);
+                }
+                if (!TextUtils.isEmpty(carrierInfo)) {
+                    smsInfo.setCarrierOprator(carrierInfo);
+                }
+                infos.add(smsInfo);
+            }
+        }
+        return infos;
+    }
+
+    private List<SmsInfo> assembleSmsInfoBySingleNumber(Payload payload)
+    {
+        List<SmsInfo> infos = new ArrayList();
+        if ((payload instanceof SendSmsByNumberPayload))
+        {
+            CandidateRecipientNumber recipient = ((SendSmsByNumberPayload)payload).getRecipient();
+            String simIndex = ((SendSmsByNumberPayload)payload).getUseSimIndex();
+            String carrierInfo = ((SendSmsByNumberPayload)payload).getUseCarrier();
+            SmsInfo smsInfo = new SmsInfo();
+            smsInfo.setType(SmsInfo.TYPE_NUMBER);
+            smsInfo.setName(recipient.getDisplayName());
+
+            List<SmsInfo.NumberInfo> numberList = new ArrayList();
+            SmsInfo.NumberInfo numberInfo = new SmsInfo.NumberInfo();
+            numberInfo.setPhoneNumber(recipient.getPhoneNumber());
+            numberList.add(numberInfo);
+            smsInfo.setPhoneNumbersList(numberList);
+            if (!TextUtils.isEmpty(simIndex)) {
+                smsInfo.setSimIndex(simIndex);
+            }
+            if (!TextUtils.isEmpty(carrierInfo)) {
+                smsInfo.setCarrierOprator(carrierInfo);
+            }
+            smsInfo.setMessageContent(((SendSmsByNumberPayload)payload).getMessageContent());
+            infos.add(smsInfo);
+        }
+        return infos;
     }
 
     public interface SmsSimQueryInterface {

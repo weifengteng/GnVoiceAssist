@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
-import com.baidu.duer.dcs.framework.internalApi.DcsConfig;
+import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
@@ -69,6 +69,7 @@ public class RecordController implements IRecordControl {
 
     public void startRecordOnline() {
         startRecord(ASR_MODE_ONLINE, null);
+//        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().beginVoiceRequest(true);
     }
 
     private void startRecord(final int mode, JSONObject jsonObject) {

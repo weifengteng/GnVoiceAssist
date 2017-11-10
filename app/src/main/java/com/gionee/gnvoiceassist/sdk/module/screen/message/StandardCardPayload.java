@@ -1,7 +1,7 @@
 package com.gionee.gnvoiceassist.sdk.module.screen.message;
 
 import com.baidu.duer.dcs.framework.message.Payload;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class StandardCardPayload extends RenderCardPayload {
     private String token;
@@ -71,13 +71,4 @@ public class StandardCardPayload extends RenderCardPayload {
         this.content = content;
     }
 
-    public Link getLink()
-    {
-        return this.link;
-    }
-
-    public void setLink(Link link)
-    {
-        this.link = link;
-    }
 }
