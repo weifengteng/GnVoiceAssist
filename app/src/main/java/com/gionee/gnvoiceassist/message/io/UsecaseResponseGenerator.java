@@ -57,6 +57,11 @@ public class UsecaseResponseGenerator {
         return this;
     }
 
+    public UsecaseResponseGenerator setSpeakText(String speakText) {
+        this.speakText = speakText;
+        return this;
+    }
+
     public UsecaseResponseGenerator setMetadata(String metadata) {
         this.metadata = metadata;
         return this;

@@ -23,6 +23,8 @@ import com.baidu.duer.dcs.util.CommonUtil;
 import com.gionee.gnvoiceassist.GNBaseActivity;
 import com.gionee.gnvoiceassist.PermissionsActivity;
 import com.gionee.gnvoiceassist.R;
+import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
+import com.gionee.gnvoiceassist.message.model.render.TextRenderEntity;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.PermissionsChecker;
@@ -142,7 +144,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void initData() {
-        mPresenter = new HomePresenter(HomeActivity.this);
+        mPresenter = new HomePresenter(this,HomeActivity.this);
         mPermissionsChecker = new PermissionsChecker(this);
     }
 
@@ -198,37 +200,28 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
     @Override
     public void onRecognizeStateChanged(Constants.RecognitionState state) {
-        switch (state) {
-            case LISTENING:
-                updateRecordingStateUi(true);
-                break;
-            case IDLE:
-            case SPEAKING:
-            case THINKING:
-                updateRecordingStateUi(false);
-                break;
-        }
+        Message msg = mMainHandler.obtainMessage(Constants.MSG_UPDATE_RECOGNIZE_STATE,state);
+        mMainHandler.sendMessage(msg);
     }
 
     @Override
     public void onEngineState(Constants.EngineState state) {
-        switch (state) {
-            case UNINIT:
-                btnRecord.setEnabled(false);
-                break;
-            case INITING:
-                btnRecord.setEnabled(false);
-                break;
-            case INITED:
-                btnRecord.setEnabled(true);
-                break;
-        }
+        Message msg = mMainHandler.obtainMessage(Constants.MSG_UPDATE_ENGINE_STATE,state);
+        mMainHandler.sendMessage(msg);
     }
 
     @Override
-    public void onResult() {
-
+    public void onResult(RenderEntity renderData) {
+        Message message = new Message();
+        if (renderData.getType() == RenderEntity.Type.TextCard && ((TextRenderEntity)renderData).isQueryText()) {
+            message.what = Constants.MSG_SHOW_QUERY;
+        } else {
+            message.what = Constants.MSG_SHOW_ANSWER;
+        }
+        message.obj = renderData;
+        mMainHandler.sendMessage(message);
     }
+
 
     /**
      * Called when a view has been clicked.
@@ -305,6 +298,24 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         });
     }
 
+    private void updateRecognizeState(Constants.RecognitionState state) {
+        switch (state){
+            case LISTENING:
+                updateRecordingStateUi(true);
+                break;
+            case THINKING:
+                updateRecordingStateUi(false);
+                //todo: implement thinking ui
+                break;
+            case SPEAKING:
+                updateRecordingStateUi(false);
+                break;
+            case IDLE:
+                updateRecordingStateUi(false);
+                break;
+        }
+    }
+
     /**
      * 更新录音按钮状态UI
      * @param recording 是否正在录音
@@ -339,6 +350,14 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         btnRecord.stopRippleAnimation();
     }
 
+    private void renderAnswer(RenderEntity answer) {
+
+    }
+
+    private void renderQuery(RenderEntity query) {
+
+    }
+
     private void startVoiceCommand() {
         if(SharedData.getInstance().isStopListenReceiving()) {
 //            baseFunctionManager.getRecordController().stopRecord();
@@ -363,39 +382,64 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     static class MainHandler extends Handler {
-        private WeakReference<Activity> activityWeakReference;
+        private WeakReference<Activity> activityRef;
 
         public MainHandler(HomeActivity activity) {
-            activityWeakReference = new WeakReference<Activity>(activity);
+            activityRef = new WeakReference<Activity>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             HomeActivity homeActivity = null;
-            if(activityWeakReference != null) {
-                homeActivity = (HomeActivity) activityWeakReference.get();
+            if(activityRef != null) {
+                homeActivity = (HomeActivity) activityRef.get();
             }
 
             switch (msg.what) {
                 case Constants.MSG_SHOW_QUERY:
-                    String text = String.valueOf(msg.obj);
-                    if(homeActivity != null) {
-                        homeActivity.addView(text, null, null);
+                    if (homeActivity != null) {
+                        homeActivity.renderQuery((RenderEntity) msg.obj);
                     }
+//                    String text = String.valueOf(msg.obj);
+//                    if(homeActivity != null) {
+//                        homeActivity.addView(text, null, null);
+//
                     break;
                 case Constants.MSG_SHOW_ANSWER:
-                    String answer = String.valueOf(msg.obj);
-                    if(homeActivity != null) {
-                        homeActivity.addView(null, answer, null);
+                    if (homeActivity != null)  {
+                        homeActivity.renderAnswer((RenderEntity) msg.obj);
+                    }
+//                    String answer = String.valueOf(msg.obj);
+//                    if(homeActivity != null) {
+//                        homeActivity.addView(null, answer, null);
+//                    }
+                    break;
+                case Constants.MSG_UPDATE_ENGINE_STATE:
+                    //TODO Do Something when engine state changed
+                    Constants.EngineState engineState = (Constants.EngineState) msg.obj;
+                    boolean enableRecordButton = false;
+                    if (engineState == Constants.EngineState.INITED) {
+                        enableRecordButton = true;
+                    } else {
+                        enableRecordButton = false;
+                    }
+                    if (homeActivity != null) {
+                        homeActivity.btnRecord.setEnabled(enableRecordButton);
                     }
                     break;
-                case Constants.MSG_SHOW_INFO_PANEL:
-                    View infoPanel = (View) msg.obj;
-                    if(homeActivity != null) {
-                        homeActivity.addView(null, null, infoPanel);
+                case Constants.MSG_UPDATE_RECOGNIZE_STATE:
+                    if (homeActivity != null) {
+                        Constants.RecognitionState state = (Constants.RecognitionState) msg.obj;
+                        homeActivity.updateRecognizeState(state);
                     }
                     break;
+//                case Constants.MSG_SHOW_INFO_PANEL:
+//                    View infoPanel = (View) msg.obj;
+//                    if(homeActivity != null) {
+//                        homeActivity.addView(null, null, infoPanel);
+//                    }
+//                    break;
             }
         }
     }

@@ -15,4 +15,27 @@ public class TextRenderEntity extends RenderEntity {
     //是否为查询原文字
     private boolean queryText;
 
+    public boolean isPartical() {
+        return partical;
+    }
+
+    public void setPartical(boolean partical) {
+        this.partical = partical;
+    }
+
+    public long getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(long conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public boolean isQueryText() {
+        return queryText;
+    }
+
+    public void setQueryText(boolean queryText) {
+        this.queryText = queryText;
+    }
 }

@@ -97,7 +97,7 @@ public class PhonecallUseCase extends UseCase {
 
     @CuiQuery("multi_number")
     private void queryMultiNumber(PhonecallMetadata metadata) {
-        CustomInteractGenerator generator = new CustomInteractGenerator(ACTION_CUI_MULTI_NUMBER);
+        CustomInteractGenerator generator = new CustomInteractGenerator(getUseCaseName(),ACTION_CUI_MULTI_NUMBER);
         for (int i = 0; i < metadata.getContacts().size(); i++) {
             String url = CustomLinkSchema.LINK_PHONE +
                     "num=" + metadata.getContacts().get(i).getNumber();
@@ -125,7 +125,7 @@ public class PhonecallUseCase extends UseCase {
     @CuiQuery("select_sim")
     private void querySelectSim(PhonecallMetadata metadata) {
         String baseUrl = CustomLinkSchema.LINK_PHONE + "num=" + metadata.getContacts().get(0).getNumber();  //TODO 这里直接取首条条目有没有问题？会不会出现空的情况？
-        CUIEntity customInteract = new CustomInteractGenerator(ACTION_QUERY_SIMSLOT)
+        CUIEntity customInteract = new CustomInteractGenerator(getUseCaseName(),ACTION_QUERY_SIMSLOT)
                 .addCommand(baseUrl + "#sim=" + "1", "卡一", "卡伊")
                 .addCommand(baseUrl + "#sim=" + "2","卡二","卡而","卡饿")
                 .generateEntity();

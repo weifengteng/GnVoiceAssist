@@ -1,10 +1,12 @@
 package com.gionee.gnvoiceassist.message.model.render;
 
+import java.io.Serializable;
+
 /**
  * 界面显示数据结构
  */
 
-public class RenderEntity {
+public class RenderEntity implements Serializable{
 
     public enum Type {
         TextCard, StandardCard, ListCard, ImageListCard, ChooseBoxCard, ChooseListCard
@@ -12,9 +14,43 @@ public class RenderEntity {
 
     private String title;
 
+    private Type type;
+
     private String content;
 
     private LinkModel link;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public LinkModel getLink() {
+        return link;
+    }
+
+    public void setLink(LinkModel link) {
+        this.link = link;
+    }
 
     /**
      * 链接数据结构
@@ -59,5 +95,7 @@ public class RenderEntity {
         //元数据
         public String metadata;
     }
+
+
 
 }

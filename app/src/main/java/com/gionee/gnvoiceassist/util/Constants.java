@@ -96,12 +96,13 @@ public class Constants {
     public static final String SLOT_CONTACTNAME = "contactname";
 
 
-    public static final int MSG_INIT_SUCCESS = 0x1010;
     public static final int MSG_SHOW_QUERY = 0x1011;
     public static final int MSG_SHOW_ANSWER = 0x1012;
     public static final int MSG_SHOW_INFO_PANEL = 0x1013;
     public static final int MSG_UPDATE_CONTACTS = 0x1014;
     public static final int MSG_UPDATE_INPUTVOLUME = 0x1015;
+    public static final int MSG_UPDATE_ENGINE_STATE = 0x1016;
+    public static final int MSG_UPDATE_RECOGNIZE_STATE = 0x1017;
 
     public static enum RecognitionState {
         LISTENING,THINKING,SPEAKING,IDLE

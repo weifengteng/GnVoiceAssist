@@ -89,7 +89,7 @@ public class SmsSendUseCase extends UseCase {
 
     @CuiQuery
     private void queryMultiNumber(SmsSendMetadata metadata) {
-        CustomInteractGenerator generator = new CustomInteractGenerator(ACTION_CUI_MULTI_NUMBER);
+        CustomInteractGenerator generator = new CustomInteractGenerator(getUseCaseName(),ACTION_CUI_MULTI_NUMBER);
         for (int i = 0; i < metadata.getDestination().size(); i++) {
             String url = CustomLinkSchema.LINK_SMS +
                     "num=" + metadata.getDestination().get(i).getNumber();
@@ -109,6 +109,7 @@ public class SmsSendUseCase extends UseCase {
                 .setShouldRender(true)
                 .setShouldSpeak(true)
                 .setRenderContent(null)
+                .setSpeakText("你要选择哪个联系人？")
                 .generateEntity();
 
         sendResponse(response);
@@ -117,7 +118,7 @@ public class SmsSendUseCase extends UseCase {
     @CuiQuery
     private void querySimSlot(SmsSendMetadata metadata) {
         String baseUrl = CustomLinkSchema.LINK_SMS + "num=" + metadata.getDestination().get(0).getNumber();  //TODO 这里直接取首条条目有没有问题？会不会出现空的情况？
-        CUIEntity customInteract = new CustomInteractGenerator(ACTION_QUERY_SIMSLOT)
+        CUIEntity customInteract = new CustomInteractGenerator(getUseCaseName(),ACTION_QUERY_SIMSLOT)
                 .addCommand(baseUrl + "#sim=" + "1", "卡一", "卡伊")
                 .addCommand(baseUrl + "#sim=" + "2","卡二","卡而","卡饿")
                 .generateEntity();
@@ -127,6 +128,7 @@ public class SmsSendUseCase extends UseCase {
                 .setMetadata(metadata.toJson())
                 .setShouldRender(true)
                 .setRenderContent(null)
+                .setSpeakText("卡一还是卡二？")
                 .generateEntity();
         sendResponse(response);
     }

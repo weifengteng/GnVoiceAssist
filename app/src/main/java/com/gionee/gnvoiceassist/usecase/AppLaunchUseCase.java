@@ -211,7 +211,7 @@ public class AppLaunchUseCase extends UseCase {
         // 1.要显示"没有下载[应用名]，下载还是取消"这段文字
         // 2.要播报"没有下载该应用，下载还是取消"
         // 3.要发起多轮交互请求。等待用户回复两个选项：下载、取消
-        CUIEntity customInteract = new CustomInteractGenerator(ACTION_CUI_DOWNLOAD_APP)
+        CUIEntity customInteract = new CustomInteractGenerator(getUseCaseName(),ACTION_CUI_DOWNLOAD_APP)
                 .addCommand(CustomLinkSchema.LINK_APP_DOWNLOAD + "download_confirm","是","是的","好的","下载")
                 .addCommand(CustomLinkSchema.LINK_APP_DOWNLOAD + "download_cancel", "不","不要","取消","不下载")
                 .generateEntity();

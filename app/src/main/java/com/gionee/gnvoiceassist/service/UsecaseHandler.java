@@ -14,7 +14,7 @@ public class UsecaseHandler {
 
     private Map<String,UseCase> mUsecaseMap;
 
-    private UsecaseHandler () {
+    public UsecaseHandler () {
         mUsecaseMap = new HashMap<>();
     }
 

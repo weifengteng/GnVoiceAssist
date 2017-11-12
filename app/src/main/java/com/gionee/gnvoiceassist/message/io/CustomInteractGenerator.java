@@ -14,10 +14,12 @@ import java.util.List;
 
 public class CustomInteractGenerator {
 
+    private String usecase;
     private String interactionId;
     private List<CUIEntity.Command> commandSet;
 
-    public CustomInteractGenerator(String interactionId) {
+    public CustomInteractGenerator(String usecase, String interactionId) {
+        this.usecase = usecase;
         this.interactionId = interactionId;
         commandSet = new ArrayList<>();
     }
@@ -31,11 +33,11 @@ public class CustomInteractGenerator {
     }
 
     public CUIEntity generateEntity() {
-        return new CUIEntity(interactionId,commandSet);
+        return new CUIEntity(usecase,interactionId,commandSet);
     }
 
     public String generateJsonStr() {
-        return JsonUtil.toJson(new CUIEntity(interactionId,commandSet));
+        return JsonUtil.toJson(new CUIEntity(usecase,interactionId,commandSet));
     }
 
 }

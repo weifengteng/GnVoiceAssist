@@ -11,6 +11,10 @@ import com.baidu.duer.dcs.androidsystemimpl.sms.ISmsImpl;
 import com.baidu.duer.dcs.api.IASROffLineConfigProvider;
 import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.devicemodule.contacts.ContactsDeviceModule;
+import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
 import com.baidu.duer.dcs.devicemodule.phonecall.PhoneCallDeviceModule;
 import com.baidu.duer.dcs.devicemodule.sms.SmsDeviceModule;
 import com.baidu.duer.dcs.devicemodule.ttsoutput.TtsOutputDeviceModule;
@@ -22,16 +26,19 @@ import com.baidu.duer.dcs.framework.internalApi.DcsConfig;
 import com.baidu.duer.dcs.framework.internalApi.IDcsRequestBodySentListener;
 import com.baidu.duer.dcs.framework.internalApi.IErrorListener;
 import com.baidu.duer.dcs.framework.message.DcsRequestBody;
+import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
 import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
 import com.baidu.duer.dcs.systeminterface.IAudioRecorder;
 import com.baidu.duer.dcs.systeminterface.IOauth;
 import com.gionee.gnvoiceassist.DirectiveListenerManager;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
+import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.gnvoiceassist.directiveListener.location.LocationHandler;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.AsrVoiceInputListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.IVoiceInputEventListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinputvolume.VoiceInputVolumeListener;
+import com.gionee.gnvoiceassist.message.model.CUIEntity;
 import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
@@ -188,6 +195,28 @@ public class RecognizeManager {
         if (mEngineStatus == EngineState.INITED) {
             SdkManagerImpl.getInstance().getInternalApi().speakOfflineQuery(text);
         }
+    }
+
+    public void startCustomInteraction(final CUIEntity cuiData) {
+        CustomUserInteractionDeviceModule.PayLoadGenerator generator =
+                new CustomUserInteractionDeviceModule.PayLoadGenerator() {
+            @Override
+            public Payload generateContextPayloadByInteractionState
+                    (CustomClicentContextMachineState customClicentContextMachineState) {
+                if(CustomUserInteractionManager.getInstance().shouldStopCurrentInteraction()) {
+                    return new CustomClientContextPayload(null);
+                }
+                Payload payload;
+                ArrayList<CustomClientContextHyperUtterace> hyperUtterances = new ArrayList<>();
+                for (CUIEntity.Command command:cuiData.getCommandSet()) {
+                    hyperUtterances.add(new CustomClientContextHyperUtterace(command.getUtterance(), command.getUrl()));
+                }
+                return new CustomClientContextPayload(false, hyperUtterances);
+            }
+        };
+        //TODO 更改自定义交互回调监听到各自的DirectiveListener中
+        CustomUserInteractionManager.getInstance().startCustomUserInteraction(generator,cuiData.getInteractionId(),null);
+
     }
 
     /**

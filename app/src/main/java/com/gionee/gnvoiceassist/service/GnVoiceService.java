@@ -12,10 +12,23 @@ import android.os.Message;
 import android.provider.ContactsContract;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import com.gionee.gnvoiceassist.basefunction.contact.ContactObserver;
+import com.gionee.gnvoiceassist.message.model.CUIEntity;
 import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
+import com.gionee.gnvoiceassist.message.model.UsecaseResponseEntity;
 import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
+import com.gionee.gnvoiceassist.usecase.AlarmUseCase;
+import com.gionee.gnvoiceassist.usecase.AppLaunchUseCase;
+import com.gionee.gnvoiceassist.usecase.ContactsUseCase;
+import com.gionee.gnvoiceassist.usecase.DeviceControlUseCase;
+import com.gionee.gnvoiceassist.usecase.GnMusicUseCase;
+import com.gionee.gnvoiceassist.usecase.GnRemoteUseCase;
+import com.gionee.gnvoiceassist.usecase.PhonecallUseCase;
+import com.gionee.gnvoiceassist.usecase.SmsSendUseCase;
+import com.gionee.gnvoiceassist.usecase.TimeQueryUseCase;
+import com.gionee.gnvoiceassist.usecase.UseCase;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
@@ -26,7 +39,7 @@ import java.util.List;
 
 import static com.gionee.gnvoiceassist.util.Preconditions.checkNotNull;
 
-public class GnVoiceService extends Service implements IDirectiveListenerCallback{
+public class GnVoiceService extends Service implements IDirectiveListenerCallback, UseCase.UsecaseCallback{
 
     private static final String TAG = GnVoiceService.class.getSimpleName();
     private static final int MSG_CONTACT_UPDATE = Constants.MSG_UPDATE_CONTACTS;
@@ -38,6 +51,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     private AudioManager mAudioManager;
     private AudioManager.OnAudioFocusChangeListener mAudioFocusChangeCallback;
     private GnVoiceServiceBinder mBinder;
+    private UsecaseHandler mUsecaseHandler;
 
     //消息传递
     private List<IVoiceServiceListener> mExportCallbacks;   //对外回调接口
@@ -150,6 +164,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     public void stopRecord() {
         mRecognizeManager.abortRecord(false);
         //TODO 恢复音频焦点
+
     }
 
     /**
@@ -171,22 +186,53 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
      * 处理RecognizeManager返回的语音识别结果
      * 选择调用HandlerDispatcher分发到具体的Usecase，或显示到View
      */
-    public void dispatchRecognizeResult() {
-
+    public void dispatchRecognizeResult(DirectiveResponseEntity directiveResult) {
+        try {
+            mUsecaseHandler.sendMessage(directiveResult);
+        } catch (Exception e) {
+            LogUtil.e(TAG,"dispatchRecognizeResult() 分发消息时出现错误。" + e);
+            e.printStackTrace();
+        }
     }
 
     /**
      * 处理Usecase返回的消息
+     * @param usecaseResult UseCase返回的实体类
      */
-    public void dispatchUsecaseResult() {
+    public void dispatchUsecaseResult(UsecaseResponseEntity usecaseResult) {
+        if (usecaseResult.isShouldSpeak()) {
+            //取出SpeakText
+            if (!TextUtils.isEmpty(usecaseResult.getSpeakText()))
+                playTts(usecaseResult.getSpeakText());
+        }
 
+        if (usecaseResult.isShouldRender() && usecaseResult.getRenderContent() != null) {
+            //取出RenderEntity
+            //分发到界面进行渲染
+            renderOnActivity(usecaseResult.getRenderContent());
+        }
+
+        if (usecaseResult.isInCustomInteractive() && usecaseResult.getCustomInteract() != null) {
+            //取出CUIEntity，信息分发到RecognizeManager，让其主持发起多轮交互
+            startCustomInteraction(usecaseResult.getCustomInteract());
+        }
     }
 
     /**
      * 处理从View层传递的请求
      */
-    public void dispatchViewRequest() {
+    public void dispatchViewRequest(RenderEntity renderData) {
 
+    }
+
+    private void startCustomInteraction(CUIEntity cuiData) {
+        mRecognizeManager.startCustomInteraction(cuiData);
+    }
+
+    private synchronized void renderOnActivity(RenderEntity renderData) {
+        for (IVoiceServiceListener listener:mExportCallbacks) {
+            listener.onRenderRequest(renderData);
+        }
     }
 
     private void initRecognizeManager() {
@@ -199,7 +245,17 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     }
 
     private void initEssentialComponent() {
-        //TODO 初始化UsecaseDispatcher
+        //TODO 初始化UsecaseHandler
+        mUsecaseHandler = new UsecaseHandler();
+        mUsecaseHandler.registerUsecase("applaunch",new AppLaunchUseCase(),this);
+        mUsecaseHandler.registerUsecase("phonecall",new PhonecallUseCase(),this);
+        mUsecaseHandler.registerUsecase("smssend",new SmsSendUseCase(),this);
+        mUsecaseHandler.registerUsecase("alarm",new AlarmUseCase(),this);
+        mUsecaseHandler.registerUsecase("contacts",new ContactsUseCase(),this);
+        mUsecaseHandler.registerUsecase("device_control", new DeviceControlUseCase(),this);
+        mUsecaseHandler.registerUsecase("gn_remote",new GnRemoteUseCase(),this);
+        mUsecaseHandler.registerUsecase("gn_music",new GnMusicUseCase(),this);
+        mUsecaseHandler.registerUsecase("time_query",new TimeQueryUseCase(),this);
 
         // 初始化ContentResolver
         mContentResolver = getContentResolver();    //是否要判断ContentResolver为空的情况？是否要使用ApplicationContext？
@@ -283,7 +339,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
 
     @Override
     public void onDirectiveResponse(DirectiveResponseEntity response) {
-
+        dispatchRecognizeResult(response);
     }
 
     @Override
@@ -294,6 +350,11 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     @Override
     public void onRenderResponse(RenderEntity response) {
 
+    }
+
+    @Override
+    public void onUsecaseResponse(UsecaseResponseEntity response) {
+        dispatchUsecaseResult(response);
     }
 
     /**

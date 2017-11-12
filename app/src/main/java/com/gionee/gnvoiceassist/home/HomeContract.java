@@ -2,6 +2,7 @@ package com.gionee.gnvoiceassist.home;
 
 import com.gionee.gnvoiceassist.archframework.BasePresenter;
 import com.gionee.gnvoiceassist.archframework.BaseView;
+import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
 import com.gionee.gnvoiceassist.util.Constants;
 
 /**
@@ -25,8 +26,9 @@ public interface HomeContract {
 
         /**
          * 转写文字、识别数据回调
+         * @param renderData 供屏幕显示的数据源
          */
-        void onResult();
+        void onResult(RenderEntity renderData);
 
     }
 
