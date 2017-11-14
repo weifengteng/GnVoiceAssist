@@ -12,6 +12,7 @@ import com.gionee.gnvoiceassist.DirectiveListenerManager;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
+import com.gionee.gnvoiceassist.basefunction.offlineasr.OfflineAsrHandler;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.phonecall.message.ContactInfo;
@@ -32,11 +33,15 @@ import java.util.Map;
  * Created by twf on 2017/8/22.
  */
 
-public class OfflineAsrListener extends BaseDirectiveListener implements IRecogListener,OffLineDeviceModule.IOfflineDirectiveListener {
+public class OfflineAsrListener extends BaseDirectiveListener
+        implements IRecogListener,OffLineDeviceModule.IOfflineDirectiveListener, OfflineAsrHandler.OfflineAsrHandlerCallback {
     public static final String TAG = OfflineAsrListener.class.getSimpleName();
+    public OfflineAsrHandler offlineAsrHandler;
 
     public OfflineAsrListener(IBaseFunction iBaseFunction) {
         super(iBaseFunction);
+        offlineAsrHandler = iBaseFunction.getOfflineAsrHandler();
+        offlineAsrHandler.setCallback(this);
     }
 
 //    @Override
@@ -177,88 +182,17 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
             }
 
             if(!TextUtils.isEmpty(domain)) {
-                if(TextUtils.equals(domain, "kookong")
-                        && TextUtils.equals(intent, "control")) {
-                    // teleControll
-                    if(iBaseFunction != null) {
-                        iBaseFunction.getKookongOperator().executeVoiceCmd(rawText);
-                    }
-                } else if(TextUtils.equals(domain, "music")
-                        && TextUtils.equals(intent, "bargin")) {
-                    // TODO: 实现音乐播放
-                    T.showShort("domain: music  intent: bargin");
-
-                }  else if(TextUtils.equals(domain, "app")
-                        && TextUtils.equals(intent, "launch")) {
-                    String appName = offlineResultMap.get(Constants.SLOT_APPNAME);
-                    if(iBaseFunction != null) {
-                        boolean isSuccess = iBaseFunction.getAppLaunchPresenter()
-                                .launchAppByName(appName);
-                        if(!isSuccess) {
-                            playTTS("系统中没有安装该应用", true);
-                        }
-                    }
-
-                }  else if(TextUtils.equals(domain, "device")
-                        && TextUtils.equals(intent, "control")) {
-                    // TODO: device control
-                    if(iBaseFunction != null) {
-                        iBaseFunction.getDeviceControlOperator().operateOfflineDeviceControlCmd(rawText);
-                    }
-
-                }  else if(TextUtils.equals(domain, "time")
-                        && TextUtils.equals(intent, "query")) {
-                    if(iBaseFunction != null) {
-                        iBaseFunction.getTimerQuery().queryNowTime();
-                    }
-
-                }  else if(TextUtils.equals(domain, "msg")
-                        && TextUtils.equals(intent, "send")) {
-                    String contactname = offlineResultMap.get(Constants.SLOT_CONTACTNAME);
-                    if (!TextUtils.isEmpty(contactname)) {
-                        //TODO: 发送短信
-                    }
-                    // TODO: msg send
-                }  else if(TextUtils.equals(domain, "msg")
-                        && TextUtils.equals(intent, "cancel")) {
-                    // TODO:
-
-                }  else if(TextUtils.equals(domain, "telephone")
-                        && TextUtils.equals(intent, "call")) {
-                    String contactName = offlineResultMap.get(Constants.SLOT_CONTACTNAME);
-                    HashMap<String,ArrayList<String>> phoneNumsMap = ContactProcessor.getContactProcessor().getNumberByName(contactName);
-                    List<String> phoneNumList = new ArrayList<>();
-                    for (String name:phoneNumsMap.keySet()) {
-                        phoneNumList.addAll(phoneNumsMap.get(name));
-                    }
-                    //TODO: 实现选联系人、选卡多轮交互
-                    if(!TextUtils.isEmpty(contactName)) {
-                        //TODO: 实现离线打电话功能选卡
-                        //若phoneNums为空值怎么办？
-                        if (phoneNumList.size() > 0) {
-                            iBaseFunction.getPhoneCallPresenter().setContactInfo(phoneNumList.get(0), "1");
-                            iBaseFunction.getPhoneCallPresenter().readyToCallPhone();
-                        }
-                    } else {
-                        // TODO: contact name is empty
-                    }
-                    // TODO:
-
-                }  else if(TextUtils.equals(domain, "telephone")
-                        && TextUtils.equals(intent, "cancel")) {
-                    //TODO: 实现取消打电话的功能
-                    iBaseFunction.getPhoneCallPresenter().cancelCallPhone();
-                }  else if(TextUtils.equals(domain, "select")
-                        && TextUtils.equals(intent, "operate")) {
-
-                }
+                offlineAsrHandler.dispatchOfflineAsr(domain,intent,rawText,offlineResultMap);
             }
         }
     }
 
     @Override
     public void onAsrFinishError(int i, String s, String s1) {
-
+        if(!NetWorkUtil.isNetworkConnected(GnVoiceAssistApplication.getInstance())) {
+            playTTS("没联网我懂得很少，你可以说打电话给小明或打开相机试试看", true);
+        }
+        LogUtil.e(TAG, "onAsrFinishError(), 错误信息：" + s + s1);
     }
 
     @Override
@@ -320,5 +254,11 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
                 this.onAsrFinish(recogResult);
             }
         }
+    }
+
+
+    @Override
+    public void requestSpeak(String text, boolean displaySpeakText) {
+        playTTS(text, displaySpeakText);
     }
 }

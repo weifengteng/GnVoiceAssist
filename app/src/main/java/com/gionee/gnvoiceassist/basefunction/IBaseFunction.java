@@ -9,6 +9,7 @@ import com.gionee.gnvoiceassist.basefunction.contact.ContactsPresenter;
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.DeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.kookong.KookongOperator;
 import com.gionee.gnvoiceassist.basefunction.music.GNMusicOperator;
+import com.gionee.gnvoiceassist.basefunction.offlineasr.OfflineAsrHandler;
 import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
 import com.gionee.gnvoiceassist.basefunction.recordcontrol.RecordController;
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
@@ -56,4 +57,6 @@ public interface IBaseFunction {
     IAudioPlayerStateListener getAudioPlayerStateListener();
 
     GNMusicOperator getGNMusicOperattor();
+
+    OfflineAsrHandler getOfflineAsrHandler();
 }

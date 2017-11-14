@@ -16,12 +16,14 @@
 package com.gionee.gnvoiceassist.sdk.module.offlineasr;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.baidu.duer.dcs.devicemodule.system.HandleDirectiveException;
 import com.baidu.duer.dcs.framework.BaseDeviceModule;
 import com.baidu.duer.dcs.framework.message.ClientContext;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.OffLineAsrDirective;
+import com.baidu.duer.dcs.util.SystemServiceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +36,6 @@ import java.util.List;
  */
 public class OffLineDeviceModule extends BaseDeviceModule {
     public static final String TAG = "OffLineDeviceModule";
-
     private List<IOfflineDirectiveListener> listeners = new ArrayList<>();
 
     public OffLineDeviceModule() {
@@ -54,9 +55,18 @@ public class OffLineDeviceModule extends BaseDeviceModule {
             OffLineAsrDirective offLineAsrDirective = (OffLineAsrDirective) directive;
             Log.d(TAG, "handleDirective: " + offLineAsrDirective.type);
             Log.d(TAG, "handleDirective: " + offLineAsrDirective.offLineData);
+            // 最终结果时提示一下，表示离线真的成功了。
+            if (offLineAsrDirective.type == 2) {
+                Toast.makeText(SystemServiceManager.getAppContext(), "离线识别成功.", Toast.LENGTH_SHORT).show();
+            }
             for (IOfflineDirectiveListener listener:listeners) {
                 listener.onDirectiveReceived((OffLineAsrDirective) directive);
             }
+        } else {
+            String message = "No device to handle the directive";
+            throw new HandleDirectiveException(
+                    HandleDirectiveException.ExceptionType.UNSUPPORTED_OPERATION,
+                    message);
         }
     }
 
@@ -65,11 +75,9 @@ public class OffLineDeviceModule extends BaseDeviceModule {
         return null;
     }
 
-
-
     @Override
     public void release() {
-        listeners.clear();
+
     }
 
     public void addOfflineDirectiveListener(IOfflineDirectiveListener listener) {

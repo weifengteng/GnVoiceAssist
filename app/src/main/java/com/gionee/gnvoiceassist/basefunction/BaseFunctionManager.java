@@ -13,6 +13,7 @@ import com.gionee.gnvoiceassist.basefunction.devicecontrol.DeviceControlOperator
 import com.gionee.gnvoiceassist.basefunction.devicecontrol.GioneeDeviceControlOperator;
 import com.gionee.gnvoiceassist.basefunction.kookong.KookongOperator;
 import com.gionee.gnvoiceassist.basefunction.music.GNMusicOperator;
+import com.gionee.gnvoiceassist.basefunction.offlineasr.OfflineAsrHandler;
 import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
 import com.gionee.gnvoiceassist.basefunction.recordcontrol.RecordController;
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
@@ -41,6 +42,7 @@ public class BaseFunctionManager implements IBaseFunction {
     private IVoiceInputEventListener voiceInputEventListener;
     private IAudioPlayerStateListener audioPlayerStateListener;
     private GNMusicOperator gnMusicOperator;
+    private OfflineAsrHandler offlineAsrHandler;
 
     public void setHandler(Handler handler) {
         this.mMainHandler = handler;
@@ -174,5 +176,13 @@ public class BaseFunctionManager implements IBaseFunction {
             gnMusicOperator = new GNMusicOperator(this);
         }
         return gnMusicOperator;
+    }
+
+    @Override
+    public OfflineAsrHandler getOfflineAsrHandler() {
+        if (offlineAsrHandler == null) {
+            offlineAsrHandler = new OfflineAsrHandler(this);
+        }
+        return offlineAsrHandler;
     }
 }

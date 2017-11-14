@@ -11,10 +11,17 @@ import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Data;
 import android.text.TextUtils;
 
+import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.contact.db.DataBaseAccess;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.CandidateCallee;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.CandidateCalleeNumber;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.ContactInfo;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.PhonecallByNamePayload;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.PhonecallByNumberPayload;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.SelectCalleePayload;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -273,6 +280,29 @@ public class ContactProcessor {
         }
         LogUtil.d(TAG, "ContactProcessor getNumberById mRawContactId = " + mRawContactId + ", phoneMap = " + phoneMap);
         return phoneMap;
+    }
+
+    public List<ContactInfo> assembleContactInfoByNumber(Map<String,ArrayList<String>> contactsMap) {
+        List<ContactInfo> infos = new ArrayList();
+        for (String contactName:contactsMap.keySet()) {
+            ContactInfo contactInfo = new ContactInfo();
+            contactInfo.setType(ContactInfo.TYPE_NUMBER);
+            contactInfo.setName(contactName);
+            ArrayList<String> numberList = contactsMap.get(contactName);
+            List<ContactInfo.NumberInfo> numberInfos = new ArrayList<>();
+            for (int i = 0; i < numberList.size(); i++) {
+                ContactInfo.NumberInfo numberInfo = new ContactInfo.NumberInfo();
+                numberInfo.setPhoneNumber(numberList.get(i));
+                //TODO 设置电话号码的number type
+                numberInfo.setNumberType("工作");
+                numberInfos.add(numberInfo);
+            }
+            contactInfo.setPhoneNumbersList(numberInfos);
+            contactInfo.setCarrierOprator("");
+            contactInfo.setSimIndex("");
+            infos.add(contactInfo);
+        }
+        return infos;
     }
 
     public String getContactPinYinByName(String name) {

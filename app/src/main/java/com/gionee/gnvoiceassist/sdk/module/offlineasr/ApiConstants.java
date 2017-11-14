@@ -15,11 +15,13 @@
  */
 package com.gionee.gnvoiceassist.sdk.module.offlineasr;
 
+import java.io.Serializable;
+
 /**
  * 离线识别的
  * <p>
  * Created by guxiuzhong@baidu.com on 2017/9/26.
  */
-public class ApiConstants {
+public class ApiConstants implements Serializable {
     public static final String NAMESPACE = "ai.dueros.device_interface.offline";
 }

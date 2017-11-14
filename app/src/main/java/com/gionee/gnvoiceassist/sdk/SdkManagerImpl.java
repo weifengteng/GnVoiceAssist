@@ -3,9 +3,11 @@ package com.gionee.gnvoiceassist.sdk;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.baidu.duer.dcs.androidsystemimpl.AudioRecordImpl;
 import com.baidu.duer.dcs.androidsystemimpl.player.MediaPlayerImpl;
+import com.baidu.duer.dcs.androidsystemimpl.wakeup.kitt.KittWakeUpImpl;
 import com.baidu.duer.dcs.api.DcsSdkBuilder;
 import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.devicemodule.audioplayer.AudioPlayerDeviceModule;
@@ -18,6 +20,8 @@ import com.baidu.duer.dcs.framework.IMessageSender;
 import com.baidu.duer.dcs.framework.InternalApi;
 import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.baidu.duer.dcs.framework.internalapi.IASROffLineConfigProvider;
+import com.baidu.duer.dcs.framework.internalapi.IWakeupAgent;
+import com.baidu.duer.dcs.framework.internalapi.IWakeupProvider;
 import com.baidu.duer.dcs.framework.location.Location;
 import com.baidu.duer.dcs.framework.message.DcsRequestBody;
 import com.baidu.duer.dcs.framework.message.Directive;
@@ -25,6 +29,7 @@ import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
 import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
 import com.baidu.duer.dcs.systeminterface.BaseAudioRecorder;
+import com.baidu.duer.dcs.systeminterface.BaseWakeup;
 import com.baidu.duer.dcs.systeminterface.IOauth;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
@@ -69,6 +74,7 @@ public class SdkManagerImpl implements ISdkManager {
 
     private IDcsSdk mDcsSdk;
     private Context mAppCtx;
+    private IWakeupAgent.IWakeupAgentListener wakeupAgentListener;
 
     private SdkManagerImpl() {
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
@@ -91,9 +97,37 @@ public class SdkManagerImpl implements ISdkManager {
         mDcsSdk.release();
     }
 
-    private void initSdk(Context context) {
+    private void initSdk(final Context context) {
         // 第一步初始化sdk
         BaseAudioRecorder audioRecorder = new AudioRecordImpl();
+
+        final BaseWakeup wakeup = new KittWakeUpImpl();
+        IWakeupProvider wakeupProvider = new IWakeupProvider() {
+            @Override
+            public String wakeupWords() {
+                return "你好小金";
+            }
+
+            @Override
+            public boolean enableWarning() {
+                return false;
+            }
+
+            @Override
+            public String warningSource() {
+                return "assets://alarm.mp3";
+            }
+
+            @Override
+            public boolean wakeAlways() {
+                return false;
+            }
+
+            @Override
+            public BaseWakeup wakeupImpl() {
+                return wakeup;
+            }
+        };
 
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
         String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
@@ -121,6 +155,7 @@ public class SdkManagerImpl implements ISdkManager {
                 .build();
 
         getInternalApi().setDebug(true);
+        getInternalApi().setWakeupProvider(wakeupProvider);
         getInternalApi().setAsrMode(GnVoiceAssistApplication.ASR_MODE);
         getInternalApi().setAsrOffLineConfigProvider(asrOffLineConfigProvider);
 
@@ -144,6 +179,24 @@ public class SdkManagerImpl implements ISdkManager {
                 LogUtil.w(TAG,"SDK login cancel!");
             }
         });
+
+        IWakeupAgent wakeupAgent = getInternalApi().getWakeupAgent();
+        if (wakeupAgent != null) {
+            wakeupAgentListener = new IWakeupAgent.IWakeupAgentListener() {
+                @Override
+                public void onWakeupSucceed() {
+                    Toast.makeText(context, "唤醒成功",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+
+                @Override
+                public void onWarningCompleted() {
+
+                }
+            };
+            wakeupAgent.addWakeupAgentListener(wakeupAgentListener);
+        }
 
     }
 

@@ -48,6 +48,6 @@ public class GnVoiceAssistApplication extends Application{
     }
 
     //全局控制
-    public static final int ASR_MODE = DcsConfig.ASR_MODE_OFFLINE_PRIORITY;
+    public static final int ASR_MODE = DcsConfig.ASR_MODE_OFFLINE;
 
 }
