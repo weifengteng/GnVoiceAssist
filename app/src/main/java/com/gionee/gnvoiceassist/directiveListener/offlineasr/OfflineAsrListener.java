@@ -34,14 +34,13 @@ import java.util.Map;
  */
 
 public class OfflineAsrListener extends BaseDirectiveListener
-        implements IRecogListener,OffLineDeviceModule.IOfflineDirectiveListener, OfflineAsrHandler.OfflineAsrHandlerCallback {
+        implements IRecogListener,OffLineDeviceModule.IOfflineDirectiveListener {
     public static final String TAG = OfflineAsrListener.class.getSimpleName();
     public OfflineAsrHandler offlineAsrHandler;
 
     public OfflineAsrListener(IBaseFunction iBaseFunction) {
         super(iBaseFunction);
         offlineAsrHandler = iBaseFunction.getOfflineAsrHandler();
-        offlineAsrHandler.setCallback(this);
     }
 
 //    @Override
@@ -254,11 +253,5 @@ public class OfflineAsrListener extends BaseDirectiveListener
                 this.onAsrFinish(recogResult);
             }
         }
-    }
-
-
-    @Override
-    public void requestSpeak(String text, boolean displaySpeakText) {
-        playTTS(text, displaySpeakText);
     }
 }

@@ -14,6 +14,7 @@ public class SharedData {
     private static SharedData mInstance;
     private String currDirectiveListenerClassName;
     private String desiredScene;
+    private String answerWord;
     private List<String> utteranceWords;
     private List<String> utteranceExtraInfo;
     private boolean isStopListenReceiving;
@@ -21,6 +22,7 @@ public class SharedData {
 
     private SharedData(){
         currentScene = Scene.IDLE;
+        answerWord = "";
         utteranceWords = new ArrayList<>();
         utteranceExtraInfo = new ArrayList<>();
     }
@@ -81,5 +83,13 @@ public class SharedData {
 
     public List<String> getUtteranceExtraInfo() {
         return utteranceExtraInfo;
+    }
+
+    public String getAnswerWord() {
+        return answerWord;
+    }
+
+    public void setAnswerWord(String answerWord) {
+        this.answerWord = answerWord;
     }
 }
