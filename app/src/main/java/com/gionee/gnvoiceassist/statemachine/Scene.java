@@ -7,6 +7,8 @@ package com.gionee.gnvoiceassist.statemachine;
 public enum Scene {
 
     APPLAUNCH_NEW_WAIT_CONFIRM("", ""),
+    WAIT_CHOOSE_PHONE_TYPE_TO_CALL("phonecall", "phonecall"),
+    WAIT_CHOOSE_SIM_TO_CALL("phonecall", "phonecall"),
 
     IDLE("all", "all"),
     STOCK("all", "all"),

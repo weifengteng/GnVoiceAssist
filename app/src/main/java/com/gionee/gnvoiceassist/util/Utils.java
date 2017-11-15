@@ -372,11 +372,14 @@ public class Utils {
                         return offlineResultMap;
                     }
 
-                    Map<String, Object> objectMap = (Map<String, Object>) resultMap.get("object");
+                    Map<String, String> objectMap = (Map<String, String>) resultMap.get("object");
                     LogUtil.d("DCSF", "--------------------parseOfflineResult:  objectMap= " + objectMap.values().toString());
                     if(objectMap != null && !objectMap.isEmpty()) {
                         for(String key : keyList) {
                             offlineResultMap.put(key, (String) objectMap.get(key));
+                        }
+                        for (String key : objectMap.keySet()) {
+                            offlineResultMap.put(key,objectMap.get(key));
                         }
                     }
                 }
