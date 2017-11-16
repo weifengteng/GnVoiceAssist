@@ -55,7 +55,7 @@ public class RenderEntity implements Serializable{
     /**
      * 链接数据结构
      */
-    class LinkModel {
+    public static class LinkModel {
         //链接提示文字
         public String anchorText;
         //链接地址
@@ -65,7 +65,7 @@ public class RenderEntity implements Serializable{
     /**
      * 图片数据结构
      */
-    class ImageModel {
+    public static class ImageModel {
         //图片地址
         public String src;
     }
@@ -73,7 +73,7 @@ public class RenderEntity implements Serializable{
     /**
      * 列表条目数据结构
      */
-    class ListItemModel {
+    public static class ListItemModel {
         //标题
         public String title;
         //内容
@@ -87,7 +87,7 @@ public class RenderEntity implements Serializable{
     /**
      * 选择器条目数据结构
      */
-    class ChooseItemModel {
+    public static class ChooseItemModel {
         //标题
         public String title;
         //内容
