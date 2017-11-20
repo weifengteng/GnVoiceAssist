@@ -72,6 +72,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.1'
     testCompile 'junit:junit:4.12'
 
+    compile(name: 'dlp', ext: 'aar')
+
     compile 'com.squareup.picasso:picasso:2.5.2'
     def jacksonVersion = '2.9.1'
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
