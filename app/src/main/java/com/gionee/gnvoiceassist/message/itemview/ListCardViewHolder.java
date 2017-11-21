@@ -32,7 +32,7 @@ import static com.gionee.gnvoiceassist.R.id.tel;
 public class ListCardViewHolder extends BaseViewHolder {
 
     private static final String TAG = ListCardViewHolder.class.getSimpleName();
-    LinearLayout mCustomLayout;
+    private LinearLayout mCustomLayout;
 
     public ListCardViewHolder(View itemView) {
         super(itemView);
@@ -85,7 +85,7 @@ public class ListCardViewHolder extends BaseViewHolder {
 
         String[] newTels = new String[]{content};
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         LinearLayout linearLayout = (LinearLayout) itemView.findViewById(tel);
         for(final String tel : newTels) {
             list.add(tel);

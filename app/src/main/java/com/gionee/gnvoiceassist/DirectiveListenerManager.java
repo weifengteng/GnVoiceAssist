@@ -13,6 +13,7 @@ import com.baidu.duer.dcs.devicemodule.ttsoutput.TtsOutputDeviceModule;
 import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
 import com.baidu.duer.dcs.framework.BaseDeviceModule;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
+import com.baidu.duer.dcs.framework.InternalApi;
 import com.baidu.duer.dcs.framework.internalApi.IDcsRequestBodySentListener;
 import com.baidu.duer.dcs.framework.internalApi.IDirectiveReceivedListener;
 import com.baidu.duer.dcs.framework.internalApi.IErrorListener;
@@ -58,6 +59,7 @@ import com.gionee.gnvoiceassist.util.T;
 public class DirectiveListenerManager {
     public final String TAG = DirectiveListenerManager.class.getSimpleName();
 
+    private InternalApi mInternalApi;
     private IDirectiveListenerCallback mCallback;
     private PhoneCallDirectiveListener phoneCallDirectiveListener;
     private SmsDirectiveListener smsDirectiveListener;
@@ -83,26 +85,14 @@ public class DirectiveListenerManager {
         initDirectiveListener();
     }
 
+    public void injectSdkInternalApi(InternalApi internalApi) {
+        //TODO 考虑如何更好地取得SDK的InternalApi依赖
+        mInternalApi = internalApi;
+    }
+
     public  void registerDirectiveListener() {
 //        DcsSDK.getInstance().getAsr().registOfflineListener(offlineAsrListener);
 //        DcsSDK.getInstance().getAudioRecord().registerRecordListener(voiceInputVolumeListener);
-
-        SdkManagerImpl.getInstance().getInternalApi().addDirectiveReceivedListener(new IDirectiveReceivedListener() {
-            @Override
-            public void onDirective(Directive directive) {
-                //TODO: 处理IDirectiveReceivedListener，评估是否可以拿掉
-
-                if (!TextUtils.isEmpty(directive.rawMessage)) {
-                    Log.v(TAG, "directive-rawMessage:" + directive.rawMessage);
-                }
-                String name = directive.getName();
-                Log.v(TAG, "directive-name:" + name);
-                Payload payload = directive.getPayload();
-                if ("StopListen".equals(name)) {
-
-                }
-            }
-        });
 
         //初始化对话回调接口
         ((AudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.audio_player")).addAudioPlayListener(audioPlayerListener);
@@ -201,6 +191,6 @@ public class DirectiveListenerManager {
     }
 
     private BaseDeviceModule getDeviceModule(String namespace) {
-        return SdkManagerImpl.getInstance().getInternalApi().getDeviceModule(namespace);
+        return mInternalApi.getDeviceModule(namespace);
     }
 }

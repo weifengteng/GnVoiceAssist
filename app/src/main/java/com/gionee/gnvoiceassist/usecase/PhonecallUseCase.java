@@ -92,7 +92,7 @@ public class PhonecallUseCase extends UseCase {
                 metadata.setSimSlot("0");
             }
         }
-        operation.call(metadata.getContacts().get(0).getNumber(),metadata.getSimSlot());
+        operation.call(metadata.getContacts().get(0).getNumberList().get(0),metadata.getSimSlot());
     }
 
     @CuiQuery("multi_number")
@@ -100,7 +100,7 @@ public class PhonecallUseCase extends UseCase {
         CustomInteractGenerator generator = new CustomInteractGenerator(getUseCaseName(),ACTION_CUI_MULTI_NUMBER);
         for (int i = 0; i < metadata.getContacts().size(); i++) {
             String url = CustomLinkSchema.LINK_PHONE +
-                    "num=" + metadata.getContacts().get(i).getNumber();
+                    "num=" + metadata.getContacts().get(i).getNumberList().get(0);
             if (!TextUtils.isEmpty(metadata.getSimSlot())) {
                 url += "#" + "sim=" + metadata.getSimSlot();
             }
@@ -114,9 +114,9 @@ public class PhonecallUseCase extends UseCase {
                 .setInCustomInteractive(true)
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
-                .setShouldRender(true)
+                .setShouldRender(false)
                 .setShouldSpeak(true)
-                .setRenderContent(null)
+                .setRenderContent(null) //TODO Render Content
                 .generateEntity();
 
         sendResponse(response);
@@ -124,7 +124,7 @@ public class PhonecallUseCase extends UseCase {
 
     @CuiQuery("select_sim")
     private void querySelectSim(PhonecallMetadata metadata) {
-        String baseUrl = CustomLinkSchema.LINK_PHONE + "num=" + metadata.getContacts().get(0).getNumber();  //TODO 这里直接取首条条目有没有问题？会不会出现空的情况？
+        String baseUrl = CustomLinkSchema.LINK_PHONE + "num=" + metadata.getContacts().get(0).getNumberList().get(0);  //TODO 这里直接取首条条目有没有问题？会不会出现空的情况？
         CUIEntity customInteract = new CustomInteractGenerator(getUseCaseName(),ACTION_QUERY_SIMSLOT)
                 .addCommand(baseUrl + "#sim=" + "1", "卡一", "卡伊")
                 .addCommand(baseUrl + "#sim=" + "2","卡二","卡而","卡饿")
@@ -146,7 +146,7 @@ public class PhonecallUseCase extends UseCase {
          * @param tel 电话号码
          */
         private void call(String tel, String simslot) {
-
+            //TODO 实现打电话功能
         }
 
         /**

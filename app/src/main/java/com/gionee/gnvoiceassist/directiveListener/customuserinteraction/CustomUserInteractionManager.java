@@ -19,6 +19,7 @@ public class CustomUserInteractionManager {
     private volatile boolean mCustomUserInteractionProcessing = false;
     private String mCurrCUInteractionId;
     private HashMap<String, ICUIDirectiveReceivedInterface> mCustomUserInteractionMap = new HashMap<>();
+    private String mCustomInteractorMetadata = "";
 
     public static CustomUserInteractionManager getInstance() {
         return ourInstance;
@@ -79,5 +80,17 @@ public class CustomUserInteractionManager {
     public boolean isCustomUserInteractionProcessing() {
 
         return mCustomUserInteractionProcessing;
+    }
+
+    public String getCustomInteractorMetadata() {
+        return mCustomInteractorMetadata;
+    }
+
+    public void setCustomInteractorMetadata(String metadata) {
+        mCustomInteractorMetadata = metadata;
+    }
+
+    public void clearCustomInteractorMetadata() {
+        mCustomInteractorMetadata = "";
     }
 }

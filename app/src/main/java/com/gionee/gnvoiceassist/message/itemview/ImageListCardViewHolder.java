@@ -20,7 +20,7 @@ public class ImageListCardViewHolder extends BaseViewHolder {
 
     private static final int MAX_DISPLAY_ITEM = 5;
 
-    LinearLayout llCustomPanel;
+    private LinearLayout llCustomPanel;
 
     public ImageListCardViewHolder(View itemView) {
         super(itemView);

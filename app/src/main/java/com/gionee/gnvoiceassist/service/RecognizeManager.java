@@ -109,9 +109,9 @@ public class RecognizeManager {
 
 
     private RecognizeManager() {
-        updateEngineState(EngineState.UNINIT);
         mLocalHandler = new RecognizeManagerHandler(this);
         mExportCallbacks = new ArrayList<>();
+        updateEngineState(EngineState.UNINIT);
     }
 
     public static synchronized RecognizeManager getInstance() {
@@ -262,10 +262,45 @@ public class RecognizeManager {
     private void initSdk() {
         if (mEngineStatus == EngineState.UNINIT) {
             updateEngineState(EngineState.INITING);
-            if (mInitTask == null) {
-                mInitTask = new InitEngineTask();
-            }
-            mInitTask.execute();
+//            if (mInitTask == null) {
+//                mInitTask = new InitEngineTask();
+//            }
+//            mInitTask.execute();
+
+            //初始化SDK（同步）
+            IAudioRecorder audioRecorder = new AudioRecordImpl();
+            String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
+            String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
+            String appId = "10290022";
+            String apiKey = "bw40xRdDGFclaSIGzgXgNFdG";
+            String secretKey = "AkP1XOuGVlrrML7dTs4WqW6bqj8lvv6C";
+            IOauth oauth = new BaiduOauthClientCredentialsImpl(clientId, clientSecret);
+            final ASROffLineConfig asrOffLineConfig = new ASROffLineConfig();
+//            asrOffLineConfig.offlineAsrSlots = loadOfflineAsrSlots();
+            asrOffLineConfig.asrAppId = appId;
+            asrOffLineConfig.asrAppKey = apiKey;
+            asrOffLineConfig.asrSecretKey = secretKey;
+
+            IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
+                @Override
+                public ASROffLineConfig get() {
+                    return asrOffLineConfig;
+                }
+            };
+            mDcsSdk = new DcsSdkImpl.Builder()
+                    .oauth(oauth)
+                    .clientId(clientId)
+                    .audioRecorder(audioRecorder)
+                    .asrMode(DcsConfig.ASR_MODE_ONLINE)
+                    .asrOffLineConfig(asrOffLineConfigProvider)
+                    .build();
+
+            initDeviceModule();
+
+
+            // 第三步，将sdk跑起来
+            mDcsSdk.run();
+            mLocalHandler.sendEmptyMessage(MSG_INNER_ENGINEINIT_SUCCESS);
         }
     }
 
@@ -402,6 +437,7 @@ public class RecognizeManager {
     private void registerDirectiveListener() {
         if (directiveListenerManager == null) {
             directiveListenerManager = new DirectiveListenerManager(mDirectiveCallback);
+            directiveListenerManager.injectSdkInternalApi(getSdkInternalApi());
         }
         directiveListenerManager.registerDirectiveListener();
     }

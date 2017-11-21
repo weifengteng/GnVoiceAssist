@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liyingheng on 10/24/17.
+ * 主页显示查询结果的列表（RecyclerView）
  */
 
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter {

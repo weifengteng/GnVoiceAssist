@@ -92,7 +92,7 @@ public class SmsSendUseCase extends UseCase {
         CustomInteractGenerator generator = new CustomInteractGenerator(getUseCaseName(),ACTION_CUI_MULTI_NUMBER);
         for (int i = 0; i < metadata.getDestination().size(); i++) {
             String url = CustomLinkSchema.LINK_SMS +
-                    "num=" + metadata.getDestination().get(i).getNumber();
+                    "num=" + metadata.getDestination().get(i).getNumberList().get(0);
             if (!TextUtils.isEmpty(metadata.getSimSlot())) {
                 url += "#" + "sim=" + metadata.getSimSlot();
             }
@@ -117,7 +117,7 @@ public class SmsSendUseCase extends UseCase {
 
     @CuiQuery
     private void querySimSlot(SmsSendMetadata metadata) {
-        String baseUrl = CustomLinkSchema.LINK_SMS + "num=" + metadata.getDestination().get(0).getNumber();  //TODO 这里直接取首条条目有没有问题？会不会出现空的情况？
+        String baseUrl = CustomLinkSchema.LINK_SMS + "num=" + metadata.getDestination().get(0);  //TODO 这里直接取首条条目有没有问题？会不会出现空的情况？
         CUIEntity customInteract = new CustomInteractGenerator(getUseCaseName(),ACTION_QUERY_SIMSLOT)
                 .addCommand(baseUrl + "#sim=" + "1", "卡一", "卡伊")
                 .addCommand(baseUrl + "#sim=" + "2","卡二","卡而","卡饿")

@@ -21,6 +21,29 @@ public class DirectiveResponseEntity {
         metadata = builder.metadata;
     }
 
+    public DirectiveResponseEntity(
+            String usecase,
+            String action,
+            String subAction,
+            boolean inCustomInteractive,
+            boolean shouldRender,
+            boolean shouldSpeak,
+            RenderEntity renderContent,
+            String speakText,
+            String metadata,
+            CUIEntity customInteract) {
+        this.usecase = usecase;
+        this.action = action;
+        this.subAction = subAction;
+        this.inCustomInteractive = inCustomInteractive;
+        this.shouldRender = shouldRender;
+        this.shouldSpeak = shouldSpeak;
+        this.renderContent = renderContent;
+        this.speakText = speakText;
+        this.metadata = metadata;
+        this.customInteract = customInteract;
+    }
+
     //用例场景
     private String usecase;
 

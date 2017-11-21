@@ -6,28 +6,32 @@ package com.gionee.gnvoiceassist.message.model.render;
 
 public class TextRenderEntity extends RenderEntity {
 
+    public TextRenderEntity() {
+        setType(Type.TextCard);
+    }
+
     //部分查询回调
-    private boolean partical;
+    private boolean partial;
 
     //对话识别码
-    private long conversationId;
+    private String conversationId;
 
     //是否为查询原文字
     private boolean queryText;
 
-    public boolean isPartical() {
-        return partical;
+    public boolean isPartial() {
+        return partial;
     }
 
-    public void setPartical(boolean partical) {
-        this.partical = partical;
+    public void setPartial(boolean partial) {
+        this.partial = partial;
     }
 
-    public long getConversationId() {
+    public String getConversationId() {
         return conversationId;
     }
 
-    public void setConversationId(long conversationId) {
+    public void setConversationId(String conversationId) {
         this.conversationId = conversationId;
     }
 

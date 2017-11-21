@@ -22,8 +22,8 @@ public class TextCardViewHolder extends BaseViewHolder {
 
     private static final String TAG = TextCardViewHolder.class.getSimpleName();
 
-    TextView tvContent;
-    TextView tvMoreInfo;
+    private TextView tvContent;
+    private TextView tvMoreInfo;
 
     private boolean query;
 
@@ -47,7 +47,7 @@ public class TextCardViewHolder extends BaseViewHolder {
 
     /**
      * 设置是否为原始查询文字
-     * @param query
+     * @param query 用户查询原始文字
      */
     public void setQueryText(boolean query) {
         this.query = query;

@@ -22,6 +22,7 @@ import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.message.io.RenderInfoGenerator;
 import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.message.HtmlPayload;
 import com.gionee.gnvoiceassist.sdk.module.screen.message.Image;
@@ -53,7 +54,7 @@ import java.util.Map;
 
 public class ScreenDirectiveListener extends BaseDirectiveListener implements ScreenDeviceModule.IScreenListener {
     public static final String TAG = ScreenDirectiveListener.class.getSimpleName();
-    private ScreenRender screenRender;
+//    private ScreenRender screenRender;
     private Context mAppCtx;
 
     public ScreenDirectiveListener(IDirectiveListenerCallback callback) {
@@ -184,7 +185,7 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
             RenderVoiceInputTextPayload.Type type = renderVoiceInputTextPayload.type;
             LogUtil.d(TAG, "asrResult= " + asrResult);
             if(type == RenderVoiceInputTextPayload.Type.FINAL) {
-                screenRender.renderQueryInScreen(asrResult);
+//                screenRender.renderQueryInScreen(asrResult);
             }
         }
     }
@@ -197,117 +198,62 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
     @Override
     public void onRenderCard(RenderCardPayload payload, int id) {
         String rawMessage = payload.content;
-//        String cardType = Utils.getValueByKey(rawMessage, Constants.TYPE);
         RenderCardPayload.Type cardType = payload.type;
-//        Map<String, Map<String, Object>> headerAndPayloadMap = Utils.getHeaderAndPayloadMap(rawMessage);
-//        Map<String, Object> payloadMap = headerAndPayloadMap.get(Constants.PAYLOAD);
         ObjectMapper mapper = new ObjectMapper();
 
-//        if(TextUtils.isEmpty(cardType)) {
-//            LogUtil.d(TAG, "cardType is null, return!");
-//            return;
-//        }
-
         switch (cardType) {
-            case TextCard:
-//                if(payload instanceof TextCardPayload) {
-//                    TextCardPayload textCardPayload = (TextCardPayload) payload;
-//                    Link link = textCardPayload.getLink();
-//                    if(link != null) {
-//                        SimpleTextCardItem stci = new SimpleTextCardItem(mAppCtx, textCardPayload){
-//                            @Override
-//                            public void onClick() {
-//                                super.onClick();
-//                            }
-//                        };
-//                        View textCardView = stci.getView();
-//                        screenRender.renderInfoPanel(textCardView);
-//                    } else {
-//                        screenRender.renderAnswerInScreen(textCardPayload.getContent());
-//                    }
-//                }
+            case TextCard: {
+                RenderInfoGenerator.GenerateText builder = new RenderInfoGenerator.GenerateText();
                 RenderCardPayload.LinkStructure link = payload.link;
                 if (link != null) {
-                    SimpleTextCardItem cardItem = new SimpleTextCardItem(mAppCtx,payload) {
-                        @Override
-                        public void onClick() {
-                            super.onClick();
-                        }
-                    };
-                    View textCardView = cardItem.getView();
-                    screenRender.renderInfoPanel(textCardView);
-                } else {
-                    screenRender.renderAnswerInScreen(payload.content);
+                    builder.setLink(link.anchorText, link.url); //RenderInfoPanel
+                }
+                builder.setContent(payload.content);        //RenderAnswer
+                builder.setQuery(false);
+                mCallback.onRenderResponse(builder.build());    //发送渲染信息回Service
+                break;
+            }
+            case StandardCard: {
+                //RenderInfoPanel
+                RenderInfoGenerator.GenerateStandard builder = new RenderInfoGenerator.GenerateStandard();
+                builder.setTitle(payload.title);
+                builder.setContent(payload.content);
+                if (payload.image != null) {
+                    builder.setImage(payload.image.src);
+                }
+                if (payload.link != null) {
+                    builder.setLink(payload.link.anchorText,payload.link.url);
+                }
+                mCallback.onRenderResponse(builder.build());
+                break;
+            }
+            case ListCard: {
+                //RenderInfoPanel
+                RenderInfoGenerator.GenerateList builder = new RenderInfoGenerator.GenerateList();
+                List<RenderCardPayload.ListItem> listCardItems = payload.list;
+                for (RenderCardPayload.ListItem item:listCardItems) {
+                    String imageSrc = "";
+                    String linkSrc = "";
+                    String anchorText = "";
+                    if (item.image != null) {
+                        imageSrc = item.image.src;
+                    }
+                    if (item.url != null) {
+                        linkSrc = item.url;
+                    }
+                    builder.addItem(item.title,item.content,imageSrc,linkSrc);
                 }
                 break;
-            case StandardCard:
-                //TODO
-//                if(payload instanceof StandardCardPayload) {
-//                    StandardCardPayload standardCardPayload = (StandardCardPayload) payload;
-//                    SimpleStandardCardItem ssci = new SimpleStandardCardItem(mAppCtx, standardCardPayload){
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//
-//                    screenRender.renderInfoPanel(ssci.getView());
-//                }
-                SimpleStandardCardItem ssci = new SimpleStandardCardItem(mAppCtx,payload) {
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-                screenRender.renderInfoPanel(ssci.getView());
-                break;
-
-            case ListCard:
-//                if(payload instanceof ListCardPayload) {
-//                    ListCardPayload listCardPayload = (ListCardPayload) payload;
-//                    List<ListCardItem> listCardItems = listCardPayload.getList();
-//                    SimpleListCardItem sri =  new SimpleListCardItem(mAppCtx, listCardItems){
-//
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//                    View view = sri.getView();
-//                    screenRender.renderInfoPanel(view);
-//                }
-                List<RenderCardPayload.ListItem> listCardItems = payload.list;
-                SimpleListCardItem slci = new SimpleListCardItem(mAppCtx, listCardItems) {
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-                View slciView = slci.getView();
-                screenRender.renderInfoPanel(slciView);
-                break;
-            case ImageListCard:
-                //TODO
-//                if(payload instanceof ImageListCardPayload) {
-//                    ImageListCardPayload imageListCardPayload = (ImageListCardPayload) payload;
-//                    List<Image> images = imageListCardPayload.getImageList();
-//                    SimpleImageListItem sili = new SimpleImageListItem(mAppCtx, images) {
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//                    screenRender.renderInfoPanel(sili.getView());
-//                }
+            }
+            case ImageListCard: {
+                //RenderInfoPanel
+                RenderInfoGenerator.GenerateImageList builder = new RenderInfoGenerator.GenerateImageList();
                 List<RenderCardPayload.ImageStructure> images = payload.imageList;
-                SimpleImageListItem sili = new SimpleImageListItem(mAppCtx, images) {
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-                screenRender.renderInfoPanel(sili.getView());
+                for (RenderCardPayload.ImageStructure image : images) {
+                    builder.addImage(image.src);
+                }
                 break;
+            }
             default:
                 break;
         }

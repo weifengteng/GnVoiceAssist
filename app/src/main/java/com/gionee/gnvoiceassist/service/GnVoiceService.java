@@ -35,6 +35,7 @@ import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.gionee.gnvoiceassist.util.Preconditions.checkNotNull;
@@ -42,7 +43,12 @@ import static com.gionee.gnvoiceassist.util.Preconditions.checkNotNull;
 public class GnVoiceService extends Service implements IDirectiveListenerCallback, UseCase.UsecaseCallback{
 
     private static final String TAG = GnVoiceService.class.getSimpleName();
+
     private static final int MSG_CONTACT_UPDATE = Constants.MSG_UPDATE_CONTACTS;
+    private static final int MSG_DIRECTIVE_RECEIVED = Constants.MSG_DIRECTIVE_RECEIVED;
+    private static final int MSG_RENDER_RECEIVED = Constants.MSG_RENDER_RECEIVED;
+    private static final int MSG_USECASE_RECEIVED = Constants.MSG_USECASE_RECEIVED;
+
 
     private RecognizeManager mRecognizeManager;
     private ContactObserver mContactObserver;
@@ -114,7 +120,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         mBinder = new GnVoiceServiceBinder();
         mExportCallbacks = new ArrayList<>();
         mLocalHandler = new InnerHandler(this);
-        mAudioManager = (AudioManager) getApplicationContext().getSystemService(AUDIO_SERVICE);
+
     }
 
     @Override
@@ -222,7 +228,8 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
      * 处理从View层传递的请求
      */
     public void dispatchViewRequest(RenderEntity renderData) {
-
+        //TODO 将底层返回结果返回到界面
+        renderOnActivity(renderData);
     }
 
     private void startCustomInteraction(CUIEntity cuiData) {
@@ -262,10 +269,11 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         // 初始化ContactObserver
         mContactObserver = new ContactObserver(mLocalHandler,GnVoiceService.this.getApplicationContext());
         mContentResolver.registerContentObserver(ContactsContract.Contacts.CONTENT_URI,true,mContactObserver);
-        // TODO 初始化Telephony监听器
+        // 初始化Telephony监听器
         mTelephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(mPhoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
-        //初始化音频焦点监听
+        // 初始化音频焦点监听
+        mAudioManager = (AudioManager) getApplicationContext().getSystemService(AUDIO_SERVICE);
         mAudioFocusChangeCallback = new AudioManager.OnAudioFocusChangeListener() {
             @Override
             public void onAudioFocusChange(int focusChange) {
@@ -339,7 +347,8 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
 
     @Override
     public void onDirectiveResponse(DirectiveResponseEntity response) {
-        dispatchRecognizeResult(response);
+        Message msg = mLocalHandler.obtainMessage(MSG_DIRECTIVE_RECEIVED,response);
+        mLocalHandler.sendMessage(msg);
     }
 
     @Override
@@ -349,12 +358,14 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
 
     @Override
     public void onRenderResponse(RenderEntity response) {
-
+        Message msg = mLocalHandler.obtainMessage(MSG_RENDER_RECEIVED);
+        mLocalHandler.sendMessage(msg);
     }
 
     @Override
     public void onUsecaseResponse(UsecaseResponseEntity response) {
-        dispatchUsecaseResult(response);
+        Message msg = mLocalHandler.obtainMessage(MSG_USECASE_RECEIVED,response);
+        mLocalHandler.sendMessage(msg);
     }
 
     /**
@@ -406,6 +417,15 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
             switch (msg.what) {
                 case MSG_CONTACT_UPDATE:
                     service.startUpdateContacts();
+                    break;
+                case MSG_RENDER_RECEIVED:
+                    service.dispatchViewRequest((RenderEntity) msg.obj);
+                    break;
+                case MSG_DIRECTIVE_RECEIVED:
+                    service.dispatchRecognizeResult((DirectiveResponseEntity) msg.obj);
+                    break;
+                case MSG_USECASE_RECEIVED:
+                    service.dispatchUsecaseResult((UsecaseResponseEntity) msg.obj);
                     break;
             }
         }

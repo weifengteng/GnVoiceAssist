@@ -3,10 +3,14 @@ package com.gionee.gnvoiceassist.message.model.render;
 import org.json.JSONObject;
 
 /**
- * Created by liyingheng on 11/7/17.
+ * 标准卡片的数据结构
  */
 
 public class StandardRenderEntity extends RenderEntity {
+
+    public StandardRenderEntity() {
+        this.setType(Type.StandardCard);
+    }
 
     //图片
     private ImageModel image;

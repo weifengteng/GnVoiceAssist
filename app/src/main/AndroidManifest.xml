@@ -54,6 +54,8 @@
         <service
             android:name=".service.ContactsUploadJob"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".service.GnVoiceService"/>
     </application>
 
 </manifest>

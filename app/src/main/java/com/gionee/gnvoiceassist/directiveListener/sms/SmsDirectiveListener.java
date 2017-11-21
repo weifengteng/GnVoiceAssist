@@ -43,7 +43,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
     public static final String CUI_SELECT_SMS_SIM = "cui_select_sms_sim";
 
     private List<SmsInfo> mSmsInfos;
-    private SmsSendPresenter smsSendPresenter;
+//    private SmsSendPresenter smsSendPresenter;
     private SmsSimQueryInterface smsSimQueryInterface;
 
     public SmsDirectiveListener(IDirectiveListenerCallback callback) {
@@ -56,7 +56,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
                 selectPhoneSim(phoneNumber, smsContent);
             }
         };
-        smsSendPresenter.setSmsSimQueryInterface(smsSimQueryInterface);
+//        smsSendPresenter.setSmsSimQueryInterface(smsSimQueryInterface);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
         if(TextUtils.equals(id, CUI_SELECT_SMS_CONTACT)) {
             if(MaxUpriseCounter.isMaxCount()) {
                 alert = "太累了,我先休息一下";
-                smsSendPresenter.disableContactSelect();
+//                smsSendPresenter.disableContactSelect();
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
                 playTTS(alert, true);
             } else if(TextUtils.isEmpty(alert)) {
@@ -88,7 +88,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
         } else if(TextUtils.equals(id, CUI_SELECT_SMS_SIM)) {
             if(MaxUpriseCounter.isMaxCount()) {
                 alert = "太累了,我先休息一下";
-                smsSendPresenter.disableChooseSimCard();
+//                smsSendPresenter.disableChooseSimCard();
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
                 playTTS(alert, true);
             } else if(TextUtils.isEmpty(alert)) {
@@ -117,23 +117,23 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
                 e.printStackTrace();
             }
             if(contents.length == 2) {
-                smsSendPresenter.disableContactSelect();
-                smsSendPresenter.setSmsParam(phoneNumber, msgContent);
-                if(smsSendPresenter.isNeedChoosePhoneSim()) {
-                    selectPhoneSim(phoneNumber, msgContent);
-                } else {
-                    CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
-                    smsSendPresenter.sendSms(phoneNumber, msgContent, "1");
-                }
+//                smsSendPresenter.disableContactSelect();
+//                smsSendPresenter.setSmsParam(phoneNumber, msgContent);
+//                if(smsSendPresenter.isNeedChoosePhoneSim()) {
+//                    selectPhoneSim(phoneNumber, msgContent);
+//                } else {
+//                    CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
+//                    smsSendPresenter.sendSms(phoneNumber, msgContent, "1");
+//                }
 
             } else if(contents.length == 3){
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
 
                 String simId = contents[2].substring(contents[2].indexOf("=") + 1);
                 LogUtil.d(TAG, "customUserInteractionDirectiveReceived phoneNumber= " + phoneNumber + " msgContent= " + msgContent + "simId= " + simId);
-                smsSendPresenter.disableChooseSimCard();
+//                smsSendPresenter.disableChooseSimCard();
                 // TODO:
-                smsSendPresenter.sendSms(phoneNumber, msgContent, simId);
+//                smsSendPresenter.sendSms(phoneNumber, msgContent, simId);
                 String asrResult = iBaseFunction.getScreenRender().getAsrResult();
                 if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
                     iBaseFunction.getScreenRender().renderQueryInScreen("卡一");
@@ -231,7 +231,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
             }
         };
         CustomUserInteractionManager.getInstance().startCustomUserInteraction(generator, CUI_SELECT_SMS_CONTACT, this);
-        smsSendPresenter.showSmsContactSelectView(mSmsInfos);
+//        smsSendPresenter.showSmsContactSelectView(mSmsInfos);
         playTTS("请问你要选择哪一个号码？", UTTER_SHOW_SELECT_SMS_CONTACT_VIEW, this, true);
     }
 
@@ -280,7 +280,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
             }
         };
         CustomUserInteractionManager.getInstance().startCustomUserInteraction(generator, CUI_SELECT_SMS_SIM, this);
-        smsSendPresenter.showPhoneSimChooseView();
+//        smsSendPresenter.showPhoneSimChooseView();
         playTTS("卡1发送还是卡2？", UTTER_SHOW_SELECT_SMS_SIM_VIEW, this, true);
     }
 

@@ -18,6 +18,11 @@ import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.message.io.DirectiveResponseGenerator;
+import com.gionee.gnvoiceassist.message.io.MetadataParser;
+import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
+import com.gionee.gnvoiceassist.message.model.metadata.ContactsMetadata;
+import com.gionee.gnvoiceassist.message.model.metadata.PhonecallMetadata;
 import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.SharedData;
 
@@ -39,7 +44,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     public static final String CUI_SELECT_PHONE_CONTACT = "cui_select_phone_contact";
     public static final String CUI_SELECT_PHONE_SIM = "cui_select_phone_sim";
     private List<ContactInfo> mContactInfos;
-    private PhoneCallPresenter mPhoneCallPresenter;
+//    private PhoneCallPresenter mPhoneCallPresenter;
     private PhoneCardSelectCallback mCardSelectCallback;
 
     public PhoneCallDirectiveListener(IDirectiveListenerCallback callback) {
@@ -48,7 +53,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
         mCardSelectCallback = new PhoneCardSelectCallback() {
             @Override
             public void onSelectContact(String phoneNumber) {
-                PhoneCallDirectiveListener.this.initiatePhoneSimSelect(phoneNumber);
+//                PhoneCallDirectiveListener.this.initiatePhoneSimSelect(phoneNumber);
             }
 
             @Override
@@ -61,13 +66,26 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     @Override
     public void phoneCallDirectiveReceived(List<ContactInfo> list, Directive directive) {
         LogUtil.d(TAG, "phoneCallDirectiveReceived: " + list.toString());
-//        directive.getName();
-//        PhonecallByNamePayload namePayload = (PhonecallByNamePayload) directive.getPayload();
-//        List<CandidateCallee> callees = namePayload.getCandidateCallees();
-//        mPhoneCallPresenter.procMultiNameContact((String[]) callees.toArray());
 
         mContactInfos = list;
-        initiatePhoneContactSelect(mContactInfos);
+        PhonecallMetadata metadata = new PhonecallMetadata();
+        for (ContactInfo info:list) {
+            ContactsMetadata transformContactInfo = new ContactsMetadata();
+            transformContactInfo.setName(info.getName());
+            List<String> numbers = new ArrayList<>();
+            for (ContactInfo.NumberInfo numberInfo:info.getPhoneNumbersList()) {
+                //TODO 这里结构很复杂，必须处理
+                numbers.add(numberInfo.getPhoneNumber());
+            }
+        }
+        DirectiveResponseEntity response = new DirectiveResponseGenerator("phonecall")
+                .setAction("request_call")
+                .setShouldSpeak(false)
+                .setShouldRender(false)
+                .setInCustomInteractive(false)
+                .setMetadata(metadata.toJson())
+                .build();
+        mCallback.onDirectiveResponse(response);
     }
 
     @Override
@@ -78,7 +96,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
         if(TextUtils.equals(id, CUI_SELECT_PHONE_CONTACT)) {
             if(MaxUpriseCounter.isMaxCount()) {
                 alert = "太累了,我先休息一下";
-                mPhoneCallPresenter.disableSelectContact();
+//                mPhoneCallPresenter.disableSelectContact();
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
                 playTTS(alert, true);
             } else if(TextUtils.isEmpty(alert)) {
@@ -89,7 +107,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
         } else if(TextUtils.equals(id, CUI_SELECT_PHONE_SIM)) {
             if(MaxUpriseCounter.isMaxCount()) {
                 alert = "太累了,我先休息一下";
-                mPhoneCallPresenter.disableSelectSimCard();
+//                mPhoneCallPresenter.disableSelectSimCard();
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
                 playTTS(alert, true);
             } else if(TextUtils.isEmpty(alert)) {
@@ -110,33 +128,55 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
             String phoneNumber = contents[0].substring(contents[0].indexOf("=") + 1);
             LogUtil.d(TAG, "customUserInteractionDirectiveReceived contents[0]= " + contents[0]);
 
+            PhonecallMetadata metadata = MetadataParser.toEntity
+                    (CustomUserInteractionManager.getInstance().getCustomInteractorMetadata(),PhonecallMetadata.class);
+            CustomUserInteractionManager.getInstance().clearCustomInteractorMetadata();
+
             if(contents.length == 1) {
-                mPhoneCallPresenter.disableSelectContact();
-                mPhoneCallPresenter.setContactInfo(phoneNumber, null);
-                if(mPhoneCallPresenter.isNeedChoosePhoneSim()) {
-                    initiatePhoneSimSelect(phoneNumber);
-                } else {
-                    CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
-//                    mPhoneCallPresenter.callPhone(phoneNumber, "1");
-//                    playTTS("正在为您呼叫", UTTER_READY_TO_CALL, this, true);
-                    mPhoneCallPresenter.readyToCallPhone();
-                }
+                //有电话号码
+//                mPhoneCallPresenter.disableSelectContact();
+//                mPhoneCallPresenter.setContactInfo(phoneNumber, null);
+
+//                if(mPhoneCallPresenter.isNeedChoosePhoneSim()) {
+//                    initiatePhoneSimSelect(phoneNumber);
+//                } else {
+//                    CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
+////                    mPhoneCallPresenter.callPhone(phoneNumber, "1");
+////                    playTTS("正在为您呼叫", UTTER_READY_TO_CALL, this, true);
+//                    mPhoneCallPresenter.readyToCallPhone();
+//                }
+
+                CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
+                List<ContactsMetadata> contactsInfos = new ArrayList<>();
+                contactsInfos.add(new ContactsMetadata("",phoneNumber));
+                metadata.setContacts(contactsInfos);
 
             } else if(contents.length == 2) {
-                CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
+                //选卡
+//                CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
                 String simId = contents[1].substring(contents[1].indexOf("=") + 1);
                 LogUtil.d(TAG, "customUserInteractionDirectiveReceived phoneNumber= " + phoneNumber + " simId= " + simId);
-                mPhoneCallPresenter.disableSelectSimCard();
+//                mPhoneCallPresenter.disableSelectSimCard();
 //                mPhoneCallPresenter.callPhone(phoneNumber, simId);
-                mPhoneCallPresenter.setContactInfo(phoneNumber, simId);
-                mPhoneCallPresenter.readyToCallPhone();
+//                mPhoneCallPresenter.setContactInfo(phoneNumber, simId);
+//                mPhoneCallPresenter.readyToCallPhone();
 //                playTTS("正在为您呼叫", UTTER_READY_TO_CALL, this, true);
-                String asrResult = iBaseFunction.getScreenRender().getAsrResult();
-                if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
-                    iBaseFunction.getScreenRender().renderQueryInScreen("卡一");
-                } else if(TextUtils.equals(asrResult, "卡尔") || TextUtils.equals(asrResult, "卡而")) {
-                    iBaseFunction.getScreenRender().renderQueryInScreen("卡二");
-                }
+
+                //设置选择的联系人
+                CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
+                List<ContactsMetadata> contactsInfos = new ArrayList<>();
+                contactsInfos.add(new ContactsMetadata("",phoneNumber));
+                metadata.setContacts(contactsInfos);
+                metadata.setSimSlot(simId);
+
+                //TODO 取得Query的内容
+
+//                String asrResult = iBaseFunction.getScreenRender().getAsrResult();  //取得Query的内容
+//                if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
+//                    iBaseFunction.getScreenRender().renderQueryInScreen("卡一");
+//                } else if(TextUtils.equals(asrResult, "卡尔") || TextUtils.equals(asrResult, "卡而")) {
+//                    iBaseFunction.getScreenRender().renderQueryInScreen("卡二");
+//                }
             }
         }
     }
@@ -175,104 +215,6 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     public void onDestroy() {
 
     }
-
-    /**
-     * 选联系人适配，此处需要手动进行语音识别开启，并提示打给谁的tts播报。
-     */
-    private void initiatePhoneContactSelect(final List<ContactInfo> contactInfos) {
-        CustomUserInteractionDeviceModule.PayLoadGenerator generator = new CustomUserInteractionDeviceModule.PayLoadGenerator() {
-            @Override
-            public Payload generateContextPayloadByInteractionState(CustomClicentContextMachineState state) {
-                LogUtil.d(TAG, "generateContextPayloadByInteractionState");
-                if(CustomUserInteractionManager.getInstance().shouldStopCurrentInteraction()) {
-                    return new CustomClientContextPayload(null);
-                }
-
-                int index;
-                Payload payload;
-                ArrayList<CustomClientContextHyperUtterace> hyperUtterances = new ArrayList<>();
-
-                for (int i = 0; i < contactInfos.size(); i++) {
-                    ContactInfo contactInfo = contactInfos.get(i);
-                    List<ContactInfo.NumberInfo> numberInfos = contactInfo.getPhoneNumbersList();
-                    if (numberInfos != null && numberInfos.size() > 0) {
-                        for (int j = 0; j < numberInfos.size(); j++) {
-                            List<String> utterances = new ArrayList<String>();
-                            index = i + j + 1;
-                            utterances.add("第" + index + "条");
-                            // 开始拼凑phone协议schema
-                            String phoneNumber = numberInfos.get(j).getPhoneNumber();
-                            String simIndex = contactInfo.getSimIndex();
-                            String carrier = contactInfo.getCarrierOprator();
-                            String url = CustomLinkSchema.LINK_PHONE +
-                                    "num=" + phoneNumber;
-                            if (!TextUtils.isEmpty(simIndex)) {
-                                url += "#" + "sim=" + simIndex;
-                            }
-                            if (!TextUtils.isEmpty(carrier)) {
-                                url += "#" + "carrier=" + carrier;
-
-                            }
-                            LogUtil.d(TAG, "initiatePhoneContactSelect url= " + url + " index= " + index);
-                            CustomClientContextHyperUtterace customClientContextHyperUtterace =
-                                    new CustomClientContextHyperUtterace(utterances, url);
-                            hyperUtterances.add(customClientContextHyperUtterace);
-                        }
-                    }
-                }
-                payload = new CustomClientContextPayload(false, hyperUtterances);
-                return payload;
-            }
-        };
-
-        CustomUserInteractionManager.getInstance().startCustomUserInteraction(generator, CUI_SELECT_PHONE_CONTACT, PhoneCallDirectiveListener.this);
-        mPhoneCallPresenter.showPhoneContactSelectView(mContactInfos);
-        playTTS("选择第几条？", UTTER_SHOW_SELECT_PHONE_CONTACT_VIEW, this, true);
-    }
-
-    //打电话场景的选卡
-    private void initiatePhoneSimSelect(final String phoneNumber) {
-        CustomUserInteractionDeviceModule.PayLoadGenerator generator =
-                new CustomUserInteractionDeviceModule.PayLoadGenerator(){
-
-                    @Override
-                    public Payload generateContextPayloadByInteractionState(CustomClicentContextMachineState customClicentContextMachineState) {
-                        if(CustomUserInteractionManager.getInstance().shouldStopCurrentInteraction()) {
-                            // 达到最大多轮交互次数，跳出自定义多轮交互状态
-                            return new CustomClientContextPayload(null);
-                        }
-
-                        Payload payload;
-                        ArrayList<CustomClientContextHyperUtterace> hyperUtterances = new ArrayList<>();
-                        for(int i=1; i < 3; i++) {
-                            List<String> utterances = new ArrayList<>();
-                            utterances.add("卡" + i);
-                            utterances.add("sim卡" + i);
-                            if(i == 1) {
-                                utterances.add("卡已");
-                                utterances.add("卡伊");
-                            }else if(i == 2) {
-                                utterances.add("卡尔");
-                                utterances.add("卡而");
-                            }
-                            String url = CustomLinkSchema.LINK_PHONE;
-                            url += "num=" + phoneNumber;
-                            url += "#sim=" + i;
-                            CustomClientContextHyperUtterace customClientContextHyperUtterance =
-                                    new CustomClientContextHyperUtterace(utterances, url);
-                            hyperUtterances.add(customClientContextHyperUtterance);
-                        }
-
-                        payload = new CustomClientContextPayload(false, hyperUtterances);
-                        return payload;
-                    }
-                };
-        // 上传自定义交互
-        CustomUserInteractionManager.getInstance().startCustomUserInteraction(generator, CUI_SELECT_PHONE_SIM, this);
-        mPhoneCallPresenter.showPhoneSimChooseView();
-        playTTS("卡1呼叫还是卡2？", UTTER_SHOW_SELECT_PHONE_SIM_VIEW,this, true);
-    }
-
 
     //PhonecallPresenter的回调接口
     public interface PhoneCardSelectCallback {

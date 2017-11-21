@@ -32,7 +32,7 @@ public class RenderEntity implements Serializable{
         return type;
     }
 
-    public void setType(Type type) {
+    protected void setType(Type type) {
         this.type = type;
     }
 
@@ -95,7 +95,5 @@ public class RenderEntity implements Serializable{
         //元数据
         public String metadata;
     }
-
-
 
 }

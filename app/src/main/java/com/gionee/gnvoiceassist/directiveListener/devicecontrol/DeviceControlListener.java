@@ -5,6 +5,9 @@ import android.util.Log;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.message.io.DirectiveResponseGenerator;
+import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
+import com.gionee.gnvoiceassist.message.model.metadata.DeviceControlMetadata;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.Constants;
@@ -31,7 +34,20 @@ public class DeviceControlListener extends BaseDirectiveListener implements Devi
         String funcName = map.get(Constants.FUN_OPERATOR);
         String state = map.get(Constants.FUN_STATE);
         boolean openOrClose = state.equals("true");
-        iBaseFunction.getDeviceControlOperator().operateOnlineDeviceControlCmd(funcName, openOrClose);
+//        iBaseFunction.getDeviceControlOperator().operateOnlineDeviceControlCmd(funcName, openOrClose);
+
+        DeviceControlMetadata metadata = new DeviceControlMetadata();
+        metadata.setCommand(funcName);
+        metadata.setState(openOrClose);
+
+        DirectiveResponseEntity response = new DirectiveResponseGenerator("device_control")
+                .setAction("device_control")
+                .setInCustomInteractive(false)
+                .setShouldRender(false)
+                .setShouldSpeak(false)
+                .setMetadata(metadata.toJson())
+                .build();
+        mCallback.onDirectiveResponse(response);
     }
 
     @Override

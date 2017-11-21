@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
 
 /**
- * Created by liyingheng on 11/16/17.
+ * 含选项选择的卡片ViewHolder。如下载还是取消，选择第几个联系人，卡一还是卡二等选择场景会用到
  */
 
 public class ChooseCardViewHolder extends BaseViewHolder {

@@ -18,7 +18,9 @@ import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.message.io.DirectiveResponseGenerator;
 import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
+import com.gionee.gnvoiceassist.message.model.metadata.AppLaunchMetadata;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.SharedData;
@@ -43,7 +45,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
     public static final String USECASE_NAME = "applaunch";
 
 
-    private AppLaunchPresenter mAppLaunchPresenter;
+//    private AppLaunchPresenter mAppLaunchPresenter;
 
     public AppLauncherListener(IDirectiveListenerCallback callback) {
         super(callback);
@@ -66,12 +68,17 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
 //            confirmDownloadOrNot(appName);
 //        }
 
-        DirectiveResponseEntity.Builder builder = new DirectiveResponseEntity.Builder(USECASE_NAME);
+        AppLaunchMetadata metadata = new AppLaunchMetadata();
+        metadata.setAppName(appName);
+        metadata.setPackageName(packageName);
+
+        DirectiveResponseGenerator builder = new DirectiveResponseGenerator(USECASE_NAME);
         DirectiveResponseEntity response = builder
                 .setAction("launch_app")
                 .setInCustomInteractive(false)
                 .setShouldRender(false)
                 .setShouldSpeak(false)
+                .setMetadata(metadata.toJson())
                 .build();
         mCallback.onDirectiveResponse(response);
     }
@@ -83,22 +90,46 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
 
 //        DcsSDK.getInstance().getAppLauncher().
 //                launchAppByDeepLink(iBaseFunction.getHomeActivity(), deeplink);
-        mAppLaunchPresenter.launchAppByDeepLink(deeplink);
+
+//        mAppLaunchPresenter.launchAppByDeepLink(deeplink);
+        AppLaunchMetadata metadata = new AppLaunchMetadata();
+        metadata.setDeeplink(deeplink);
+        DirectiveResponseEntity response = new DirectiveResponseGenerator(USECASE_NAME)
+                .setAction("launch_app")
+                .setInCustomInteractive(false)
+                .setShouldRender(false)
+                .setShouldSpeak(false)
+                .setMetadata(metadata.toJson())
+                .build();
+
+        mCallback.onDirectiveResponse(response);
+
     }
 
     @Override
     public void handleCUInteractionTargetUrl(String id, String url) {
         super.handleCUInteractionTargetUrl(id, url);
         if(TextUtils.equals(id, CUI_QUERY_DOWNLOAD_APP)) {
+            String metadataStr = CustomUserInteractionManager.getInstance().getCustomInteractorMetadata();
+            CustomUserInteractionManager.getInstance().clearCustomInteractorMetadata();
+            DirectiveResponseGenerator builder = new DirectiveResponseGenerator(USECASE_NAME)
+                    .setInCustomInteractive(false)
+                    .setAction("cui_download_app")
+                    .setMetadata(metadataStr)
+                    .setShouldRender(false)
+                    .setShouldSpeak(false);
             if(url.startsWith(CustomLinkSchema.LINK_APP_DOWNLOAD)){
                 int beginIdx = url.indexOf(":");
                 String realContent = url.substring(beginIdx + 3);
                 LogUtil.d(TAG, "customUserInteractionDirectiveReceived realContent = " + realContent);
                 if(TextUtils.equals(realContent, DOWNLOAD_CANCEL)) {
-                    mAppLaunchPresenter.cancelDownload();
+                    builder.setSubAction("cancel");
+//                    mAppLaunchPresenter.cancelDownload();
                 } else if(TextUtils.equals(realContent, DOWNLOAD_CONFIRM)) {
-                    mAppLaunchPresenter.confirmDownload();
+//                    mAppLaunchPresenter.confirmDownload();
+                    builder.setSubAction("confirm");
                 }
+                mCallback.onDirectiveResponse(builder.build());
             }
         }
     }
@@ -111,7 +142,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
             MaxUpriseCounter.increaseUpriseCount();
             if(MaxUpriseCounter.isMaxCount()) {
                 alert = "太累了,我先休息一下";
-                mAppLaunchPresenter.disappearSelectButton();
+//                mAppLaunchPresenter.disappearSelectButton();
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
                 playTTS(alert, true);
                 return;
@@ -194,6 +225,6 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
                 .startCustomUserInteraction(generator, CUI_QUERY_DOWNLOAD_APP, this);
 
         playTTS("没有安装" + appName + ",下载还是取消？", UTTER_SHOW_CONFIRM_DIALOG, this, false);
-        mAppLaunchPresenter.tipInstallOrCancel();
+//        mAppLaunchPresenter.tipInstallOrCancel();
     }
 }

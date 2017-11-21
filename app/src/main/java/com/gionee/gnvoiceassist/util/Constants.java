@@ -103,6 +103,9 @@ public class Constants {
     public static final int MSG_UPDATE_INPUTVOLUME = 0x1015;
     public static final int MSG_UPDATE_ENGINE_STATE = 0x1016;
     public static final int MSG_UPDATE_RECOGNIZE_STATE = 0x1017;
+    public static final int MSG_DIRECTIVE_RECEIVED = 0x1018;        //收到底层Directive的消息
+    public static final int MSG_RENDER_RECEIVED = 0x1019;           //收到渲染请求的消息
+    public static final int MSG_USECASE_RECEIVED = 0x1020;
 
     public static enum RecognitionState {
         LISTENING,THINKING,SPEAKING,IDLE

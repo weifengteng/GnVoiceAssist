@@ -16,11 +16,11 @@ import com.gionee.gnvoiceassist.util.T;
  */
 
 public class LocalAudioPlayerListener extends BaseDirectiveListener implements LocalAudioPlayerDeviceModule.ILocalAudioPlayerListener {
-    private GNMusicOperator mGnMusicOperator;
+//    private GNMusicOperator mGnMusicOperator;
 
     public LocalAudioPlayerListener(IDirectiveListenerCallback callback) {
         super(callback);
-        mGnMusicOperator = iBaseFunction.getGNMusicOperattor();
+//        mGnMusicOperator = iBaseFunction.getGNMusicOperattor();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class LocalAudioPlayerListener extends BaseDirectiveListener implements L
             String query = searchAndPlayMusicPayload.getQuery();
             String song = searchAndPlayMusicPayload.getSong();
             String singer = searchAndPlayMusicPayload.getSinger().get(0);
-            mGnMusicOperator.playMusic(singer, song);
+//            mGnMusicOperator.playMusic(singer, song);
             T.showShort("搜索并播放音乐！ song= " + song + " singer= " + singer);
         }
     }
@@ -49,7 +49,7 @@ public class LocalAudioPlayerListener extends BaseDirectiveListener implements L
 
     @Override
     public void onDestroy() {
-        mGnMusicOperator.onDestroy();
-        mGnMusicOperator = null;
+//        mGnMusicOperator.onDestroy();
+//        mGnMusicOperator = null;
     }
 }

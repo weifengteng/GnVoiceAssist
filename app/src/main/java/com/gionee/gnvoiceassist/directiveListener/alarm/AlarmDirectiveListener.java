@@ -5,6 +5,10 @@ import com.gionee.gnvoiceassist.basefunction.BaseFunctionManager;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.alarm.IAlarmPresenter;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.message.io.DirectiveResponseGenerator;
+import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
+import com.gionee.gnvoiceassist.message.model.metadata.AlarmMetadata;
+import com.gionee.gnvoiceassist.message.model.metadata.TimerMetadata;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.alarms.message.SetAlarmPayload;
 import com.gionee.gnvoiceassist.sdk.module.alarms.message.SetTimerPayload;
@@ -23,7 +27,7 @@ import java.util.List;
 
 public class AlarmDirectiveListener extends BaseDirectiveListener implements AlarmsDeviceModule.IAlarmDirectiveListener {
     public static final String TAG = AlarmDirectiveListener.class.getSimpleName();
-    public IAlarmPresenter mAlarmPresenter;
+//    public IAlarmPresenter mAlarmPresenter;
 
     public AlarmDirectiveListener(IDirectiveListenerCallback callback) {
         super(callback);
@@ -63,7 +67,21 @@ public class AlarmDirectiveListener extends BaseDirectiveListener implements Ala
                     break;
             }
         }
-        mAlarmPresenter.setAlarm(setAlarmPayload.getHour(),setAlarmPayload.getMinutes(), (ArrayList<Integer>) days,setAlarmPayload.getMessage());
+//        mAlarmPresenter.setAlarm(setAlarmPayload.getHour(),setAlarmPayload.getMinutes(), (ArrayList<Integer>) days,setAlarmPayload.getMessage());
+        AlarmMetadata metadata = new AlarmMetadata();
+        metadata.setHour(setAlarmPayload.getHour());
+        metadata.setMinute(setAlarmPayload.getMinutes());
+        metadata.setTriggerDays((ArrayList<Integer>) days);
+        metadata.setMessage(setAlarmPayload.getMessage());
+        DirectiveResponseEntity response = new DirectiveResponseGenerator("alarm")
+                .setAction("request_alarm")
+                .setSubAction("set")
+                .setShouldSpeak(false)
+                .setShouldRender(false)
+                .setInCustomInteractive(false)
+                .setMetadata(metadata.toJson())
+                .build();
+        mCallback.onDirectiveResponse(response);
     }
 
     @Override
@@ -74,6 +92,18 @@ public class AlarmDirectiveListener extends BaseDirectiveListener implements Ala
     @Override
     public void onSetTimerDirectiveReceived(SetTimerPayload setTimerPayload) {
         LogUtil.d("DCSF-----", TAG + " onSetTimerDirectiveReceived: ");
+        TimerMetadata metadata = new TimerMetadata();
+        metadata.setLength(setTimerPayload.getLength());
+        metadata.setMessage(setTimerPayload.getMessage());
+        DirectiveResponseEntity response = new DirectiveResponseGenerator("alarm")
+                .setAction("request_timer")
+                .setSubAction("set")
+                .setShouldSpeak(false)
+                .setShouldRender(false)
+                .setInCustomInteractive(false)
+                .setMetadata(metadata.toJson())
+                .build();
+        mCallback.onDirectiveResponse(response);
     }
 
     @Override

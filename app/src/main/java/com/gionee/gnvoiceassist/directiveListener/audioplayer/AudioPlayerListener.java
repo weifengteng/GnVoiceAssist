@@ -12,6 +12,7 @@ import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 public class AudioPlayerListener extends BaseDirectiveListener implements IMediaPlayer.IMediaPlayerListener{
     private IAudioPlayerStateListener iAudioPlayerState;
 
+    //TODO 这个类怎么解决？
     public AudioPlayerListener(IDirectiveListenerCallback callback) {
         super(callback);
 //        this.iAudioPlayerState = baseFunction.getAudioPlayerStateListener();

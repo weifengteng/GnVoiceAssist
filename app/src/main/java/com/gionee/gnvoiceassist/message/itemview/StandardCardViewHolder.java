@@ -29,10 +29,10 @@ public class StandardCardViewHolder extends BaseViewHolder {
     private static final String TAG = StandardCardViewHolder.class.getSimpleName();
     private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 
-    TextView tvTitle;
-    TextView tvContent;
-    TextView tvMoreInfo;
-    ImageButton ivImage;
+    private TextView tvTitle;
+    private TextView tvContent;
+    private TextView tvMoreInfo;
+    private ImageButton ivImage;
 
     public StandardCardViewHolder(View itemView) {
         super(itemView);

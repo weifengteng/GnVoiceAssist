@@ -3,10 +3,14 @@ package com.gionee.gnvoiceassist.message.model.render;
 import java.util.List;
 
 /**
- * Created by liyingheng on 11/16/17.
+ * 图片列表卡片的数据结构
  */
 
 public class ImageListRenderEntity extends RenderEntity {
+
+    public ImageListRenderEntity() {
+        this.setType(Type.ImageListCard);
+    }
 
     private List<ImageModel> imageList;
 

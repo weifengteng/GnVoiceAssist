@@ -1,12 +1,13 @@
 package com.gionee.gnvoiceassist.message.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by liyingheng on 11/8/17.
  */
 
-public class CUIEntity {
+public class CUIEntity implements Serializable{
 
     public CUIEntity(String usecase, String interactionId, List<Command> commandSet) {
         this.usecase = usecase;

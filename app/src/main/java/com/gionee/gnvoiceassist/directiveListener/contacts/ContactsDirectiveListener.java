@@ -34,15 +34,13 @@ public class ContactsDirectiveListener extends BaseDirectiveListener implements 
             SearchContactPayload searchContactPayload = (SearchContactPayload)directive.getPayload();
             List<String> nameList = searchContactPayload.getCandidateNames();
             LogUtil.d(TAG, "DCSF****************SearchContact: " + nameList.toString());
-            iBaseFunction.getContactsPresenter().searchContact(nameList);
+//            iBaseFunction.getContactsPresenter().searchContact(nameList);
         } else if(TextUtils.equals(directiveName, CREATECONTACT)) {
             CreateContactPayload createContactPayload = (CreateContactPayload) directive.getPayload();
             String name = createContactPayload.getContactName();
             String phoneNumber = createContactPayload.getPhoneNumber();
-            iBaseFunction.getContactsPresenter().createContact(name, phoneNumber);
+//            iBaseFunction.getContactsPresenter().createContact(name, phoneNumber);
         }
-
-
 
     }
 
