@@ -13,6 +13,9 @@ import com.gionee.gnvoiceassist.message.model.metadata.PhonecallMetadata;
 import com.gionee.gnvoiceassist.usecase.annotation.CuiQuery;
 import com.gionee.gnvoiceassist.usecase.annotation.DirectiveResult;
 import com.gionee.gnvoiceassist.usecase.annotation.Operation;
+import com.gionee.gnvoiceassist.util.constants.UsecaseConstants.UsecaseAlias;
+import static com.gionee.gnvoiceassist.util.constants.ActionConstants.PhonecallAction.*;
+
 
 /**
  * Created by liyingheng on 11/9/17.
@@ -21,14 +24,6 @@ import com.gionee.gnvoiceassist.usecase.annotation.Operation;
 public class PhonecallUseCase extends UseCase {
 
     private static final String USECASE_ALIAS = "phonecall";
-    //传入的action
-    public static final String ACTION_REQUEST_CALL = "request_call";
-    public static final String ACTION_CUI_SIMSLOT = "cui_simslot";
-    public static final String ACTION_CUI_MULTI_NUMBER = "cui_multi_number";
-    //发出的action
-    public static final String ACTION_QUERY_SIMSLOT = "query_simslot";
-    public static final String ACTION_QUERY_MULTI_NUMBER = "query_multi_number";
-    public static final String ACTION_RESULT_CALL = "result_call";
 
     @Override
     public void handleMessage(DirectiveResponseEntity message) {
@@ -50,7 +45,7 @@ public class PhonecallUseCase extends UseCase {
 
     @Override
     public String getUseCaseName() {
-        return USECASE_ALIAS;
+        return UsecaseAlias.PHONECALL;
     }
 
     @DirectiveResult

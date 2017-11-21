@@ -13,6 +13,8 @@ import com.gionee.gnvoiceassist.message.model.metadata.SmsSendMetadata;
 import com.gionee.gnvoiceassist.usecase.annotation.CuiQuery;
 import com.gionee.gnvoiceassist.usecase.annotation.CuiResult;
 import com.gionee.gnvoiceassist.usecase.annotation.DirectiveResult;
+import com.gionee.gnvoiceassist.util.constants.UsecaseConstants.UsecaseAlias;
+import static com.gionee.gnvoiceassist.util.constants.ActionConstants.SmsAction.*;
 
 /**
  * Created by liyingheng on 11/9/17.
@@ -21,16 +23,6 @@ import com.gionee.gnvoiceassist.usecase.annotation.DirectiveResult;
 public class SmsSendUseCase extends UseCase {
 
     private static final String USECASE_ALIAS = "smssend";
-
-    //传入Action
-    public static final String ACTION_REQUEST_SENDSMS = "request_send_sms";
-    public static final String ACTION_CUI_MULTI_NUMBER = "cui_multi_number";
-    public static final String ACTION_CUI_SIMSLOT = "cui_simslot";
-    public static final String ACTION_CUI_SENDSMS_CONFIRM = "cui_sendsms_confirm";
-    //发出Action
-    public static final String ACTION_QUERY_MULTI_NUMBER = "query_multi_number";
-    public static final String ACTION_QUERY_SIMSLOT = "query_simslot";
-    public static final String ACTION_QUERY_SENDSMS_CONFIRM = "query_sendsms_confirm";
 
     @Override
     public void handleMessage(DirectiveResponseEntity message) {
@@ -55,7 +47,7 @@ public class SmsSendUseCase extends UseCase {
 
     @Override
     public String getUseCaseName() {
-        return USECASE_ALIAS;
+        return UsecaseAlias.SMS;
     }
 
     @DirectiveResult

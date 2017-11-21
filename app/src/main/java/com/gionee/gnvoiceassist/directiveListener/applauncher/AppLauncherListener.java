@@ -12,9 +12,7 @@ import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.CommonUtil;
 import com.baidu.duer.dcs.util.LogUtil;
-import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
-import com.gionee.gnvoiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
@@ -24,6 +22,8 @@ import com.gionee.gnvoiceassist.message.model.metadata.AppLaunchMetadata;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.SharedData;
+import com.gionee.gnvoiceassist.util.constants.ActionConstants.AppLaunchAction;
+import com.gionee.gnvoiceassist.util.constants.UsecaseConstants.UsecaseAlias;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
     public static final String UTTER_ENTER_DOWNLOAD_CONFIRM_CUI = "utter_enter_download_confirm_cui";
     public static final String CUI_QUERY_DOWNLOAD_APP = "cui_query_download_app";
 
-    public static final String USECASE_NAME = "applaunch";
+    private static final String USECASE_NAME = UsecaseAlias.APPLAUNCH;
 
 
 //    private AppLaunchPresenter mAppLaunchPresenter;
@@ -74,7 +74,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
 
         DirectiveResponseGenerator builder = new DirectiveResponseGenerator(USECASE_NAME);
         DirectiveResponseEntity response = builder
-                .setAction("launch_app")
+                .setAction(AppLaunchAction.ACTION_REQUEST_LAUNCH_APP)
                 .setInCustomInteractive(false)
                 .setShouldRender(false)
                 .setShouldSpeak(false)
@@ -95,7 +95,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
         AppLaunchMetadata metadata = new AppLaunchMetadata();
         metadata.setDeeplink(deeplink);
         DirectiveResponseEntity response = new DirectiveResponseGenerator(USECASE_NAME)
-                .setAction("launch_app")
+                .setAction(AppLaunchAction.ACTION_REQUEST_LAUNCH_APP)
                 .setInCustomInteractive(false)
                 .setShouldRender(false)
                 .setShouldSpeak(false)

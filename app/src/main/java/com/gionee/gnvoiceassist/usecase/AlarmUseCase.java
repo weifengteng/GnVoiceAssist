@@ -12,13 +12,15 @@ import com.gionee.gnvoiceassist.usecase.annotation.Operation;
 
 import java.util.ArrayList;
 
+import com.gionee.gnvoiceassist.util.constants.UsecaseConstants.UsecaseAlias;
+
 /**
  * Created by liyingheng on 11/9/17.
  */
 
 public class AlarmUseCase extends UseCase {
 
-    private static final String USECASE_ALIAS = "alarm";
+    private static final String USECASE_ALIAS = UsecaseAlias.ALARM;
 
     public static final String ACTION_REQUEST_ALARM = "request_alarm";
     public static final String ACTION_REQUEST_TIMER = "request_timer";

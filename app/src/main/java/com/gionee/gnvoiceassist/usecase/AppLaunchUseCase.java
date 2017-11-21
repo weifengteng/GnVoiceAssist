@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
+import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.message.io.CustomInteractGenerator;
 import com.gionee.gnvoiceassist.message.io.MetadataParser;
@@ -25,6 +26,9 @@ import com.gionee.gnvoiceassist.usecase.annotation.CuiResult;
 import com.gionee.gnvoiceassist.usecase.annotation.DirectiveResult;
 import com.gionee.gnvoiceassist.usecase.annotation.Operation;
 import com.gionee.gnvoiceassist.util.LogUtil;
+import com.gionee.gnvoiceassist.util.constants.UsecaseConstants.UsecaseAlias;
+import static com.gionee.gnvoiceassist.util.constants.ActionConstants.AppLaunchAction.*;
+
 
 import java.util.List;
 
@@ -34,19 +38,8 @@ import java.util.List;
 
 public class AppLaunchUseCase extends UseCase {
 
-    private static final String USECASE_ALIAS = "applaunch";
-
-    //初次请求启动应用
-    public static final String ACTION_REQUEST_LAUNCH_APP = "request_launch_app";
-
-    //没有安装应用，发起多轮交互，请求用户下载
-    public static final String ACTION_QUERY_DOWNLOAD_APP = "query_download_app";
-    public static final String ACTION_CUI_DOWNLOAD_APP = "cui_download_app";
-    public static final String SUBACTION_CUI_CONFIRM = "confirm";
-    public static final String SUBACTION_CUI_CANCEL = "cancel";
-
-
     private static final String TAG = AppLaunchUseCase.class.getSimpleName();
+    private static final String USECASE_ALIAS = UsecaseAlias.APPLAUNCH;
 
     private static final String GIONEE_MARKET_APK = "com.gionee.aora.market.GoMarketSearchResult";
     private static final String GIONEE_MARKET_PACKAGE_NAME = "com.gionee.aora.market";
@@ -105,6 +98,9 @@ public class AppLaunchUseCase extends UseCase {
 
     @Operation("launch_app")
     private boolean launchAppByName(String appName) {
+        if (mAppCtx == null) {
+            mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();       //TODO 这个AppContext如何取得？
+        }
         PackageManager pManager = mAppCtx.getPackageManager();
         // 获取手机内所有应用
         List<PackageInfo> pkgList = pManager.getInstalledPackages(0);

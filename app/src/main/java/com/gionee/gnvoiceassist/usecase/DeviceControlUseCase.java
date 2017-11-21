@@ -31,6 +31,8 @@ import com.gionee.gnvoiceassist.message.model.metadata.DeviceControlMetadata;
 import com.gionee.gnvoiceassist.usecase.annotation.DirectiveResult;
 import com.gionee.gnvoiceassist.usecase.annotation.Operation;
 import com.gionee.gnvoiceassist.util.Constants;
+import com.gionee.gnvoiceassist.util.constants.UsecaseConstants.UsecaseAlias;
+
 
 /**
  * Created by liyingheng on 11/9/17.
@@ -38,7 +40,7 @@ import com.gionee.gnvoiceassist.util.Constants;
 
 public class DeviceControlUseCase extends UseCase {
 
-    private static final String USECASE_DEVICE_CONTROL = "device_control";
+    private static final String USECASE_DEVICE_CONTROL = UsecaseAlias.DEVICE_CONTROL;
 
     private Context mAppCtx;
     public DeviceControlUseCase() {
