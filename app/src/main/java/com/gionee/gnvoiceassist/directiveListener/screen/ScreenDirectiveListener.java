@@ -243,6 +243,7 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
                     }
                     builder.addItem(item.title,item.content,imageSrc,linkSrc);
                 }
+                mCallback.onRenderResponse(builder.build());
                 break;
             }
             case ImageListCard: {
@@ -252,6 +253,7 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
                 for (RenderCardPayload.ImageStructure image : images) {
                     builder.addImage(image.src);
                 }
+                mCallback.onRenderResponse(builder.build());
                 break;
             }
             default:

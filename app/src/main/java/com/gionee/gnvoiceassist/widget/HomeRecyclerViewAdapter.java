@@ -101,9 +101,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        switch (mRenderData.get(position).getType()) {
+        RenderEntity data = mRenderData.get(position);
+        switch (data.getType()) {
             case TextCard:
-                if (((TextRenderEntity)mRenderData).isQueryText()) {
+                if (((TextRenderEntity)data).isQueryText()) {
                     return VIEW_TYPE_TEXT_QUERY_CARD;
                 } else {
                     return VIEW_TYPE_TEXT_RESULT_CARD;

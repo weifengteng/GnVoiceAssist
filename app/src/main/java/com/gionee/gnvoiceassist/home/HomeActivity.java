@@ -124,7 +124,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
     private void initView() {
         tvWelcomeTip = (TextView)findViewById(R.id.tip);
-        tvWelcomeTip.setVisibility(View.VISIBLE);
+        tvWelcomeTip.setVisibility(View.GONE);
         btnHelp = (ImageButton)findViewById(R.id.help);
         lvHelpCommandTips = (ExpandableListView)findViewById(R.id.home_listview);
         llResultScrollView = (LinearLayout)findViewById(R.id.sv_ll);
@@ -135,6 +135,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         mRecyclerViewLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mRecyclerViewLayoutManager);
+        mRecyclerView.setVisibility(View.VISIBLE);      //TODO 当RecyclerView内容为空时，显示WelcomeWord
         ivAnimOutside = (ImageView)findViewById(R.id.anim_outside);
         mRotationor = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.rotation_animator);
         mRotationor.setTarget(ivAnimOutside);
@@ -351,29 +352,15 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void renderAnswer(RenderEntity answer) {
-
+        mAdapter.addResultItem(answer);
     }
 
     private void renderQuery(RenderEntity query) {
-
+        mAdapter.addQueryItem(query);
     }
 
     private void startVoiceCommand() {
-        if(SharedData.getInstance().isStopListenReceiving()) {
-//            baseFunctionManager.getRecordController().stopRecord();
-            SharedData.getInstance().setStopListenReceiving(false);
-            return;
-        }
-        SharedData.getInstance().setStopListenReceiving(true);
-//        startTimeStopListen = System.currentTimeMillis();
-        // TODO：强制退出云端多轮交互场景(权宜之计)
-//                DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
-//                ((SystemDeviceModule)
-//                        (DcsSdkImpl.getInstance().getInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
-//                        .release();
-//                baseFunctionManager.getRecordController().startRecordOfflineOnly();
-//        baseFunctionManager.getRecordController().startRecordOfflinePrior();
-//        baseFunctionManager.getRecordController().startRecordOnline();
+        mPresenter.fireVoiceRequest();
     }
 
     @Override

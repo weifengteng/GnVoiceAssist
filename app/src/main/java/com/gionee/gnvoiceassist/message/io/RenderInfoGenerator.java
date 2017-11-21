@@ -93,7 +93,8 @@ public class RenderInfoGenerator {
         RenderEntity.ImageModel image;
 
         public GenerateStandard() {
-
+            link = new RenderEntity.LinkModel();
+            image = new RenderEntity.ImageModel();
         }
 
         public GenerateStandard setTitle(String title) {

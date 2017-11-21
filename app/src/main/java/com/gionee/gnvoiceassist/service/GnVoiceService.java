@@ -358,7 +358,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
 
     @Override
     public void onRenderResponse(RenderEntity response) {
-        Message msg = mLocalHandler.obtainMessage(MSG_RENDER_RECEIVED);
+        Message msg = mLocalHandler.obtainMessage(MSG_RENDER_RECEIVED, response);
         mLocalHandler.sendMessage(msg);
     }
 
