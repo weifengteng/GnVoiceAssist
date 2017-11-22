@@ -13,7 +13,7 @@ import com.gionee.gnvoiceassist.util.Utils;
 
 public class ContactObserver extends ContentObserver {
     public static final String TAG = ContactObserver.class.getSimpleName();
-    private static final int MSG_UPDATE_CONTACTS = Constants.MSG_UPDATE_CONTACTS;
+    private static final int MSG_UPDATE_CONTACTS = 301;
     private static final int HANDLER_UPDATE_CONTACTS_DELAYMILLIS = 3000;
     private Context mCxt;
     private Handler mHandler;

@@ -14,6 +14,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactObserver;
 import com.gionee.gnvoiceassist.message.model.CUIEntity;
 import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
@@ -31,6 +32,7 @@ import com.gionee.gnvoiceassist.usecase.TimeQueryUseCase;
 import com.gionee.gnvoiceassist.usecase.UseCase;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.LogUtil;
+import com.gionee.gnvoiceassist.util.SoundPlayer;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
 
 import java.lang.ref.WeakReference;
@@ -44,11 +46,18 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
 
     private static final String TAG = GnVoiceService.class.getSimpleName();
 
-    private static final int MSG_CONTACT_UPDATE = Constants.MSG_UPDATE_CONTACTS;
-    private static final int MSG_DIRECTIVE_RECEIVED = Constants.MSG_DIRECTIVE_RECEIVED;
-    private static final int MSG_RENDER_RECEIVED = Constants.MSG_RENDER_RECEIVED;
-    private static final int MSG_USECASE_RECEIVED = Constants.MSG_USECASE_RECEIVED;
-
+    private static final int MSG_DIRECTIVE_RECEIVED = 101;
+    private static final int MSG_RENDER_RECEIVED = 102;
+    private static final int MSG_USECASE_RECEIVED = 103;
+    private static final int MSG_ENGINE_STATE_CHANGE = 201;
+    private static final int MSG_RECORD_STATE_CHANGE = 202;
+    private static final int MSG_RECORD_START = 203;
+    private static final int MSG_RECORD_STOP = 204;
+    private static final int MSG_CONTACT_UPDATE = 301;
+    private static final int MSG_ENGINE_INITSUCCESS = 401;
+    private static final int MSG_ENGINE_INITFAILURE = 402;
+    private static final int MSG_RECOGNIZE_SUCCESS = 403;
+    private static final int MSG_RECOGNIZE_FAILED = 404;
 
     private RecognizeManager mRecognizeManager;
     private ContactObserver mContactObserver;
@@ -64,17 +73,27 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     private IRecognizeManagerCallback mRmCallback = new IRecognizeManagerCallback() {
         @Override
         public void onEngineState(Constants.EngineState state) {
-
+            if (mEngineState != state) {
+                mEngineState = state;
+                if (mEngineState == Constants.EngineState.INITED) {
+                    mLocalHandler.sendEmptyMessage(MSG_ENGINE_INITSUCCESS);
+                }
+            }
+            for(IVoiceServiceListener callback:mExportCallbacks) {
+                callback.onEngineState(state);
+            }
         }
 
         @Override
         public void onRecordStart() {
-
+            mLocalHandler.sendEmptyMessage(MSG_RECORD_START);
+            mRecording = true;
         }
 
         @Override
         public void onRecordStop() {
-
+            mLocalHandler.sendEmptyMessage(MSG_RECORD_STOP);
+            mRecording = false;
         }
 
         @Override
@@ -84,7 +103,9 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
 
         @Override
         public void onRecordState(Constants.RecognitionState state) {
-
+            for(IVoiceServiceListener callback:mExportCallbacks) {
+                callback.onRecognizeState(state);
+            }
         }
 
         @Override
@@ -116,6 +137,9 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     private InnerHandler mLocalHandler;
     private InnerPhoneStateListener mPhoneStateListener;
 
+    private Constants.EngineState mEngineState = Constants.EngineState.UNINIT;
+    private boolean mRecording = false;
+
     public GnVoiceService() {
         mBinder = new GnVoiceServiceBinder();
         mExportCallbacks = new ArrayList<>();
@@ -135,6 +159,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         initAdditionalComponent();
         initRecognizeManager();
         requestAudioFocus();    //TODO 处理焦点获取失败的情况
+        playBell(R.raw.welcome1);
     }
 
     @Override
@@ -155,7 +180,11 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
      * 开始录音
      */
     public void fireRecord() {
-        mRecognizeManager.startRecord();
+        if (!mRecording) {
+            mRecognizeManager.startRecord();
+        } else {
+            mRecognizeManager.abortRecord(true);
+        }
     }
 
     /**
@@ -344,6 +373,13 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         return (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
     }
 
+    private void playBell(final int resId) {
+        LogUtil.d(TAG, "GnVoiceService playBell resId=" + resId);
+        SoundPlayer soundPlayer = SoundPlayer.getInstance();
+        if(null != soundPlayer) {
+            soundPlayer.playMusicSound(resId);
+        }
+    }
 
     @Override
     public void onDirectiveResponse(DirectiveResponseEntity response) {
@@ -426,6 +462,15 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
                     break;
                 case MSG_USECASE_RECEIVED:
                     service.dispatchUsecaseResult((UsecaseResponseEntity) msg.obj);
+                    break;
+                case MSG_RECORD_START:
+                    service.playBell(R.raw.ring_start);
+                    break;
+                case MSG_RECORD_STOP:
+                    service.playBell(R.raw.ring_stop);
+                    break;
+                case MSG_ENGINE_INITSUCCESS:
+                    service.playBell(R.raw.welcome );   //"您好"一词是一进入应用就播，还是引擎初始化后再播？
                     break;
             }
         }

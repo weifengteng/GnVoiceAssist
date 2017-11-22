@@ -1,9 +1,6 @@
 package com.gionee.gnvoiceassist.directiveListener.voiceinput;
 
 import com.baidu.duer.dcs.api.IDialogStateListener;
-import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
-import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
-import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.LogUtil;
 
 /**
@@ -13,6 +10,7 @@ import com.gionee.gnvoiceassist.util.LogUtil;
 public class AsrVoiceInputListener implements IDialogStateListener {
     public static final String TAG = AsrVoiceInputListener.class.getSimpleName();
     private IVoiceInputEventListener voiceInputEventListener;
+    private DialogState mPreviousDialogState = DialogState.IDLE;
 
     public AsrVoiceInputListener() {
 //        super(callback);
@@ -82,11 +80,15 @@ public class AsrVoiceInputListener implements IDialogStateListener {
     @Override
     public void onDialogStateChanged(DialogState dialogState) {
         LogUtil.i("liyh","onDialogStateChanged() " + dialogState);
-        if (dialogState == DialogState.LISTENING) {
-            voiceInputEventListener.onVoiceInputStart();
-        } else {
-            voiceInputEventListener.onVoiceInputStop();
+        if (mPreviousDialogState != dialogState) {
+            if (dialogState == DialogState.LISTENING) {
+                voiceInputEventListener.onVoiceInputStart();
+            } else if (dialogState != DialogState.LISTENING && mPreviousDialogState == DialogState.LISTENING) {
+                voiceInputEventListener.onVoiceInputStop();
+            }
+            mPreviousDialogState = dialogState;
         }
+
     }
 
 }

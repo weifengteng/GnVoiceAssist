@@ -10,6 +10,7 @@ import com.baidu.duer.dcs.androidsystemimpl.phonecall.IPhoneCallImpl;
 import com.baidu.duer.dcs.androidsystemimpl.sms.ISmsImpl;
 import com.baidu.duer.dcs.api.IASROffLineConfigProvider;
 import com.baidu.duer.dcs.api.IDcsSdk;
+import com.baidu.duer.dcs.api.IDialogStateListener;
 import com.baidu.duer.dcs.devicemodule.contacts.ContactsDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
@@ -95,6 +96,7 @@ public class RecognizeManager {
     private AsrVoiceInputListener asrVoiceInputListener;
     private IVoiceInputEventListener voiceInputEventListener;
     private VoiceInputVolumeListener voiceInputVolumeListener;
+    private IDialogStateListener dialogStateListener;
     private DirectiveListenerManager directiveListenerManager;
 
     //回调
@@ -106,6 +108,7 @@ public class RecognizeManager {
 
     //状态
     private EngineState mEngineStatus = EngineState.UNINIT;
+    private Constants.RecognitionState mRecognizeState = Constants.RecognitionState.IDLE;
 
 
     private RecognizeManager() {
@@ -364,8 +367,6 @@ public class RecognizeManager {
     }
 
     private void registerEssentialListener() {
-        //TODO 初始化基础监听
-
         //注册SDK事件监听器
         if (requestBodySentListener == null) {
             requestBodySentListener = new IDcsRequestBodySentListener() {
@@ -377,8 +378,14 @@ public class RecognizeManager {
                     //处理TTS状态回调
                     if (eventName.equals("SpeechStarted")) {
                         // online tts start
+                        for (IRecognizeManagerCallback callback:mExportCallbacks) {
+                            callback.onTtsStart();
+                        }
                     } else if (eventName.equals("SpeechFinished")) {
                         // online tts finish
+                        for (IRecognizeManagerCallback callback:mExportCallbacks) {
+                            callback.onTtsEnd();
+                        }
                     }
                 }
             };
@@ -419,16 +426,40 @@ public class RecognizeManager {
         voiceInputEventListener = new IVoiceInputEventListener() {
             @Override
             public void onVoiceInputStart() {
-
+                for (IRecognizeManagerCallback callback:mExportCallbacks) {
+                    callback.onRecordStart();
+                }
             }
 
             @Override
             public void onVoiceInputStop() {
-
+                for (IRecognizeManagerCallback callback:mExportCallbacks) {
+                    callback.onRecordStop();
+                }
             }
         };
         asrVoiceInputListener.setVoiceInputEventListener(voiceInputEventListener);
-        mDcsSdk.getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
+        dialogStateListener = new IDialogStateListener() {
+            @Override
+            public void onDialogStateChanged(DialogState dialogState) {
+                asrVoiceInputListener.onDialogStateChanged(dialogState);
+                switch (dialogState) {
+                    case SPEAKING:
+                        updateRecognizeState(Constants.RecognitionState.SPEAKING);
+                        break;
+                    case IDLE:
+                        updateRecognizeState(Constants.RecognitionState.IDLE);
+                        break;
+                    case THINKING:
+                        updateRecognizeState(Constants.RecognitionState.THINKING);
+                        break;
+                    case LISTENING:
+                        updateRecognizeState(Constants.RecognitionState.LISTENING);
+                        break;
+                }
+            }
+        };
+        mDcsSdk.getVoiceRequest().addDialogStateListener(dialogStateListener);
 
         //TODO 如何监听输入声音音量的变化？
 
@@ -473,7 +504,8 @@ public class RecognizeManager {
         getSdkInternalApi().removeRequestBodySentListener(requestBodySentListener);
         getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.voice_output");
         getSdkInternalApi().removeDeviceModule("ai.dueros.device_interface.tts_output");
-        mDcsSdk.getVoiceRequest().removeDialogStateListener(asrVoiceInputListener);
+        mDcsSdk.getVoiceRequest().removeDialogStateListener(dialogStateListener);
+        asrVoiceInputListener = null;
     }
 
     private void unregisterDirectiveListener() {
@@ -503,6 +535,13 @@ public class RecognizeManager {
         mEngineStatus = state;
         for (IRecognizeManagerCallback callback:mExportCallbacks) {
             callback.onEngineState(state);
+        }
+    }
+
+    private void updateRecognizeState(Constants.RecognitionState state) {
+        mRecognizeState = state;
+        for (IRecognizeManagerCallback callback:mExportCallbacks) {
+            callback.onRecordState(state);
         }
     }
 
