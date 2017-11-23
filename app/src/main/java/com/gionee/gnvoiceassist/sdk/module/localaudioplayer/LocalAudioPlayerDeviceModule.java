@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * 本地音乐播放的实现
  * Created by liyingheng on 10/16/17.
  */
 
@@ -27,12 +28,13 @@ public class LocalAudioPlayerDeviceModule extends BaseDeviceModule
 
     public LocalAudioPlayerDeviceModule(IMessageSender messageSender)
     {
-        super("ai.dueros.device_interface.extensions.local_audio_player", messageSender);
+        super(ApiConstants.NAMESPACE, messageSender);
     }
 
+    @Override
     public ClientContext clientContext()
     {
-        String namespace = "ai.dueros.device_interface.extensions.local_audio_player";
+        String namespace = ApiConstants.NAMESPACE;
         String name = ApiConstants.Events.PlaybackState.NAME;
         Header header = new Header(namespace, name);
         Payload payload;
@@ -44,6 +46,7 @@ public class LocalAudioPlayerDeviceModule extends BaseDeviceModule
         return new ClientContext(header, payload);
     }
 
+    @Override
     public void handleDirective(Directive directive) throws HandleDirectiveException {
         String name = directive.getName();
         Payload payload = directive.getPayload();
@@ -75,12 +78,13 @@ public class LocalAudioPlayerDeviceModule extends BaseDeviceModule
     @Override
     public HashMap<String, Class<?>> supportPayload() {
         HashMap<String, Class<?>> map = new HashMap<>();
-        map.put(getNameSpace() + com.gionee.gnvoiceassist.sdk.module.localaudioplayer.ApiConstants.Directives.SearchAndPlayMusic.NAME, com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayMusicPayload.class);
-        map.put(getNameSpace() + com.gionee.gnvoiceassist.sdk.module.localaudioplayer.ApiConstants.Directives.SearchAndPlayUnicast.NAME, com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayUnicastPayload.class);
-        map.put(getNameSpace() + com.gionee.gnvoiceassist.sdk.module.localaudioplayer.ApiConstants.Directives.SearchAndPlayRadio.NAME, com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayRadioPayload.class);
+        map.put(getNameSpace() + ApiConstants.Directives.SearchAndPlayMusic.NAME, SearchAndPlayMusicPayload.class);
+        map.put(getNameSpace() + ApiConstants.Directives.SearchAndPlayUnicast.NAME, SearchAndPlayUnicastPayload.class);
+        map.put(getNameSpace() + ApiConstants.Directives.SearchAndPlayRadio.NAME, SearchAndPlayRadioPayload.class);
         return map;
     }
 
+    @Override
     public void release()
     {
         this.listeners.clear();
@@ -112,17 +116,17 @@ public class LocalAudioPlayerDeviceModule extends BaseDeviceModule
         }
     }
 
-    public static abstract interface PayloadGenerator
+    public interface PayloadGenerator
     {
-        public abstract ClientContextPayload generateContextPayload();
+        ClientContextPayload generateContextPayload();
     }
 
-    public static abstract interface ILocalAudioPlayerListener
+    public interface ILocalAudioPlayerListener
     {
-        public abstract void onSearchAndPlayMusic(SearchAndPlayMusicPayload paramSearchAndPlayMusicPayload);
+        void onSearchAndPlayMusic(SearchAndPlayMusicPayload paramSearchAndPlayMusicPayload);
 
-        public abstract void onSearchAndPlayUnicast(SearchAndPlayUnicastPayload paramSearchAndPlayUnicastPayload);
+        void onSearchAndPlayUnicast(SearchAndPlayUnicastPayload paramSearchAndPlayUnicastPayload);
 
-        public abstract void onSearchAndPlayRadio(SearchAndPlayRadioPayload paramSearchAndPlayRadioPayload);
+        void onSearchAndPlayRadio(SearchAndPlayRadioPayload paramSearchAndPlayRadioPayload);
     }
 }

@@ -33,7 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by caoyushu01 on 2017/7/20.
+ * 打开应用的module 类
+ * Created by lyh on 2017/11/22.
  */
 
 public class AppLauncherDeviceModule extends BaseDeviceModule {

@@ -44,14 +44,17 @@ public class BaseFunctionManager implements IBaseFunction {
     private GNMusicOperator gnMusicOperator;
     private OfflineAsrHandler offlineAsrHandler;
 
+    @Override
     public void setHandler(Handler handler) {
         this.mMainHandler = handler;
     }
 
+    @Override
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
+    @Override
     public MainActivity getMainActivity() {
         return mainActivity;
     }

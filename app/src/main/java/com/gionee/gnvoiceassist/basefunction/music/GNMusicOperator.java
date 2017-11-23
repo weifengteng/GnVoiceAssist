@@ -5,16 +5,20 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.gnvoiceassist.BuildConfig;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.BasePresenter;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.util.Utils;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.Random;
@@ -34,6 +38,7 @@ public class GNMusicOperator extends BasePresenter {
     private static final String GN_MUSIC_SEARCH_URL = "http://music.gionee.com:80";
     private static final String GN_MUSIC_VERSION_NAME_SUPPORT_SEARCH_MUSIC = "5.1.3.ca";
     private static final String GN_MUSIC_ENTRY_ACTION = "com.gionee.music.entry";
+    private static final String GN_PLAY_MUSIC_ACTION = "com.android.music.intent.action.PLAY_IN_ALL_MUSIC";
 
     private static final String GN_LOCAL_MUSIC_SELECTION_TITLE = MediaStore.Audio.Media.IS_MUSIC + "=1 and (" + MediaStore.Audio.Media.TITLE + " like ? or " + MediaStore.Audio.Media.DISPLAY_NAME + " like ?)";
     private static final String GN_LOCAL_MUSIC_SELECTION_ARTIST = MediaStore.Audio.Media.IS_MUSIC + "=1 and (" + MediaStore.Audio.Media.ARTIST + " like ? or " + MediaStore.Audio.Media.DISPLAY_NAME + " like ?)";
@@ -49,7 +54,7 @@ public class GNMusicOperator extends BasePresenter {
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
     }
 
-    public void playMusic(String singer, String song) {
+    public void procMusicAction(String singer, String song) {
         if (!getExistLocal(singer, song)) {
             searchMusicFromNet(getUrl(singer, song));
         }
@@ -58,6 +63,20 @@ public class GNMusicOperator extends BasePresenter {
         LogUtil.d(TAG, "GNMusicOperator singer = " + singer + ", song = " + song + ", tip = " + tip);
         playAndRenderText(tip, UTTER_ID_FIRE_FOCUS, this, true);
 
+    }
+
+    public void playMusic(String data, String type) {
+        LogUtil.d(TAG, "GNMusicOperator data= " + data + " type = " + type);
+        mIntent = new Intent();
+        mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.setPackage(GN_MUSIC_PACKAGE_NAME);
+        mIntent.setAction(GN_PLAY_MUSIC_ACTION);
+        if(Build.VERSION.SDK_INT >= 23) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+        }
+        mIntent.setDataAndType(Uri.fromFile(new File(data)), type);
+        mIntentType = 0;
     }
 
     @Override

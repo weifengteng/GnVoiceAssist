@@ -10,6 +10,8 @@ import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPla
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message.SearchAndPlayUnicastPayload;
 import com.gionee.gnvoiceassist.util.T;
 
+import java.util.List;
+
 /**
  * Created by tengweifeng on 9/29/17.
  */
@@ -26,10 +28,14 @@ public class LocalAudioPlayerListener extends BaseDirectiveListener implements L
     public void onSearchAndPlayMusic(SearchAndPlayMusicPayload searchAndPlayMusicPayload) {
         if(searchAndPlayMusicPayload != null) {
             // TODO:
+            String singer = "";
             String query = searchAndPlayMusicPayload.getQuery();
             String song = searchAndPlayMusicPayload.getSong();
-            String singer = searchAndPlayMusicPayload.getSinger().get(0);
-            mGnMusicOperator.playMusic(singer, song);
+            List<String> singerList = searchAndPlayMusicPayload.getSinger();
+            if(singerList != null && !singerList.isEmpty()) {
+                singer = singerList.get(0);
+            }
+            mGnMusicOperator.procMusicAction(singer, song);
             T.showShort("搜索并播放音乐！ song= " + song + " singer= " + singer);
         }
     }
