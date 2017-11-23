@@ -104,4 +104,9 @@ public class AlarmUseCase extends UseCase {
             mAppCtx.startActivity(intent);
         }
     }
+
+    @Override
+    public void onSpeakFinish(String utterId) {
+
+    }
 }

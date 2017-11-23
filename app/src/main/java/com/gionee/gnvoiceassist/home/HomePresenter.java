@@ -55,6 +55,7 @@ public class HomePresenter implements HomeContract.Presenter {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             LogUtil.d(TAG, "GnVoiceService Disconnected!");
+            mBinder.removeCallback(mCallback);
         }
     };
 

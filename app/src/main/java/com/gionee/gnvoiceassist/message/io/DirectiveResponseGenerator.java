@@ -1,5 +1,7 @@
 package com.gionee.gnvoiceassist.message.io;
 
+import android.text.TextUtils;
+
 import com.gionee.gnvoiceassist.message.model.CUIEntity;
 import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
 import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
@@ -45,18 +47,23 @@ public class DirectiveResponseGenerator {
         return this;
     }
 
-    public DirectiveResponseGenerator setShouldRender (boolean shouldRender) {
-        this.shouldRender = shouldRender;
-        return this;
-    }
-
-    public DirectiveResponseGenerator setShouldSpeak(boolean shouldSpeak) {
-        this.shouldSpeak = shouldSpeak;
+    public DirectiveResponseGenerator setSpeakText(String text) {
+        if (text != null && !TextUtils.isEmpty(text)) {
+            this.speakText = text;
+            this.shouldSpeak = true;
+        } else {
+            this.shouldSpeak = false;
+        }
         return this;
     }
 
     public DirectiveResponseGenerator setRenderEntity(RenderEntity render) {
-        this.renderEntity = render;
+        if (render != null) {
+            this.renderEntity = render;
+            this.shouldRender = true;
+        } else {
+            this.shouldRender = false;
+        }
         return this;
     }
 

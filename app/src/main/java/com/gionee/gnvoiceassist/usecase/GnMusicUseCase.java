@@ -17,4 +17,9 @@ public class GnMusicUseCase extends UseCase {
     public String getUseCaseName() {
         return UsecaseAlias.GN_MUSIC;
     }
+
+    @Override
+    public void onSpeakFinish(String utterId) {
+
+    }
 }

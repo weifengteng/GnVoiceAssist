@@ -43,8 +43,6 @@ public class DeviceControlListener extends BaseDirectiveListener implements Devi
         DirectiveResponseEntity response = new DirectiveResponseGenerator("device_control")
                 .setAction("device_control")
                 .setInCustomInteractive(false)
-                .setShouldRender(false)
-                .setShouldSpeak(false)
                 .setMetadata(metadata.toJson())
                 .build();
         mCallback.onDirectiveResponse(response);

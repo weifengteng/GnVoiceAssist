@@ -81,7 +81,9 @@ public class AppLaunchUseCase extends UseCase {
         } else {
             LogUtil.e(TAG,"打开应用操作没有传递任何信息");
         }
-        if (!launchSuccess) {
+        if (launchSuccess) {
+            openAppSuccess(metadata);
+        } else {
             queryCuiDownloadApp(metadata);
         }
     }
@@ -215,10 +217,22 @@ public class AppLaunchUseCase extends UseCase {
                 .setInCustomInteractive(true)
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
-                .setShouldSpeak(true)
-                .setShouldRender(true)
                 .setRenderContent(null) //TODO Add render content
                 .generateEntity();
         sendResponse(response);
+    }
+
+    private void openAppSuccess(AppLaunchMetadata metadata) {
+        UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(),ACTION_QUERY_DOWNLOAD_APP)
+                .setInCustomInteractive(true)
+                .setMetadata(metadata.toJson())
+                .setSpeakText("正在打开" + metadata.getAppName())
+                .generateEntity();
+        sendResponse(response);
+    }
+
+    @Override
+    public void onSpeakFinish(String utterId) {
+
     }
 }

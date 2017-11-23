@@ -1,6 +1,8 @@
 package com.gionee.gnvoiceassist.message.io;
 
 
+import android.text.TextUtils;
+
 import com.gionee.gnvoiceassist.message.model.CUIEntity;
 import com.gionee.gnvoiceassist.message.model.UsecaseResponseEntity;
 import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
@@ -42,23 +44,23 @@ public class UsecaseResponseGenerator {
         return this;
     }
 
-    public UsecaseResponseGenerator setShouldRender(boolean shouldRender) {
-        this.shouldRender = shouldRender;
-        return this;
-    }
-
-    public UsecaseResponseGenerator setShouldSpeak(boolean shouldSpeak) {
-        this.shouldSpeak = shouldSpeak;
-        return this;
-    }
-
     public UsecaseResponseGenerator setRenderContent(RenderEntity renderContent) {
-        this.renderContent = renderContent;
+        if (renderContent != null) {
+            this.shouldRender = true;
+            this.renderContent = renderContent;
+        } else {
+            this.shouldRender = false;
+        }
         return this;
     }
 
     public UsecaseResponseGenerator setSpeakText(String speakText) {
-        this.speakText = speakText;
+        if (!TextUtils.isEmpty(speakText)) {
+            this.shouldSpeak = true;
+            this.speakText = speakText;
+        } else {
+            this.shouldSpeak = false;
+        }
         return this;
     }
 

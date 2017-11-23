@@ -17,4 +17,9 @@ public class GnRemoteUseCase extends UseCase {
     public String getUseCaseName() {
         return UsecaseAlias.GN_REMOTE;
     }
+
+    @Override
+    public void onSpeakFinish(String utterId) {
+
+    }
 }

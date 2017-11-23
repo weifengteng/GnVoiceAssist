@@ -17,4 +17,9 @@ public class TimeQueryUseCase extends UseCase {
     public String getUseCaseName() {
         return UsecaseAlias.TIMEQUERY;
     }
+
+    @Override
+    public void onSpeakFinish(String utterId) {
+
+    }
 }

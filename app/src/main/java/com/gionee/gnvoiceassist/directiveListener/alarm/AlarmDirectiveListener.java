@@ -76,8 +76,6 @@ public class AlarmDirectiveListener extends BaseDirectiveListener implements Ala
         DirectiveResponseEntity response = new DirectiveResponseGenerator("alarm")
                 .setAction("request_alarm")
                 .setSubAction("set")
-                .setShouldSpeak(false)
-                .setShouldRender(false)
                 .setInCustomInteractive(false)
                 .setMetadata(metadata.toJson())
                 .build();
@@ -98,8 +96,6 @@ public class AlarmDirectiveListener extends BaseDirectiveListener implements Ala
         DirectiveResponseEntity response = new DirectiveResponseGenerator("alarm")
                 .setAction("request_timer")
                 .setSubAction("set")
-                .setShouldSpeak(false)
-                .setShouldRender(false)
                 .setInCustomInteractive(false)
                 .setMetadata(metadata.toJson())
                 .build();

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
+import com.gionee.gnvoiceassist.service.RecognizeManager;
 
 import java.util.HashMap;
 
@@ -61,7 +62,7 @@ public class TxtSpeakManager {
         }
 //        DcsSDK.getInstance().getSpeak().speakTxt(ttsText, SpeakInterface.SpeakTxtMixMode.MIX_MODE_DEFAULT);
 //        SdkManagerImpl.getInstance().getInternalApi().speakRequest(ttsText);
-        SdkManagerImpl.getInstance().getInternalApi().speakOfflineQuery(ttsText);
+        RecognizeManager.getInstance().getSdkInternalApi().speakOfflineQuery(ttsText);
 
     }
 
@@ -71,9 +72,7 @@ public class TxtSpeakManager {
             //TODO: 处理当语音正在播报时，打断语音播报
         }
         mCurrUtterId = "";
-//        DcsSDK.getInstance().getSpeak().speakTxt(ttsText, SpeakInterface.SpeakTxtMixMode.MIX_MODE_DEFAULT);
-//        SdkManagerImpl.getInstance().getInternalApi().speakRequest(ttsText);
-        SdkManagerImpl.getInstance().getInternalApi().speakOfflineQuery(ttsText);
+        RecognizeManager.getInstance().getSdkInternalApi().speakOfflineQuery(ttsText);
     }
 
     public void playTTS(int resId) {

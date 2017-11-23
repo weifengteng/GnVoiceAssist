@@ -18,8 +18,11 @@ import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.contact.ContactObserver;
 import com.gionee.gnvoiceassist.message.model.CUIEntity;
 import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
+import com.gionee.gnvoiceassist.message.model.TtsEntity;
 import com.gionee.gnvoiceassist.message.model.UsecaseResponseEntity;
 import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
+import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
+import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
 import com.gionee.gnvoiceassist.usecase.AlarmUseCase;
 import com.gionee.gnvoiceassist.usecase.AppLaunchUseCase;
 import com.gionee.gnvoiceassist.usecase.ContactsUseCase;
@@ -49,6 +52,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     private static final int MSG_DIRECTIVE_RECEIVED = 101;
     private static final int MSG_RENDER_RECEIVED = 102;
     private static final int MSG_USECASE_RECEIVED = 103;
+    private static final int MSG_TTSREQUEST_RECEIVED = 104;
     private static final int MSG_ENGINE_STATE_CHANGE = 201;
     private static final int MSG_RECORD_STATE_CHANGE = 202;
     private static final int MSG_RECORD_START = 203;
@@ -159,7 +163,6 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         initAdditionalComponent();
         initRecognizeManager();
         requestAudioFocus();    //TODO 处理焦点获取失败的情况
-        playBell(R.raw.welcome1);
     }
 
     @Override
@@ -174,6 +177,9 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         destroyAdditionalComponent();
         destroyRecognizeManager();
         abandonAudioFocus();
+        if (mLocalHandler != null) {
+            mLocalHandler.removeCallbacksAndMessages(null);
+        }
     }
 
     /**
@@ -181,7 +187,13 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
      */
     public void fireRecord() {
         if (!mRecording) {
-            mRecognizeManager.startRecord();
+            playBell(R.raw.ring_start);
+            mLocalHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mRecognizeManager.startRecord();
+                }
+            },200);
         } else {
             mRecognizeManager.abortRecord(true);
         }
@@ -210,6 +222,10 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         mRecognizeManager.startTts(text);
     }
 
+    public void playTts(String text, String utterId, ISpeakTxtEventListener ttsProgressCallback) {
+        mRecognizeManager.startTts(text,utterId,ttsProgressCallback);
+    }
+
     /**
      * 停止所有TTS朗读
      */
@@ -235,11 +251,6 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
      * @param usecaseResult UseCase返回的实体类
      */
     public void dispatchUsecaseResult(UsecaseResponseEntity usecaseResult) {
-        if (usecaseResult.isShouldSpeak()) {
-            //取出SpeakText
-            if (!TextUtils.isEmpty(usecaseResult.getSpeakText()))
-                playTts(usecaseResult.getSpeakText());
-        }
 
         if (usecaseResult.isShouldRender() && usecaseResult.getRenderContent() != null) {
             //取出RenderEntity
@@ -259,6 +270,43 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     public void dispatchViewRequest(RenderEntity renderData) {
         //TODO 将底层返回结果返回到界面
         renderOnActivity(renderData);
+    }
+
+    /**
+     * 分发TTS播报请求
+     * @param ttsData tts数据
+     */
+    public void dispatchTtsRequest(TtsEntity ttsData, boolean inCustomInteract) {
+        //若为发起多轮交互形式的结果，则需要将TtsEntity的回调换地方
+        String text = ttsData.getText();
+        String utterId = ttsData.getUtterId();
+        if (inCustomInteract) {
+            //TODO 将ISpeakTxtEventListener匿名实现移动到别的地方
+            playTts(text, utterId, new ISpeakTxtEventListener() {
+                @Override
+                public void onSpeakStart() {
+
+                }
+
+                @Override
+                public void onSpeakFinish(String utterId) {
+                    mLocalHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            fireRecord();
+                        }
+                    },500);
+                }
+
+                @Override
+                public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
+
+                }
+            });
+        }
+        if (!TextUtils.isEmpty(ttsData.getUtterId()) && ttsData.getTtsProgressListener() != null) {
+            playTts(text,utterId,checkNotNull(ttsData.getTtsProgressListener()));
+        }
     }
 
     private void startCustomInteraction(CUIEntity cuiData) {
@@ -374,9 +422,9 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     }
 
     private void playBell(final int resId) {
-        LogUtil.d(TAG, "GnVoiceService playBell resId=" + resId);
         SoundPlayer soundPlayer = SoundPlayer.getInstance();
         if(null != soundPlayer) {
+            LogUtil.d(TAG, "GnVoiceService playBell resId=" + resId);
             soundPlayer.playMusicSound(resId);
         }
     }
@@ -399,9 +447,14 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
     }
 
     @Override
-    public void onUsecaseResponse(UsecaseResponseEntity response) {
-        Message msg = mLocalHandler.obtainMessage(MSG_USECASE_RECEIVED,response);
-        mLocalHandler.sendMessage(msg);
+    public void onUsecaseResponse(UsecaseResponseEntity response, TtsEntity tts) {
+        Message responseMsg = mLocalHandler.obtainMessage(MSG_USECASE_RECEIVED,response);
+        mLocalHandler.sendMessage(responseMsg);
+        if (tts != null) {
+            Message ttsMsg = mLocalHandler.obtainMessage
+                    (MSG_TTSREQUEST_RECEIVED,response.isInCustomInteractive()?1:0,-1,tts);
+            mLocalHandler.sendMessage(ttsMsg);
+        }
     }
 
     /**
@@ -463,14 +516,16 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
                 case MSG_USECASE_RECEIVED:
                     service.dispatchUsecaseResult((UsecaseResponseEntity) msg.obj);
                     break;
+                case MSG_TTSREQUEST_RECEIVED:
+                    service.dispatchTtsRequest((TtsEntity) msg.obj, msg.arg1 == 1);
+                    break;
                 case MSG_RECORD_START:
-                    service.playBell(R.raw.ring_start);
                     break;
                 case MSG_RECORD_STOP:
                     service.playBell(R.raw.ring_stop);
                     break;
                 case MSG_ENGINE_INITSUCCESS:
-                    service.playBell(R.raw.welcome );   //"您好"一词是一进入应用就播，还是引擎初始化后再播？
+                    service.playBell(R.raw.welcome);   //"您好"一词是一进入应用就播，还是引擎初始化后再播？
                     break;
             }
         }

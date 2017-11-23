@@ -21,6 +21,7 @@ import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
 import com.gionee.gnvoiceassist.message.model.metadata.AppLaunchMetadata;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
+import com.gionee.gnvoiceassist.service.RecognizeManager;
 import com.gionee.gnvoiceassist.util.SharedData;
 import com.gionee.gnvoiceassist.util.constants.ActionConstants.AppLaunchAction;
 import com.gionee.gnvoiceassist.util.constants.UsecaseConstants.UsecaseAlias;
@@ -76,8 +77,6 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
         DirectiveResponseEntity response = builder
                 .setAction(AppLaunchAction.ACTION_REQUEST_LAUNCH_APP)
                 .setInCustomInteractive(false)
-                .setShouldRender(false)
-                .setShouldSpeak(false)
                 .setMetadata(metadata.toJson())
                 .build();
         mCallback.onDirectiveResponse(response);
@@ -97,8 +96,6 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
         DirectiveResponseEntity response = new DirectiveResponseGenerator(USECASE_NAME)
                 .setAction(AppLaunchAction.ACTION_REQUEST_LAUNCH_APP)
                 .setInCustomInteractive(false)
-                .setShouldRender(false)
-                .setShouldSpeak(false)
                 .setMetadata(metadata.toJson())
                 .build();
 
@@ -115,9 +112,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
             DirectiveResponseGenerator builder = new DirectiveResponseGenerator(USECASE_NAME)
                     .setInCustomInteractive(false)
                     .setAction("cui_download_app")
-                    .setMetadata(metadataStr)
-                    .setShouldRender(false)
-                    .setShouldSpeak(false);
+                    .setMetadata(metadataStr);
             if(url.startsWith(CustomLinkSchema.LINK_APP_DOWNLOAD)){
                 int beginIdx = url.indexOf(":");
                 String realContent = url.substring(beginIdx + 3);
@@ -168,14 +163,15 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
             }
 
             if(SharedData.getInstance().isStopListenReceiving()) {
-                iBaseFunction.getRecordController().stopRecord();
+                //TODO Should StopRecord with Callback, do not call SDK directly
+                RecognizeManager.getInstance().abortRecord(false);
                 SharedData.getInstance().setStopListenReceiving(false);
                 return;
             }
 
             LogUtil.d(TAG, "DCSF ---------- onSpeakFinish startRecordOnline");
             SharedData.getInstance().setStopListenReceiving(true);
-            iBaseFunction.getRecordController().startRecordOnline();
+            RecognizeManager.getInstance().startRecord();
             doUserActivity();
         }
     }

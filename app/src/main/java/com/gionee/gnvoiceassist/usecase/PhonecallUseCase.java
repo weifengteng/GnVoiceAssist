@@ -13,7 +13,9 @@ import com.gionee.gnvoiceassist.message.model.metadata.PhonecallMetadata;
 import com.gionee.gnvoiceassist.usecase.annotation.CuiQuery;
 import com.gionee.gnvoiceassist.usecase.annotation.DirectiveResult;
 import com.gionee.gnvoiceassist.usecase.annotation.Operation;
+import com.gionee.gnvoiceassist.util.Preconditions;
 import com.gionee.gnvoiceassist.util.constants.UsecaseConstants.UsecaseAlias;
+
 import static com.gionee.gnvoiceassist.util.constants.ActionConstants.PhonecallAction.*;
 
 
@@ -23,7 +25,8 @@ import static com.gionee.gnvoiceassist.util.constants.ActionConstants.PhonecallA
 
 public class PhonecallUseCase extends UseCase {
 
-    private static final String USECASE_ALIAS = "phonecall";
+    private static final String USECASE_ALIAS = UsecaseAlias.PHONECALL;
+    private PhonecallMetadata mTempMetadata;
 
     @Override
     public void handleMessage(DirectiveResponseEntity message) {
@@ -53,7 +56,8 @@ public class PhonecallUseCase extends UseCase {
         // 1.判断是否有多个号码
         // 2.判断是否需多个卡
         PhonecallOperation phonecallOperation = new PhonecallOperation();
-        boolean multiEntries = metadata.getContacts().size() > 1;
+        boolean multiEntries = (metadata.getContacts().size() > 1
+                || (metadata.getContacts().size() != 0 && metadata.getContacts().get(0).getNumberList().size() > 1));
         boolean selectSim = phonecallOperation.isDualSimInserted() && TextUtils.isEmpty(metadata.getSimSlot());
 
         if (multiEntries) {
@@ -63,7 +67,7 @@ public class PhonecallUseCase extends UseCase {
             //发起选择卡槽多轮交互
             querySelectSim(metadata);
         } else {
-            makeCall(metadata);
+            readyToMakeCall(metadata);
             //打电话
         }
     }
@@ -74,6 +78,16 @@ public class PhonecallUseCase extends UseCase {
 
     private void cuiSelectSim(PhonecallMetadata metadata) {
         requestCall(metadata);
+    }
+
+    private void readyToMakeCall(PhonecallMetadata metadata) {
+        UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(),ACTION_RESULT_CALL)
+                .setInCustomInteractive(true)
+                .setMetadata(metadata.toJson())
+                .setSpeakText("正在拨打电话")
+                .generateEntity();
+        sendResponse(response,this);
+        tempSaveMetadata(metadata);
     }
 
     @Operation
@@ -88,6 +102,22 @@ public class PhonecallUseCase extends UseCase {
             }
         }
         operation.call(metadata.getContacts().get(0).getNumberList().get(0),metadata.getSimSlot());
+    }
+
+    /**
+     * 临时存储Metadata数据到Usecase全局
+     * @param metadata
+     */
+    private void tempSaveMetadata(PhonecallMetadata metadata) {
+        mTempMetadata = metadata;
+    }
+
+    /**
+     * 清除临时存储的Metadata
+     * @param metadata
+     */
+    private void clearTempMetadata(PhonecallMetadata metadata) {
+        mTempMetadata = null;
     }
 
     @CuiQuery("multi_number")
@@ -109,8 +139,7 @@ public class PhonecallUseCase extends UseCase {
                 .setInCustomInteractive(true)
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
-                .setShouldRender(false)
-                .setShouldSpeak(true)
+                .setSpeakText("您要选择哪一个号码？")
                 .setRenderContent(null) //TODO Render Content
                 .generateEntity();
 
@@ -128,10 +157,15 @@ public class PhonecallUseCase extends UseCase {
                 .setInCustomInteractive(true)
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
-                .setShouldRender(true)
                 .setRenderContent(null)
                 .generateEntity();
         sendResponse(response);
+    }
+
+    @Override
+    public void onSpeakFinish(String utterId) {
+        //TODO  加入拨打电话TTS播报的utterance
+        makeCall(Preconditions.checkNotNull(mTempMetadata));
     }
 
     //TODO 此内部类将来可能移动到devicecontrol包中，因为此操作属于系统底层控制

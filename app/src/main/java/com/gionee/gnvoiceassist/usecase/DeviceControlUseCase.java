@@ -100,6 +100,11 @@ public class DeviceControlUseCase extends UseCase {
         }
     }
 
+    @Override
+    public void onSpeakFinish(String utterId) {
+
+    }
+
     private class DeviceControlOperator {
         public void operateFlashLight(boolean mode) {
             IFlashlight controller = new FlashlightController(mAppCtx);

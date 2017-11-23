@@ -2,19 +2,12 @@ package com.gionee.gnvoiceassist.directiveListener.phonecall;
 
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
-import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
-import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
-import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
 import com.baidu.duer.dcs.devicemodule.phonecall.PhoneCallDeviceModule;
 import com.baidu.duer.dcs.devicemodule.phonecall.message.ContactInfo;
 import com.baidu.duer.dcs.framework.message.Directive;
-import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.CommonUtil;
 import com.baidu.duer.dcs.util.LogUtil;
-import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
-import com.gionee.gnvoiceassist.basefunction.phonecall.PhoneCallPresenter;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
@@ -25,6 +18,8 @@ import com.gionee.gnvoiceassist.message.model.metadata.ContactsMetadata;
 import com.gionee.gnvoiceassist.message.model.metadata.PhonecallMetadata;
 import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
 import com.gionee.gnvoiceassist.util.SharedData;
+import com.gionee.gnvoiceassist.util.constants.ActionConstants.PhonecallAction;
+import com.gionee.gnvoiceassist.util.constants.UsecaseConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +64,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
 
         mContactInfos = list;
         PhonecallMetadata metadata = new PhonecallMetadata();
+        List<ContactsMetadata> contactsInfos = new ArrayList<>();
         for (ContactInfo info:list) {
             ContactsMetadata transformContactInfo = new ContactsMetadata();
             transformContactInfo.setName(info.getName());
@@ -77,11 +73,12 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
                 //TODO 这里结构很复杂，必须处理
                 numbers.add(numberInfo.getPhoneNumber());
             }
+            transformContactInfo.setNumber(numbers);
+            contactsInfos.add(transformContactInfo);
         }
+        metadata.setContacts(contactsInfos);
         DirectiveResponseEntity response = new DirectiveResponseGenerator("phonecall")
                 .setAction("request_call")
-                .setShouldSpeak(false)
-                .setShouldRender(false)
                 .setInCustomInteractive(false)
                 .setMetadata(metadata.toJson())
                 .build();
@@ -128,6 +125,8 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
             String phoneNumber = contents[0].substring(contents[0].indexOf("=") + 1);
             LogUtil.d(TAG, "customUserInteractionDirectiveReceived contents[0]= " + contents[0]);
 
+            DirectiveResponseGenerator builder = new DirectiveResponseGenerator(UsecaseConstants.UsecaseAlias.PHONECALL);
+
             PhonecallMetadata metadata = MetadataParser.toEntity
                     (CustomUserInteractionManager.getInstance().getCustomInteractorMetadata(),PhonecallMetadata.class);
             CustomUserInteractionManager.getInstance().clearCustomInteractorMetadata();
@@ -170,7 +169,6 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
                 metadata.setSimSlot(simId);
 
                 //TODO 取得Query的内容
-
 //                String asrResult = iBaseFunction.getScreenRender().getAsrResult();  //取得Query的内容
 //                if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
 //                    iBaseFunction.getScreenRender().renderQueryInScreen("卡一");
@@ -178,6 +176,18 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
 //                    iBaseFunction.getScreenRender().renderQueryInScreen("卡二");
 //                }
             }
+            switch (id) {
+                case PhonecallAction.ACTION_QUERY_MULTI_NUMBER:
+                    builder.setAction(PhonecallAction.ACTION_CUI_MULTI_NUMBER);
+                    break;
+                case PhonecallAction.ACTION_QUERY_SIMSLOT:
+                    builder.setAction(PhonecallAction.ACTION_CUI_SIMSLOT);
+                    break;
+            }
+            builder.setInCustomInteractive(false)
+                    .setMetadata(metadata.toJson());
+            DirectiveResponseEntity response = builder.build();
+            mCallback.onDirectiveResponse(response);
         }
     }
 

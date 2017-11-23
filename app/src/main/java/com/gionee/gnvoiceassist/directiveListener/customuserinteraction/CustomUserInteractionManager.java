@@ -7,6 +7,7 @@ import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentCo
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
+import com.gionee.gnvoiceassist.service.RecognizeManager;
 
 import java.util.HashMap;
 
@@ -46,7 +47,7 @@ public class CustomUserInteractionManager {
         this.mShouldStopCurrentInteraction = false;
         this.mCurrCUInteractionId = interactionId;
         mCustomUserInteractionMap.put(mCurrCUInteractionId, receivedInterface);
-        ((CustomUserInteractionDeviceModule) SdkManagerImpl.getInstance().getInternalApi()
+        ((CustomUserInteractionDeviceModule) RecognizeManager.getInstance().getSdkInternalApi()
                 .getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction"))
                 .setCustomInteractionState(CustomClicentContextMachineState.PHONE, payLoadGenerator);
         mCustomUserInteractionProcessing = true;

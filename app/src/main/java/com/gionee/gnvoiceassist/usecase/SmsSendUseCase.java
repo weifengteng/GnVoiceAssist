@@ -98,8 +98,6 @@ public class SmsSendUseCase extends UseCase {
                 .setInCustomInteractive(true)
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
-                .setShouldRender(true)
-                .setShouldSpeak(true)
                 .setRenderContent(null)
                 .setSpeakText("你要选择哪个联系人？")
                 .generateEntity();
@@ -118,7 +116,6 @@ public class SmsSendUseCase extends UseCase {
                 .setInCustomInteractive(true)
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
-                .setShouldRender(true)
                 .setRenderContent(null)
                 .setSpeakText("卡一还是卡二？")
                 .generateEntity();
@@ -128,6 +125,11 @@ public class SmsSendUseCase extends UseCase {
     @CuiQuery
     private void querySendConfirm(SmsSendMetadata metadata) {
 
+    }
+
+    @Override
+    public void onSpeakFinish(String utterId) {
+        //TODO 发送短信确认后，开始发送短信
     }
 
     private class SmsSendOperation {

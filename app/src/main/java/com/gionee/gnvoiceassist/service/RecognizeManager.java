@@ -34,6 +34,7 @@ import com.baidu.duer.dcs.systeminterface.IAudioRecorder;
 import com.baidu.duer.dcs.systeminterface.IOauth;
 import com.gionee.gnvoiceassist.DirectiveListenerManager;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
+import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.gnvoiceassist.directiveListener.location.LocationHandler;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.AsrVoiceInputListener;
@@ -52,9 +53,12 @@ import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
+import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
 import com.gionee.gnvoiceassist.tts.SpeakTxtListener;
+import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.Constants.EngineState;
+import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.T;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
@@ -141,9 +145,9 @@ public class RecognizeManager {
         // 释放（销毁）完成的工作：
         // SDK中DeviceModule的销毁、SDK基础监听器(DialogStateListener、ErrorListener、
         // 语音识别状态、TTS状态）的注销、位置组件的注销。最后释放SDK。
-        releaseDeviceModule();
-        unregisterEssentialListener();
         unregisterDirectiveListener();
+        unregisterEssentialListener();
+        releaseDeviceModule();
         //若AsyncTask未完成工作，打断
         if (mInitTask != null && mInitTask.getStatus() != AsyncTask.Status.FINISHED) {
             mInitTask.cancel(true);
@@ -152,7 +156,6 @@ public class RecognizeManager {
         // 释放Handler
         if (mLocalHandler != null) {
             mLocalHandler.removeCallbacksAndMessages(null);
-            mLocalHandler = null;
         }
     }
 
@@ -183,7 +186,7 @@ public class RecognizeManager {
      */
     public void startTts (String text) {
         if (mEngineStatus == EngineState.INITED) {
-            SdkManagerImpl.getInstance().getInternalApi().speakOfflineQuery(text);
+            getSdkInternalApi().speakOfflineQuery(text);
         }
     }
 
@@ -192,11 +195,11 @@ public class RecognizeManager {
      * @param text 需要播报的文字
      * @param utteranceId
      */
-    public void startTts(String text, int utteranceId) {
+    public void startTts(String text, String utteranceId, ISpeakTxtEventListener ttsProgressCallback) {
         // TODO 处理UtteranceId。UtteranceId主要用作区分具体用途的TTS播报用。
         // 如在多轮交互下，播完tts后还会自动开始录音。
         if (mEngineStatus == EngineState.INITED) {
-            SdkManagerImpl.getInstance().getInternalApi().speakOfflineQuery(text);
+            TxtSpeakManager.getInstance().playTTS(text, utteranceId, ttsProgressCallback);
         }
     }
 
@@ -218,7 +221,16 @@ public class RecognizeManager {
             }
         };
         //TODO 更改自定义交互回调监听到各自的DirectiveListener中
-        CustomUserInteractionManager.getInstance().startCustomUserInteraction(generator,cuiData.getInteractionId(),null);
+        try {
+            CustomUserInteractionManager.getInstance().startCustomUserInteraction(
+                    generator,
+                    cuiData.getInteractionId(),
+                    directiveListenerManager.getDirectiveListener(cuiData.getUsecase()));
+        } catch (DirectiveListenerManager.DirectiveListenerNotFoundException e) {
+            LogUtil.e(TAG,"无法找到Usecase别名对应的DirectiveListener");
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -324,6 +336,7 @@ public class RecognizeManager {
         mDcsSdk.putDeviceModule(appLauncherDeviceModule);
 
         //初始化电话模块PhonecallDeviceModule
+        LogUtil.d("liyh", "init PhonecallDeviceModule()");
         PhoneCallDeviceModule phoneCallDeviceModule = new PhoneCallDeviceModule(new IPhoneCallImpl(),messageSender);
         mDcsSdk.putDeviceModule(phoneCallDeviceModule);
 
@@ -552,6 +565,7 @@ public class RecognizeManager {
         }
         //TODO 注入动态离线识别语法
 
+
     }
 
     private class InitEngineTask extends AsyncTask<Void,Void,Boolean> {
@@ -683,7 +697,7 @@ public class RecognizeManager {
         }
     }
 
-    private InternalApi getSdkInternalApi() {
+    public InternalApi getSdkInternalApi() {
         return ((DcsSdkImpl)Preconditions.checkNotNull(mDcsSdk)).getInternalApi();
     }
 

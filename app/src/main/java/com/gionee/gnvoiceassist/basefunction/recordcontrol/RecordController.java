@@ -9,6 +9,7 @@ import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
+import com.gionee.gnvoiceassist.service.RecognizeManager;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.SoundPlayer;
 import com.gionee.gnvoiceassist.util.Utils;
@@ -42,14 +43,14 @@ public class RecordController implements IRecordControl {
     public void stopRecord() {
         //TODO: 停止录音
 //        DcsSDK.getInstance().getAsr().stopRecord();
-        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().endVoiceRequest();
+        RecognizeManager.getInstance().abortRecord(false);
     }
 
     @Override
     public void cancelRecord() {
         //TODO: 取消录音
 //        DcsSDK.getInstance().getAsr().cancelRecord();
-        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().cancelVoiceRequest();
+        RecognizeManager.getInstance().abortRecord(true);
     }
 
     @Override

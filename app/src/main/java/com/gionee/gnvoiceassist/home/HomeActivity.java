@@ -191,12 +191,11 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if(mMainHandler != null) {
             mMainHandler.removeCallbacksAndMessages(null);
-            mMainHandler = null;
         }
         mPresenter.destroy();
-        super.onDestroy();
     }
 
     @Override
@@ -207,8 +206,10 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
     @Override
     public void onEngineState(Constants.EngineState state) {
-        Message msg = mMainHandler.obtainMessage(Constants.MSG_UPDATE_ENGINE_STATE,state);
-        mMainHandler.sendMessage(msg);
+        if (mMainHandler != null) {
+            Message msg = mMainHandler.obtainMessage(Constants.MSG_UPDATE_ENGINE_STATE,state);
+            mMainHandler.sendMessage(msg);
+        }
     }
 
     @Override

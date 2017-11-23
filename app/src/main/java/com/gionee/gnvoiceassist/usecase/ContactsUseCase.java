@@ -17,4 +17,9 @@ public class ContactsUseCase extends UseCase {
     public String getUseCaseName() {
         return UsecaseAlias.CONTACTS;
     }
+
+    @Override
+    public void onSpeakFinish(String utterId) {
+
+    }
 }
