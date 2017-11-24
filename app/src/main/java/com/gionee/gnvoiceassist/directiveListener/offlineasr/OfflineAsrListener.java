@@ -13,6 +13,8 @@ import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
+import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.OfflineCustomInteractionProcessor;
 import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.phonecall.message.ContactInfo;
 import com.gionee.gnvoiceassist.service.IDirectiveListenerCallback;
@@ -172,6 +174,12 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
             String rawText = offlineResultMap.get(Constants.SLOT_RAW_TEXT);
             String domain = offlineResultMap.get(Constants.SLOT_DOMAIN);
             String intent = offlineResultMap.get(Constants.SLOT_INTENT);
+            boolean inCustomInteraction = CustomUserInteractionManager.getInstance().isCustomUserInteractionProcessing();
+            if (inCustomInteraction) {
+                //当多轮交互正在进行中时，调用离线多轮交互器处理结果
+                OfflineCustomInteractionProcessor.getInstance().onOfflineAsrResult(rawText);
+                return;
+            }
             LogUtil.d(TAG, "DCSF--------------------- rawText= " + rawText + " domain= " + domain + "   intent= " + intent);
             if(iBaseFunction != null) {
                 iBaseFunction.getScreenRender().renderQueryInScreen(rawText);
@@ -259,7 +267,12 @@ public class OfflineAsrListener extends BaseDirectiveListener implements IRecogL
 
     @Override
     public void onAsrFinishError(int i, String s, String s1) {
-
+        boolean inCustomInteraction = CustomUserInteractionManager.getInstance().isCustomUserInteractionProcessing();
+        if (inCustomInteraction) {
+            //当多轮交互正在进行中时，调用离线多轮交互器处理结果
+            OfflineCustomInteractionProcessor.getInstance().onOfflineAsrResult("");
+            return;
+        }
     }
 
     @Override

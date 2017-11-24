@@ -203,7 +203,7 @@ public class RecognizeManager {
         }
     }
 
-    public void startCustomInteraction(final CUIEntity cuiData) {
+    public void startCustomInteraction(final String metadata, final CUIEntity cuiData) {
         CustomUserInteractionDeviceModule.PayLoadGenerator generator =
                 new CustomUserInteractionDeviceModule.PayLoadGenerator() {
             @Override
@@ -212,7 +212,6 @@ public class RecognizeManager {
                 if(CustomUserInteractionManager.getInstance().shouldStopCurrentInteraction()) {
                     return new CustomClientContextPayload(null);
                 }
-                Payload payload;
                 ArrayList<CustomClientContextHyperUtterace> hyperUtterances = new ArrayList<>();
                 for (CUIEntity.Command command:cuiData.getCommandSet()) {
                     hyperUtterances.add(new CustomClientContextHyperUtterace(command.getUtterance(), command.getUrl()));
@@ -220,12 +219,12 @@ public class RecognizeManager {
                 return new CustomClientContextPayload(false, hyperUtterances);
             }
         };
-        //TODO 更改自定义交互回调监听到各自的DirectiveListener中
         try {
             CustomUserInteractionManager.getInstance().startCustomUserInteraction(
                     generator,
                     cuiData.getInteractionId(),
                     directiveListenerManager.getDirectiveListener(cuiData.getUsecase()));
+            CustomUserInteractionManager.getInstance().setCustomInteractorMetadata(metadata);
         } catch (DirectiveListenerManager.DirectiveListenerNotFoundException e) {
             LogUtil.e(TAG,"无法找到Usecase别名对应的DirectiveListener");
             e.printStackTrace();

@@ -20,6 +20,7 @@ import com.gionee.gnvoiceassist.message.model.CUIEntity;
 import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
 import com.gionee.gnvoiceassist.message.model.TtsEntity;
 import com.gionee.gnvoiceassist.message.model.UsecaseResponseEntity;
+import com.gionee.gnvoiceassist.message.model.metadata.Metadata;
 import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
 import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
 import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
@@ -260,7 +261,7 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
 
         if (usecaseResult.isInCustomInteractive() && usecaseResult.getCustomInteract() != null) {
             //取出CUIEntity，信息分发到RecognizeManager，让其主持发起多轮交互
-            startCustomInteraction(usecaseResult.getCustomInteract());
+            startCustomInteraction(usecaseResult.getMetadata(),usecaseResult.getCustomInteract());
         }
     }
 
@@ -309,8 +310,8 @@ public class GnVoiceService extends Service implements IDirectiveListenerCallbac
         }
     }
 
-    private void startCustomInteraction(CUIEntity cuiData) {
-        mRecognizeManager.startCustomInteraction(cuiData);
+    private void startCustomInteraction(String metadata, CUIEntity cuiData) {
+        mRecognizeManager.startCustomInteraction(metadata,cuiData);
     }
 
     private synchronized void renderOnActivity(RenderEntity renderData) {

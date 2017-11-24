@@ -5,9 +5,11 @@ import android.text.TextUtils;
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
+import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.service.RecognizeManager;
+import com.gionee.gnvoiceassist.util.ConnectivityUtils;
 
 import java.util.HashMap;
 
@@ -47,9 +49,17 @@ public class CustomUserInteractionManager {
         this.mShouldStopCurrentInteraction = false;
         this.mCurrCUInteractionId = interactionId;
         mCustomUserInteractionMap.put(mCurrCUInteractionId, receivedInterface);
-        ((CustomUserInteractionDeviceModule) RecognizeManager.getInstance().getSdkInternalApi()
-                .getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction"))
-                .setCustomInteractionState(CustomClicentContextMachineState.PHONE, payLoadGenerator);
+
+        //TODO Warning 这里有个对ApplicationContext的引用。尽快处理，避免产生内存泄漏
+        if (ConnectivityUtils.isOnline(GnVoiceAssistApplication.getInstance().getApplicationContext())) {
+            ((CustomUserInteractionDeviceModule) RecognizeManager.getInstance().getSdkInternalApi()
+                    .getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction"))
+                    .setCustomInteractionState(CustomClicentContextMachineState.PHONE, payLoadGenerator);
+        } else {
+            OfflineCustomInteractionProcessor.getInstance().startOfflineCustomInteraction(
+                    CustomClicentContextMachineState.PHONE,
+                    payLoadGenerator);
+        }
         mCustomUserInteractionProcessing = true;
     }
 

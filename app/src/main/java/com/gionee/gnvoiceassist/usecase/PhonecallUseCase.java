@@ -1,7 +1,14 @@
 package com.gionee.gnvoiceassist.usecase;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 
+import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.message.io.CustomInteractGenerator;
 import com.gionee.gnvoiceassist.message.io.MetadataParser;
@@ -27,12 +34,13 @@ public class PhonecallUseCase extends UseCase {
 
     private static final String USECASE_ALIAS = UsecaseAlias.PHONECALL;
     private PhonecallMetadata mTempMetadata;
+    private Context mAppCtx;
 
     @Override
     public void handleMessage(DirectiveResponseEntity message) {
         String action = message.getAction();
         String subAction = message.getSubAction();
-        PhonecallMetadata metadata = MetadataParser.toEntity(message.getMetadata(),PhonecallMetadata.class);
+        PhonecallMetadata metadata = MetadataParser.toEntity(message.getMetadata(), PhonecallMetadata.class);
         switch (action) {
             case ACTION_REQUEST_CALL:
                 requestCall(metadata);
@@ -81,12 +89,12 @@ public class PhonecallUseCase extends UseCase {
     }
 
     private void readyToMakeCall(PhonecallMetadata metadata) {
-        UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(),ACTION_RESULT_CALL)
+        UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(), ACTION_RESULT_CALL)
                 .setInCustomInteractive(true)
                 .setMetadata(metadata.toJson())
                 .setSpeakText("正在拨打电话")
                 .generateEntity();
-        sendResponse(response,this);
+        sendResponse(response, this);
         tempSaveMetadata(metadata);
     }
 
@@ -101,7 +109,7 @@ public class PhonecallUseCase extends UseCase {
                 metadata.setSimSlot("0");
             }
         }
-        operation.call(metadata.getContacts().get(0).getNumberList().get(0),metadata.getSimSlot());
+        operation.call(metadata.getContacts().get(0).getNumberList().get(0), metadata.getSimSlot());
     }
 
     /**
@@ -122,7 +130,7 @@ public class PhonecallUseCase extends UseCase {
 
     @CuiQuery("multi_number")
     private void queryMultiNumber(PhonecallMetadata metadata) {
-        CustomInteractGenerator generator = new CustomInteractGenerator(getUseCaseName(),ACTION_CUI_MULTI_NUMBER);
+        CustomInteractGenerator generator = new CustomInteractGenerator(getUseCaseName(), ACTION_QUERY_MULTI_NUMBER);
         for (int i = 0; i < metadata.getContacts().size(); i++) {
             String url = CustomLinkSchema.LINK_PHONE +
                     "num=" + metadata.getContacts().get(i).getNumberList().get(0);
@@ -132,10 +140,10 @@ public class PhonecallUseCase extends UseCase {
             if (!TextUtils.isEmpty(metadata.getSimSlot())) {
                 url += "#" + "carrier=" + metadata.getCarrier();
             }
-            generator.addCommand(url,String.valueOf(i + 1),"第" + (i+1), "第" + (i+1) + "条");
+            generator.addCommand(url, String.valueOf(i + 1), "第" + (i + 1), "第" + (i + 1) + "条");
         }
         CUIEntity customInteract = generator.generateEntity();
-        UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(),ACTION_QUERY_MULTI_NUMBER)
+        UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(), ACTION_QUERY_MULTI_NUMBER)
                 .setInCustomInteractive(true)
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
@@ -149,11 +157,11 @@ public class PhonecallUseCase extends UseCase {
     @CuiQuery("select_sim")
     private void querySelectSim(PhonecallMetadata metadata) {
         String baseUrl = CustomLinkSchema.LINK_PHONE + "num=" + metadata.getContacts().get(0).getNumberList().get(0);  //TODO 这里直接取首条条目有没有问题？会不会出现空的情况？
-        CUIEntity customInteract = new CustomInteractGenerator(getUseCaseName(),ACTION_QUERY_SIMSLOT)
+        CUIEntity customInteract = new CustomInteractGenerator(getUseCaseName(), ACTION_QUERY_SIMSLOT)
                 .addCommand(baseUrl + "#sim=" + "1", "卡一", "卡伊")
-                .addCommand(baseUrl + "#sim=" + "2","卡二","卡而","卡饿")
+                .addCommand(baseUrl + "#sim=" + "2", "卡二", "卡而", "卡饿")
                 .generateEntity();
-        UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(),ACTION_QUERY_SIMSLOT)
+        UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(), ACTION_QUERY_SIMSLOT)
                 .setInCustomInteractive(true)
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
@@ -176,6 +184,28 @@ public class PhonecallUseCase extends UseCase {
          */
         private void call(String tel, String simslot) {
             //TODO 实现打电话功能
+            if (mAppCtx == null) {
+                mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
+            }
+            if (!TextUtils.isEmpty(tel) && mAppCtx != null) {
+                Uri uri = Uri.parse("tel:" + tel);
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(uri);
+                if (intent.resolveActivity(mAppCtx.getPackageManager()) != null) {
+                    // TODO: 实现选卡打电话功能
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    mAppCtx.startActivity(intent);
+                }
+            }
         }
 
         /**

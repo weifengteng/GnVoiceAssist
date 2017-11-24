@@ -43,4 +43,9 @@ public class CUIDirectiveListener implements CustomUserInteractionDeviceModule.C
             // TODO:
         }
     }
+
+    public void offlineCustomInteractionReceived(String url, String directiveName) {
+
+    }
+
 }
