@@ -183,7 +183,6 @@ public class PhonecallUseCase extends UseCase {
          * @param tel 电话号码
          */
         private void call(String tel, String simslot) {
-            //TODO 实现打电话功能
             if (mAppCtx == null) {
                 mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
             }
@@ -193,7 +192,7 @@ public class PhonecallUseCase extends UseCase {
                 intent.setData(uri);
                 if (intent.resolveActivity(mAppCtx.getPackageManager()) != null) {
                     // TODO: 实现选卡打电话功能
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(mAppCtx, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
                         //    ActivityCompat#requestPermissions
                         // here to request the missing permissions, and then overriding
