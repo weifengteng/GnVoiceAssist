@@ -237,6 +237,11 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
                     View textCardView = cardItem.getView();
                     screenRender.renderInfoPanel(textCardView);
                 } else {
+                    // TODO: 本地音乐播放Query 会返回一个“play”的字符串
+                    if(payload.content.equals("play")) {
+                        return;
+                    }
+
                     screenRender.renderAnswerInScreen(payload.content);
                 }
                 break;
