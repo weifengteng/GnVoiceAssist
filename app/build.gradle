@@ -72,7 +72,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.1'
     testCompile 'junit:junit:4.12'
 
-    compile(name: 'dlp', ext: 'aar')
+    compile(name: 'dlp-1.0.0', ext: 'aar')
+    compile(name: 'ijkmedia-1.0.0', ext: 'aar')
 
     compile 'com.squareup.picasso:picasso:2.5.2'
     def jacksonVersion = '2.9.1'

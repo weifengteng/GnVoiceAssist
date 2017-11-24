@@ -127,6 +127,11 @@ public class SdkManagerImpl implements ISdkManager {
             public BaseWakeup wakeupImpl() {
                 return wakeup;
             }
+
+            @Override
+            public float volume() {
+                return 0;
+            }
         };
 
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
