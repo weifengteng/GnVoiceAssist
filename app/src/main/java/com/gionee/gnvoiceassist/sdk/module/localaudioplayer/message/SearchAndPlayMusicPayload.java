@@ -3,7 +3,7 @@ package com.gionee.gnvoiceassist.sdk.module.localaudioplayer.message;
 import com.baidu.duer.dcs.framework.message.Payload;
 import java.io.Serializable;
 import java.util.List;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SearchAndPlayMusicPayload extends Payload implements Serializable {
     private String query;

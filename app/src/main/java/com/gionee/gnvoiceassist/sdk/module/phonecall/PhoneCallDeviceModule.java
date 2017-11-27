@@ -16,15 +16,6 @@
  */
 package com.gionee.gnvoiceassist.sdk.module.phonecall;
 
-import android.text.TextUtils;
-
-import com.baidu.duer.dcs.devicemodule.phonecall.ApiConstants;
-import com.baidu.duer.dcs.devicemodule.phonecall.message.CandidateCallee;
-import com.baidu.duer.dcs.devicemodule.phonecall.message.CandidateCalleeNumber;
-import com.baidu.duer.dcs.devicemodule.phonecall.message.ContactInfo;
-import com.baidu.duer.dcs.devicemodule.phonecall.message.PhonecallByNamePayload;
-import com.baidu.duer.dcs.devicemodule.phonecall.message.PhonecallByNumberPayload;
-import com.baidu.duer.dcs.devicemodule.phonecall.message.SelectCalleePayload;
 import com.baidu.duer.dcs.devicemodule.system.HandleDirectiveException;
 import com.baidu.duer.dcs.framework.BaseDeviceModule;
 import com.baidu.duer.dcs.framework.IMessageSender;
@@ -32,23 +23,25 @@ import com.baidu.duer.dcs.framework.message.ClientContext;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Header;
 import com.baidu.duer.dcs.framework.message.Payload;
-import com.baidu.duer.dcs.systeminterface.IPhoneCall;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.PhonecallByNamePayload;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.PhonecallByNumberPayload;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.message.SelectCalleePayload;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by caoyushu01 on 17/7/6.
  */
 
 public class PhoneCallDeviceModule extends BaseDeviceModule {
-    private IPhoneCall mPhoneCallImpl;
-    private IPhoneCallDirectiveListener iPhoneCallDirectiveListener;
 
-    public PhoneCallDeviceModule (IPhoneCall phoneCallImpl, IMessageSender messageSender) {
+    private List<IPhoneCallListener> listeners;
+
+    public PhoneCallDeviceModule (IMessageSender messageSender) {
         super(ApiConstants.NAMESPACE, messageSender);
-        this.mPhoneCallImpl = phoneCallImpl;
+        listeners = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -67,139 +60,73 @@ public class PhoneCallDeviceModule extends BaseDeviceModule {
     }
 
     @Override
-    public HashMap<String, Class<?>> supportPayload() {
-        HashMap<String, Class<?>> map = new HashMap<>();
-        map.put(getNameSpace() + com.gionee.gnvoiceassist.sdk.module.phonecall.ApiConstants.Directives.PhonecallByName.NAME, com.gionee.gnvoiceassist.sdk.module.phonecall.message.PhonecallByNamePayload.class);
-        map.put(getNameSpace() + com.gionee.gnvoiceassist.sdk.module.phonecall.ApiConstants.Directives.SelectCallee.NAME, com.gionee.gnvoiceassist.sdk.module.phonecall.message.SelectCalleePayload.class);
-        map.put(getNameSpace() + com.gionee.gnvoiceassist.sdk.module.phonecall.ApiConstants.Directives.PhonecallByNumber.NAME, com.gionee.gnvoiceassist.sdk.module.phonecall.message.PhonecallByNumberPayload.class);
-        return map;
-    }
-
-    @Override
     public void handleDirective (Directive directive) throws HandleDirectiveException {
         String headerName = directive.getName();
-        List<ContactInfo> contactInfos = null;
+        Payload payload = directive.getPayload();
         if (ApiConstants.Directives.PhonecallByName.NAME.equals(headerName)) {
-            contactInfos = assembleContactInfoByName(directive.getPayload());
+            fireOnPhonecallByName((PhonecallByNamePayload) payload);
         } else if (ApiConstants.Directives.SelectCallee.NAME.equals(headerName)) {
-            contactInfos = assembleContactInfoByNumber(directive.getPayload());
+            fireOnSelectCallee((SelectCalleePayload) payload);
         } else if (ApiConstants.Directives.PhonecallByNumber.NAME.equals(headerName)) {
-            contactInfos = assembleContactInfoBySingleNumber(directive.getPayload());
-
+            fireOnPhonecallByNumber((PhonecallByNumberPayload) payload);
         } else {
             String message = "phone cannot handle the directive";
             throw (new HandleDirectiveException(
                     HandleDirectiveException.ExceptionType.UNSUPPORTED_OPERATION, message));
         }
-        if (iPhoneCallDirectiveListener != null) {
-            iPhoneCallDirectiveListener.phoneCallDirectiveReceived(contactInfos, directive);
-        }
     }
 
-    /**
-     * 根据directive的返回结果装填联系人信息
-     *
-     * @param payload
-     */
-    private List<ContactInfo> assembleContactInfoByName (Payload payload) {
-        List<ContactInfo> infos = new ArrayList<>();
-        if (payload instanceof PhonecallByNamePayload) {
-            // 获取推荐的联系人名单
-            List<CandidateCallee> recommendNames = ((PhonecallByNamePayload) payload).getCandidateCallees();
-            // 获取sim卡
-            String simCard = ((PhonecallByNamePayload) payload).getUseSimIndex();
-            // 获取运营商信息
-            String carrierInfo = ((PhonecallByNamePayload) payload).getUseCarrier();
-
-            // 获取运营商信息
-            for (int i = 0; i < recommendNames.size(); i++) {
-                List<ContactInfo> oneTmpInfo =
-                        mPhoneCallImpl.getPhoneContactsByName(recommendNames.get(i), simCard, carrierInfo);
-                infos.addAll(oneTmpInfo);
-            }
-        }
-        return infos;
-    }
-
-    /**
-     * 根据directive的返回结果装填电话号码的信息
-     *
-     * @param payload
-     */
-    private List<ContactInfo> assembleContactInfoByNumber (Payload payload) {
-        List<ContactInfo> infos = new ArrayList<>();
-        if (payload instanceof SelectCalleePayload) {
-            List<CandidateCalleeNumber> numbers = ((SelectCalleePayload) payload).getCandidateCallees();
-            String simIndex = ((SelectCalleePayload) payload).getUseSimIndex();
-            String carrierInfo = ((SelectCalleePayload) payload).getUseCarrier();
-
-            for (int i = 0; i < numbers.size(); i++) {
-                ContactInfo contactInfo = new ContactInfo();
-                contactInfo.setType(ContactInfo.TYPE_NUMBER);
-                contactInfo.setName(numbers.get(i).getDisplayName());
-                // 与联系人不同，numberList中只有一个numberInfo,为服务端返回
-                List<ContactInfo.NumberInfo> numberList = new ArrayList<>();
-                ContactInfo.NumberInfo numberInfo = new ContactInfo.NumberInfo();
-                numberInfo.setPhoneNumber(numbers.get(i).getPhoneNumber());
-                numberList.add(numberInfo);
-                contactInfo.setPhoneNumbersList(numberList);
-                if (!TextUtils.isEmpty(simIndex)) {
-                    contactInfo.setSimIndex(simIndex);
-                }
-                if (!TextUtils.isEmpty(carrierInfo)) {
-                    contactInfo.setCarrierOprator(carrierInfo);
-                }
-
-                infos.add(contactInfo);
-            }
-        }
-        return infos;
-    }
-
-    /**
-     * 根据directive的返回结果装填电话号码的信息
-     *
-     * @param payload
-     */
-    private List<ContactInfo> assembleContactInfoBySingleNumber (Payload payload) {
-        List<ContactInfo> infos = new ArrayList<>();
-        if (payload instanceof PhonecallByNumberPayload) {
-            CandidateCalleeNumber callee = ((PhonecallByNumberPayload) payload).getCallee();
-            String simIndex = ((PhonecallByNumberPayload) payload).getUseSimIndex();
-            String carrierInfo = ((PhonecallByNumberPayload) payload).getUseCarrier();
-            ContactInfo contactInfo = new ContactInfo();
-            contactInfo.setType(ContactInfo.TYPE_NUMBER);
-            contactInfo.setName(callee.getDisplayName());
-            // 与联系人不同，numberList中只有一个numberInfo,为服务端返回
-            List<ContactInfo.NumberInfo> numberList = new ArrayList<>();
-            ContactInfo.NumberInfo numberInfo = new ContactInfo.NumberInfo();
-            numberInfo.setPhoneNumber(callee.getPhoneNumber());
-            numberList.add(numberInfo);
-            contactInfo.setPhoneNumbersList(numberList);
-            if (!TextUtils.isEmpty(simIndex)) {
-                contactInfo.setSimIndex(simIndex);
-            }
-            if (!TextUtils.isEmpty(carrierInfo)) {
-                contactInfo.setCarrierOprator(carrierInfo);
-            }
-
-            infos.add(contactInfo);
-        }
-        return infos;
+    @Override
+    public HashMap<String, Class<?>> supportPayload() {
+        HashMap<String, Class<?>> map = new HashMap<>();
+        map.put(getNameSpace() + ApiConstants.Directives.PhonecallByName.NAME, PhonecallByNamePayload.class);
+        map.put(getNameSpace() + ApiConstants.Directives.SelectCallee.NAME, SelectCalleePayload.class);
+        map.put(getNameSpace() + ApiConstants.Directives.PhonecallByNumber.NAME, PhonecallByNumberPayload.class);
+        return map;
     }
 
     @Override
     public void release () {
-        iPhoneCallDirectiveListener = null;
+        listeners.clear();
     }
 
-    public void addPhoneCallDirectiveListener (IPhoneCallDirectiveListener listener) {
-        iPhoneCallDirectiveListener = listener;
+    private void fireOnPhonecallByName(PhonecallByNamePayload payload) {
+        for (IPhoneCallListener listener : listeners) {
+            listener.onPhoneCallByName(payload);
+        }
+    }
+
+    private void fireOnSelectCallee(SelectCalleePayload payload) {
+        for (IPhoneCallListener listener : listeners) {
+            listener.onSelectCallee(payload);
+        }
+    }
+
+    private void fireOnPhonecallByNumber(PhonecallByNumberPayload payload) {
+        for (IPhoneCallListener listener : listeners) {
+            listener.onPhoneCallByNumber(payload);
+        }
+    }
+
+    public void addPhoneCallListener (IPhoneCallListener listener) {
+        if (listener != null) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removePhoneCallListener (IPhoneCallListener listener) {
+        if (listener != null && listeners.contains(listener)) {
+            listeners.remove(listener);
+        }
     }
 
 
     // 电话指令监听器，用于Android应用层监听电话指令的到来
-    public interface IPhoneCallDirectiveListener {
-        void phoneCallDirectiveReceived (List<ContactInfo> contactInfos, Directive directive);
+    public interface IPhoneCallListener {
+        void onPhoneCallByName(PhonecallByNamePayload payload);
+
+        void onSelectCallee(SelectCalleePayload payload);
+
+        void onPhoneCallByNumber(PhonecallByNumberPayload payload);
     }
 }

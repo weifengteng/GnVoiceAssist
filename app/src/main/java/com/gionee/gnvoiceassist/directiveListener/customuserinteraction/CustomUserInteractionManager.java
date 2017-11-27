@@ -4,10 +4,8 @@ import android.text.TextUtils;
 
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
-import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
-import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.service.RecognizeManager;
 import com.gionee.gnvoiceassist.util.ConnectivityUtils;
 

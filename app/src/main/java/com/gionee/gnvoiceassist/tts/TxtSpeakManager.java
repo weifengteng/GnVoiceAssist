@@ -2,9 +2,7 @@ package com.gionee.gnvoiceassist.tts;
 
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
-import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.service.RecognizeManager;
 
 import java.util.HashMap;

@@ -6,51 +6,48 @@ import android.os.Message;
 import android.util.Log;
 
 import com.baidu.duer.dcs.androidsystemimpl.AudioRecordImpl;
-import com.baidu.duer.dcs.androidsystemimpl.phonecall.IPhoneCallImpl;
-import com.baidu.duer.dcs.androidsystemimpl.sms.ISmsImpl;
-import com.baidu.duer.dcs.api.IASROffLineConfigProvider;
+import com.baidu.duer.dcs.api.DcsSdkBuilder;
 import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.api.IDialogStateListener;
-import com.baidu.duer.dcs.devicemodule.contacts.ContactsDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
-import com.baidu.duer.dcs.devicemodule.phonecall.PhoneCallDeviceModule;
-import com.baidu.duer.dcs.devicemodule.sms.SmsDeviceModule;
-import com.baidu.duer.dcs.devicemodule.ttsoutput.TtsOutputDeviceModule;
 import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
+import com.baidu.duer.dcs.framework.DialogRequestIdHandler;
+import com.baidu.duer.dcs.framework.ILoginListener;
 import com.baidu.duer.dcs.framework.IMessageSender;
 import com.baidu.duer.dcs.framework.InternalApi;
-import com.baidu.duer.dcs.framework.internalApi.DcsConfig;
-import com.baidu.duer.dcs.framework.internalApi.IDcsRequestBodySentListener;
-import com.baidu.duer.dcs.framework.internalApi.IErrorListener;
+import com.baidu.duer.dcs.framework.internalapi.IASROffLineConfigProvider;
+import com.baidu.duer.dcs.framework.internalapi.IDcsRequestBodySentListener;
+import com.baidu.duer.dcs.framework.internalapi.IErrorListener;
 import com.baidu.duer.dcs.framework.message.DcsRequestBody;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
 import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
-import com.baidu.duer.dcs.systeminterface.IAudioRecorder;
+import com.baidu.duer.dcs.systeminterface.BaseAudioRecorder;
 import com.baidu.duer.dcs.systeminterface.IOauth;
 import com.gionee.gnvoiceassist.DirectiveListenerManager;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
-import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.gnvoiceassist.directiveListener.location.LocationHandler;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.AsrVoiceInputListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.IVoiceInputEventListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinputvolume.VoiceInputVolumeListener;
 import com.gionee.gnvoiceassist.message.model.CUIEntity;
-import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncher;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.IAppLauncherImpl;
+import com.gionee.gnvoiceassist.sdk.module.contacts.ContactsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.offlineasr.OffLineDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
+import com.gionee.gnvoiceassist.sdk.module.sms.SmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
@@ -88,6 +85,7 @@ public class RecognizeManager {
 
     private static RecognizeManager sINSTANCE;
     private IDcsSdk mDcsSdk;
+    private IASROffLineConfigProvider asrOffLineConfigProvider;
 
     private InitEngineTask mInitTask;
     private LoadOfflineCommandTask mLoadOfflineCommandTask;
@@ -282,7 +280,7 @@ public class RecognizeManager {
 //            mInitTask.execute();
 
             //初始化SDK（同步）
-            IAudioRecorder audioRecorder = new AudioRecordImpl();
+            BaseAudioRecorder audioRecorder = new AudioRecordImpl();
             String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
             String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
             String appId = "10290022";
@@ -295,25 +293,37 @@ public class RecognizeManager {
             asrOffLineConfig.asrAppKey = apiKey;
             asrOffLineConfig.asrSecretKey = secretKey;
 
-            IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
+            asrOffLineConfigProvider = new IASROffLineConfigProvider() {
                 @Override
-                public ASROffLineConfig get() {
+                public ASROffLineConfig getOfflineConfig() {
                     return asrOffLineConfig;
                 }
             };
-            mDcsSdk = new DcsSdkImpl.Builder()
-                    .oauth(oauth)
-                    .clientId(clientId)
-                    .audioRecorder(audioRecorder)
-                    .asrMode(DcsConfig.ASR_MODE_ONLINE)
-                    .asrOffLineConfig(asrOffLineConfigProvider)
+            mDcsSdk = new DcsSdkBuilder()
+                    .withOauth(oauth)
+                    .withClientId(clientId)
+                    .withAudioRecorder(audioRecorder)
                     .build();
-
             initDeviceModule();
-
-
             // 第三步，将sdk跑起来
-            mDcsSdk.run();
+            getSdkInternalApi().login(new ILoginListener() {
+                @Override
+                public void onSucceed(String s) {
+                    mDcsSdk.run();
+                }
+
+                @Override
+                public void onFailed(String s) {
+                    LogUtil.e(TAG,"SDK login failed");
+                }
+
+                @Override
+                public void onCancel() {
+                    LogUtil.e(TAG,"SDK login cancelled");
+                }
+            });
+            getSdkInternalApi().setAsrOffLineConfigProvider(asrOffLineConfigProvider);
+
             mLocalHandler.sendEmptyMessage(MSG_INNER_ENGINEINIT_SUCCESS);
         }
     }
@@ -336,11 +346,11 @@ public class RecognizeManager {
 
         //初始化电话模块PhonecallDeviceModule
         LogUtil.d("liyh", "init PhonecallDeviceModule()");
-        PhoneCallDeviceModule phoneCallDeviceModule = new PhoneCallDeviceModule(new IPhoneCallImpl(),messageSender);
+        PhoneCallDeviceModule phoneCallDeviceModule = new PhoneCallDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(phoneCallDeviceModule);
 
         //初始化短信模块SmsDeviceModule
-        SmsDeviceModule smsDeviceModule = new SmsDeviceModule(new ISmsImpl(),messageSender);
+        SmsDeviceModule smsDeviceModule = new SmsDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(smsDeviceModule);
 
         //初始化联系人模块ContactsDeviceModule
@@ -372,6 +382,10 @@ public class RecognizeManager {
         //初始化localAudioPlayerDeviceModule
         LocalAudioPlayerDeviceModule localAudioPlayerDeviceModule = new LocalAudioPlayerDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(localAudioPlayerDeviceModule);
+
+        CustomUserInteractionDeviceModule customUserInteractionDeviceModule =
+                new CustomUserInteractionDeviceModule(messageSender,new DialogRequestIdHandler());
+        mDcsSdk.putDeviceModule(customUserInteractionDeviceModule);
 
         //初始化离线识别模块
         OffLineDeviceModule offLineDeviceModule = new OffLineDeviceModule();
@@ -426,9 +440,9 @@ public class RecognizeManager {
                 .addVoiceOutputListener(ttsListener);
 
         //注册离线TTS监听器（AsrVoiceInputListener）
-        ((TtsOutputDeviceModule)getSdkInternalApi()
-                .getDeviceModule("ai.dueros.device_interface.tts_output"))
-                .addVoiceOutputListener(ttsListener);
+//        ((TtsOutputDeviceModule)getSdkInternalApi()
+//                .getDeviceModule("ai.dueros.device_interface.tts_output"))
+//                .addVoiceOutputListener(ttsListener);
 
         //注册声音音量监听器（voiceInputVolumeListener）
         voiceInputVolumeListener = new VoiceInputVolumeListener();
@@ -562,16 +576,15 @@ public class RecognizeManager {
             mLoadOfflineCommandTask.cancel(true);
             mLoadOfflineCommandTask = null;
         }
-        //TODO 注入动态离线识别语法
-
-
+        asrOffLineConfigProvider.getOfflineConfig().offlineAsrSlots = offlineSlot;
+        getSdkInternalApi().setAsrOffLineConfigProvider(asrOffLineConfigProvider);
     }
 
     private class InitEngineTask extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            IAudioRecorder audioRecorder = new AudioRecordImpl();
+            BaseAudioRecorder audioRecorder = new AudioRecordImpl();
             String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
             String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
             String appId = "10290022";
@@ -586,23 +599,20 @@ public class RecognizeManager {
 
             IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
                 @Override
-                public ASROffLineConfig get() {
+                public ASROffLineConfig getOfflineConfig() {
                     return asrOffLineConfig;
                 }
             };
-            mDcsSdk = new DcsSdkImpl.Builder()
-                    .oauth(oauth)
-                    .clientId(clientId)
-                    .audioRecorder(audioRecorder)
-                    .asrMode(DcsConfig.ASR_MODE_ONLINE)
-                    .asrOffLineConfig(asrOffLineConfigProvider)
+            mDcsSdk = new DcsSdkBuilder()
+                    .withOauth(oauth)
+                    .withClientId(clientId)
+                    .withAudioRecorder(audioRecorder)
                     .build();
-
             initDeviceModule();
-
 
             // 第三步，将sdk跑起来
             mDcsSdk.run();
+            getSdkInternalApi().setAsrOffLineConfigProvider(asrOffLineConfigProvider);
             return true;
         }
 

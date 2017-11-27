@@ -86,6 +86,16 @@ public class AudioPlayerListener extends BaseDirectiveListener implements IMedia
     }
 
     @Override
+    public void onDuration(long l) {
+
+    }
+
+    @Override
+    public void onUpdateProgress(int i) {
+
+    }
+
+    @Override
     public void onDestroy() {
         iAudioPlayerState = null;
     }

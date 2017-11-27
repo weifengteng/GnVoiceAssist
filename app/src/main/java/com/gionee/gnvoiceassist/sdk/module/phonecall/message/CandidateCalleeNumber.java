@@ -16,27 +16,29 @@
  */
 package com.gionee.gnvoiceassist.sdk.module.phonecall.message;
 
+import java.io.Serializable;
+
 /**
  * Created by caoyushu01 on 17/7/6.
  */
 
-public class CandidateCalleeNumber {
+public class CandidateCalleeNumber implements Serializable {
     private String displayName;
     private String phoneNumber;
 
-    public String getDisplayName () {
+    public String getDisplayName() {
         return displayName;
     }
 
-    public void setDisplayName (String displayName) {
+    public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
-    public String getPhoneNumber () {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber (String phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 }

@@ -1,6 +1,6 @@
 package com.gionee.gnvoiceassist.sdk.module.screen.message;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by liyingheng on 10/16/17.

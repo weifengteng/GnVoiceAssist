@@ -1,6 +1,6 @@
 package com.gionee.gnvoiceassist.directiveListener.voiceinputvolume;
 
-import com.baidu.duer.dcs.systeminterface.IAudioRecorder;
+import com.baidu.duer.dcs.systeminterface.BaseAudioRecorder;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
@@ -9,7 +9,7 @@ import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
  * Created by twf on 2017/8/16.
  */
 
-public class VoiceInputVolumeListener implements IAudioRecorder.IRecorderListener {
+public class VoiceInputVolumeListener implements BaseAudioRecorder.IRecorderListener {
     public static final String TAG = VoiceInputVolumeListener.class.getSimpleName();
     private ScreenRender screenRender;
 
@@ -25,14 +25,13 @@ public class VoiceInputVolumeListener implements IAudioRecorder.IRecorderListene
     }
 
     @Override
+    public void onError(String s) {
+
+    }
+
     public void onVolumeChange(int volume) {
 //        LogUtil.d(TAG, "onVolumeChange = " + volume);
         screenRender.renderVoiceInputVolume(volume);
-    }
-
-    @Override
-    public void onError() {
-
     }
 
     public void onDestroy() {

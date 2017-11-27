@@ -2,7 +2,7 @@ package com.gionee.gnvoiceassist.sdk.module.screen.message;
 
 import com.baidu.duer.dcs.framework.message.Payload;
 import java.util.List;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ListCardPayload extends RenderCardPayload {
     private String token;

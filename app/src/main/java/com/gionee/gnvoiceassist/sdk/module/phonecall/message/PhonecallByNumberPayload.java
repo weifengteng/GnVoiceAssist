@@ -16,7 +16,6 @@
  */
 package com.gionee.gnvoiceassist.sdk.module.phonecall.message;
 
-import com.baidu.duer.dcs.devicemodule.phonecall.message.CandidateCalleeNumber;
 import com.baidu.duer.dcs.framework.message.Payload;
 
 /**
@@ -25,7 +24,7 @@ import com.baidu.duer.dcs.framework.message.Payload;
 
 public class PhonecallByNumberPayload extends Payload {
     // 服务端返回的全部响应当前次打电话的电话号/或服务端解析到的名称
-    private com.baidu.duer.dcs.devicemodule.phonecall.message.CandidateCalleeNumber callee;
+    private CandidateCalleeNumber callee;
 
     // 使用sim卡1/卡2
     private String useSimIndex;
@@ -36,7 +35,7 @@ public class PhonecallByNumberPayload extends Payload {
     // 拨打电话给指定号码的token
     private String token;
 
-    public com.baidu.duer.dcs.devicemodule.phonecall.message.CandidateCalleeNumber getCallee () {
+    public CandidateCalleeNumber getCallee () {
         return callee;
     }
 
