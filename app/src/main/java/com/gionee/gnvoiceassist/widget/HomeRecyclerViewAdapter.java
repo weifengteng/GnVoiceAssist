@@ -7,14 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gionee.gnvoiceassist.R;
-import com.gionee.gnvoiceassist.message.itemview.ChooseCardViewHolder;
+import com.gionee.gnvoiceassist.message.itemview.ChooseBoxViewHolder;
+import com.gionee.gnvoiceassist.message.itemview.ChooseListViewHolder;
 import com.gionee.gnvoiceassist.message.itemview.ImageListCardViewHolder;
 import com.gionee.gnvoiceassist.message.itemview.ListCardViewHolder;
 import com.gionee.gnvoiceassist.message.itemview.StandardCardViewHolder;
 import com.gionee.gnvoiceassist.message.itemview.TextCardViewHolder;
 import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
 import com.gionee.gnvoiceassist.message.model.render.TextRenderEntity;
-import com.gionee.gnvoiceassist.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +40,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter {
     private List<RenderEntity> mRenderData;
     private Map<String,Integer> mQueryMap;
     private Context mContext;
+    private OnItemClickedListener mListener;
+
 
     public HomeRecyclerViewAdapter(Context context) {
         mContext = context;
@@ -51,8 +53,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int viewRes;
-        View v;
         switch (viewType) {
             case VIEW_TYPE_TEXT_RESULT_CARD:
             case VIEW_TYPE_TEXT_QUERY_CARD:
@@ -64,12 +64,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter {
             case VIEW_TYPE_IMAGE_LIST_CARD:
                 return ImageListCardViewHolder.newInstance(parent);
             case VIEW_TYPE_CHOOSE_BOX_CARD:
-                viewRes = R.layout.empty_note_board;
-                v = mInflater.inflate(viewRes,parent,false);
-                return new ChooseCardViewHolder(v);
+                return ChooseBoxViewHolder.newInstance(parent);
             case VIEW_TYPE_CHOOSE_LIST_CARD:
-                viewRes = R.layout.empty_note_board;
-                break;
+                return ChooseListViewHolder.newInstance(parent);
         }
         return null;
     }
@@ -90,6 +87,28 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter {
                 break;
             case VIEW_TYPE_IMAGE_LIST_CARD:
                 ((ImageListCardViewHolder)holder).bind(mRenderData.get(position),mContext);
+                break;
+            case VIEW_TYPE_CHOOSE_BOX_CARD:
+                ((ChooseBoxViewHolder)holder).bind(mRenderData.get(position), mContext);
+                ((ChooseBoxViewHolder)holder).setOptionClickListener(new ChooseBoxViewHolder.OptionClickListener() {
+                    @Override
+                    public void onOptionClicked(int position, View v) {
+                        if (mListener != null) {
+                            mListener.onOptionClicked(position, v);
+                        }
+                    }
+                });
+                break;
+            case VIEW_TYPE_CHOOSE_LIST_CARD:
+                ((ChooseListViewHolder)holder).bind(mRenderData.get(position), mContext);
+                ((ChooseListViewHolder)holder).setOptionClickListener(new ChooseListViewHolder.OptionClickListener() {
+                    @Override
+                    public void onOptionClicked(int position, View v) {
+                        if (mListener != null) {
+                            mListener.onOptionClicked(position, v);
+                        }
+                    }
+                });
                 break;
         }
     }
@@ -125,9 +144,18 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public void addQueryItem(RenderEntity entity) {
         if (entity != null) {
-            //TODO 动态显示正在输入的文字
-            mRenderData.add(entity);
-            notifyItemInserted(mRenderData.size());
+            if (!mRenderData.isEmpty()) {
+                RenderEntity lastRender = mRenderData.get(mRenderData.size() - 1);
+                if (lastRender.getType() == RenderEntity.Type.TextCard
+                        && ((TextRenderEntity)lastRender).isQueryText()
+                        && ((TextRenderEntity)lastRender).isPartial()) {
+                    mRenderData.set(mRenderData.size() - 1, entity);
+                    notifyItemChanged(mRenderData.size() - 1);
+                } else {
+                    mRenderData.add(entity);
+                    notifyItemInserted(mRenderData.size() - 1);
+                }
+            }
         }
     }
 
@@ -138,5 +166,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter {
         }
     }
 
+    public void setOnItemClickedListener(OnItemClickedListener listener) {
+        if (listener != null) {
+            mListener = listener;
+        }
+    }
+
+    public interface OnItemClickedListener {
+        void onItemClicked(View view);
+        void onOptionClicked(int position, View view);
+    }
 
 }

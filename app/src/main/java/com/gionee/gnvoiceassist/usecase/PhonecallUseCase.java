@@ -12,10 +12,12 @@ import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.message.io.CustomInteractGenerator;
 import com.gionee.gnvoiceassist.message.io.MetadataParser;
+import com.gionee.gnvoiceassist.message.io.RenderInfoGenerator;
 import com.gionee.gnvoiceassist.message.io.UsecaseResponseGenerator;
 import com.gionee.gnvoiceassist.message.model.CUIEntity;
 import com.gionee.gnvoiceassist.message.model.DirectiveResponseEntity;
 import com.gionee.gnvoiceassist.message.model.UsecaseResponseEntity;
+import com.gionee.gnvoiceassist.message.model.metadata.ContactsMetadata;
 import com.gionee.gnvoiceassist.message.model.metadata.PhonecallMetadata;
 import com.gionee.gnvoiceassist.usecase.annotation.CuiQuery;
 import com.gionee.gnvoiceassist.usecase.annotation.DirectiveResult;
@@ -131,16 +133,25 @@ public class PhonecallUseCase extends UseCase {
     @CuiQuery("multi_number")
     private void queryMultiNumber(PhonecallMetadata metadata) {
         CustomInteractGenerator generator = new CustomInteractGenerator(getUseCaseName(), ACTION_QUERY_MULTI_NUMBER);
+        RenderInfoGenerator.GenerateChooseList renderDataBuilder = new RenderInfoGenerator.GenerateChooseList();
+        int contactCount = 0;
         for (int i = 0; i < metadata.getContacts().size(); i++) {
-            String url = CustomLinkSchema.LINK_PHONE +
-                    "num=" + metadata.getContacts().get(i).getNumberList().get(0);
-            if (!TextUtils.isEmpty(metadata.getSimSlot())) {
-                url += "#" + "sim=" + metadata.getSimSlot();
+            ContactsMetadata contact = metadata.getContacts().get(i);
+            String name = contact.getName();
+            for (int j = 0; j < contact.getNumberList().size(); j++) {
+                contactCount ++;
+                String number = contact.getNumberList().get(j);
+                String url = CustomLinkSchema.LINK_PHONE +
+                        "num=" + number;
+                if (!TextUtils.isEmpty(metadata.getSimSlot())) {
+                    url += "#" + "sim=" + metadata.getSimSlot();
+                }
+                if (!TextUtils.isEmpty(metadata.getSimSlot())) {
+                    url += "#" + "carrier=" + metadata.getCarrier();
+                }
+                generator.addCommand(url, String.valueOf(contactCount), "第" + (contactCount), "第" + (contactCount) + "条");
+                renderDataBuilder.addOptionItem(name, number, url);
             }
-            if (!TextUtils.isEmpty(metadata.getSimSlot())) {
-                url += "#" + "carrier=" + metadata.getCarrier();
-            }
-            generator.addCommand(url, String.valueOf(i + 1), "第" + (i + 1), "第" + (i + 1) + "条");
         }
         CUIEntity customInteract = generator.generateEntity();
         UsecaseResponseEntity response = new UsecaseResponseGenerator(getUseCaseName(), ACTION_QUERY_MULTI_NUMBER)
@@ -148,7 +159,7 @@ public class PhonecallUseCase extends UseCase {
                 .setCustomInteract(customInteract)
                 .setMetadata(metadata.toJson())
                 .setSpeakText("您要选择哪一个号码？")
-                .setRenderContent(null) //TODO Render Content
+                .setRenderContent(renderDataBuilder.build()) //TODO Render Content
                 .generateEntity();
 
         sendResponse(response);

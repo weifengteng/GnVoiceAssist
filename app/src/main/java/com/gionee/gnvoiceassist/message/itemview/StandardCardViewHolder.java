@@ -111,11 +111,11 @@ public class StandardCardViewHolder extends BaseViewHolder {
     }
 
     private void openLink(String url) {
-        Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        mIntent.addCategory(Intent.CATEGORY_BROWSABLE);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
-        GnVoiceAssistApplication.getInstance().startActivity(mIntent);
+        Context context = GnVoiceAssistApplication.getInstance().getApplicationContext();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        }
     }
 
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/num_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/info_text_color"
+        android:textSize="@dimen/sub_content_text_size"
+        android:background="@drawable/num_idbg"
+        android:gravity="center"
+        android:layout_marginLeft="@dimen/contact_margin_left"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
+
+    <LinearLayout
+        android:id="@+id/info_area"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/contact_item_height"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/num_id"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/contact_layout_margin">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/info_text_color"
+            android:textSize="@dimen/sub_content_text_size"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/else_info_text_color_num"
+            android:textSize="@dimen/sub1_content_text_size"
+            android:singleLine="true"
+            android:ellipsize="end" />
+    </LinearLayout>
+
+</LinearLayout>

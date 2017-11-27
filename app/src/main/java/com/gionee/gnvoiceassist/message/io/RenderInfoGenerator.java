@@ -1,5 +1,6 @@
 package com.gionee.gnvoiceassist.message.io;
 
+import com.gionee.gnvoiceassist.message.model.render.ChooseRenderEntity;
 import com.gionee.gnvoiceassist.message.model.render.ImageListRenderEntity;
 import com.gionee.gnvoiceassist.message.model.render.ListRenderEntity;
 import com.gionee.gnvoiceassist.message.model.render.RenderEntity;
@@ -142,6 +143,7 @@ public class RenderInfoGenerator {
             RenderEntity.ListItemModel item = new RenderEntity.ListItemModel();
             item.title = title;
             item.content = content;
+            item.image = new RenderEntity.ImageModel();
             item.image.src = imageSrc;
             item.url = url;
             listItems.add(item);
@@ -177,6 +179,82 @@ public class RenderInfoGenerator {
             return entity;
         }
 
+    }
+
+    public static class GenerateChooseBox {
+
+        String title = "";
+        String content = "";
+        List<RenderEntity.ChooseItemModel> options;
+
+        public GenerateChooseBox() {
+            options = new ArrayList<>();
+        }
+
+        public GenerateChooseBox setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public GenerateChooseBox setContent(String content) {
+            this.content = content;
+            return this;
+        }
+
+        public GenerateChooseBox addOptionItem(String title, String content, String metadata) {
+            RenderEntity.ChooseItemModel item = new RenderEntity.ChooseItemModel();
+            item.title = title;
+            item.content = content;
+            item.metadata = metadata;
+            options.add(item);
+            return this;
+        }
+
+        public ChooseRenderEntity build() {
+            ChooseRenderEntity entity = new ChooseRenderEntity(false);
+            entity.setSelectors(options);
+            entity.setTitle(title);
+            entity.setContent(content);
+            return entity;
+        }
+
+    }
+
+    public static class GenerateChooseList {
+        String title = "";
+        String content = "";
+        List<RenderEntity.ChooseItemModel> options;
+
+        public GenerateChooseList() {
+            options = new ArrayList<>();
+        }
+
+        public GenerateChooseList setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public GenerateChooseList setContent(String content) {
+            this.content = content;
+            return this;
+        }
+
+        public GenerateChooseList addOptionItem(String title, String content, String metadata) {
+            RenderEntity.ChooseItemModel item = new RenderEntity.ChooseItemModel();
+            item.title = title;
+            item.content = content;
+            item.metadata = metadata;
+            options.add(item);
+            return this;
+        }
+
+        public ChooseRenderEntity build() {
+            ChooseRenderEntity entity = new ChooseRenderEntity(true);
+            entity.setSelectors(options);
+            entity.setTitle(title);
+            entity.setContent(content);
+            return entity;
+        }
     }
 
 }

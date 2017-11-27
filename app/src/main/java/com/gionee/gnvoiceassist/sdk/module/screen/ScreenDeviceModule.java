@@ -59,7 +59,7 @@ public class ScreenDeviceModule extends BaseDeviceModule {
         if (name.equals(ApiConstants.Directives.HtmlView.NAME)) {
             handleHtmlPayload(directive.getPayload(), directive.id);
         } else if (name.equals(ApiConstants.Directives.RenderVoiceInputText.NAME)) {
-            fireRenderVoiceInputText((RenderVoiceInputTextPayload) directive.getPayload());
+            fireRenderVoiceInputText((RenderVoiceInputTextPayload) directive.getPayload(), directive.id);
         } else if (name.equals(ApiConstants.Directives.RenderCard.NAME)) {
             fireOnRenderCard((RenderCardPayload) directive.getPayload(), directive.id);
         } else if (name.equals(ApiConstants.Directives.RenderHint.NAME)) {
@@ -118,14 +118,14 @@ public class ScreenDeviceModule extends BaseDeviceModule {
         }
     }
 
-    private void fireRenderVoiceInputText(RenderVoiceInputTextPayload payload) {
+    private void fireRenderVoiceInputText(RenderVoiceInputTextPayload payload, int id) {
         if (payload.type == RenderVoiceInputTextPayload.Type.FINAL) {
             FileUtil.appendStrToFileNew("ASR-FINAL-RESULT:" + payload.text
                     + "," + System.currentTimeMillis() + "\n");
         }
 
         for (IScreenListener listener : listeners) {
-            listener.onRenderVoiceInputText(payload);
+            listener.onRenderVoiceInputText(payload, id);
         }
     }
 
@@ -147,7 +147,7 @@ public class ScreenDeviceModule extends BaseDeviceModule {
          *
          * @param payload 内容
          */
-        void onRenderVoiceInputText(RenderVoiceInputTextPayload payload);
+        void onRenderVoiceInputText(RenderVoiceInputTextPayload payload, int id);
 
         /**
          * 接收到HtmlView指令时回调

@@ -12,11 +12,11 @@ public class RenderEntity implements Serializable{
         TextCard, StandardCard, ListCard, ImageListCard, ChooseBoxCard, ChooseListCard
     }
 
-    private String title;
+    private String title = "";
 
     private Type type;
 
-    private String content;
+    private String content = "";
 
     private LinkModel link;
 

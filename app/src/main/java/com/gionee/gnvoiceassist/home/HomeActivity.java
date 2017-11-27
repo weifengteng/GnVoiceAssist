@@ -142,6 +142,17 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         llHelpCommandTips = (LinearLayout)findViewById(R.id.help_command);
         btnHelp.setOnClickListener(this);
         btnRecord.setOnClickListener(this);
+        mAdapter.setOnItemClickedListener(new HomeRecyclerViewAdapter.OnItemClickedListener() {
+            @Override
+            public void onItemClicked(View view) {
+
+            }
+
+            @Override
+            public void onOptionClicked(int position, View view) {
+                
+            }
+        });
     }
 
     private void initData() {

@@ -8,7 +8,22 @@ import java.util.List;
 
 public class ChooseRenderEntity extends RenderEntity {
 
+    public ChooseRenderEntity(boolean isChooseList) {
+        if (isChooseList) {
+            setType(Type.ChooseListCard);
+        } else {
+            setType(Type.ChooseBoxCard);
+        }
+    }
+
     //选择列表
     private List<ChooseItemModel> selectors;
 
+    public List<ChooseItemModel> getSelectors() {
+        return selectors;
+    }
+
+    public void setSelectors(List<ChooseItemModel> selectors) {
+        this.selectors = selectors;
+    }
 }
