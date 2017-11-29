@@ -19,7 +19,7 @@ import com.gionee.gnvoiceassist.basefunction.BasePresenter;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.basefunction.recordcontrol.RecordController;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
-import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
+import com.gionee.gnvoiceassist.tts.TtsManager;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.widget.SimpleAppItem;
 
@@ -57,7 +57,7 @@ public class AppLaunchPresenter extends BasePresenter {
     }
 
     @Override
-    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
+    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
 
     }
 
@@ -145,7 +145,7 @@ public class AppLaunchPresenter extends BasePresenter {
         try {
             Uri uri = Uri.parse(deepLink);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            mAppCtx.startActivity(intent);
+            startIntent(intent);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,7 +162,7 @@ public class AppLaunchPresenter extends BasePresenter {
         intent.putExtra("TAGID","100");
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        mAppCtx.startActivity(intent);
+        startIntent(intent);
     }
 
     public void cancelDownload() {
@@ -209,5 +209,11 @@ public class AppLaunchPresenter extends BasePresenter {
                 confirmDownload();
             }
         });
+    }
+
+    private void startIntent(Intent intent) {
+        if (intent.resolveActivity(mAppCtx.getPackageManager()) != null) {
+            mAppCtx.startActivity(intent);
+        }
     }
 }

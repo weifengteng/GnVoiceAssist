@@ -8,7 +8,7 @@ import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
-import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
+import com.gionee.gnvoiceassist.sdk.SdkManager;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.SoundPlayer;
 import com.gionee.gnvoiceassist.util.Utils;
@@ -40,61 +40,61 @@ public class RecordController implements IRecordControl {
 
     @Override
     public void stopRecord() {
-        //TODO: 停止录音
-//        DcsSDK.getInstance().getAsr().stopRecord();
-        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().endVoiceRequest();
+        SdkManager.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest();
     }
 
     @Override
     public void cancelRecord() {
-        //TODO: 取消录音
-//        DcsSDK.getInstance().getAsr().cancelRecord();
-        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().cancelVoiceRequest();
+        SdkManager.getInstance().getSdkInstance().getVoiceRequest().cancelVoiceRequest();
     }
 
     @Override
     public void onDestroy() {
+        // TODO RecordController的销毁
+    }
 
+    public void startRecord() {
+        startRecord(GnVoiceAssistApplication.ASR_MODE);
+    }
+
+    public void startRecord(int mode) {
+        startRecord(mode, null);
+    }
+
+    public void startRecordWithOfflineSlot(int mode, JSONObject jsonObject) {
+        startRecord(mode, jsonObject);
+    }
+
+    public void startRecordOnline() {
+        startRecord(ASR_MODE_ONLINE, null);
     }
 
     public void startRecordOfflinePrior() {
-//        startRecord(ASR_MODE_OFFLINE_PRIORITY, getOfflineAsrSlots());
         startRecord(ASR_MODE_OFFLINE_PRIORITY, getOfflineAsrSlots());
-
     }
 
     public void startRecordOfflineOnly() {
         startRecord(ASR_MODE_OFFLINE, getOfflineAsrSlots());
     }
 
-    public void startRecordOnline() {
-        startRecord(ASR_MODE_ONLINE, null);
-//        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().beginVoiceRequest(true);
-    }
-
-    private void startRecord(final int mode, JSONObject jsonObject) {
+    private void startRecord(final int mode, final JSONObject jsonObject) {
         // TODO: 当正在录音时，停止上一次录音进度
-
-        final DcsConfig.ASRConfig asrParam = new DcsConfig.ASRConfig();
-        asrParam.setAsrMode(mode);
-        if(jsonObject != null) {
-            asrParam.setOfflineAsrSlots(jsonObject);
-        }
-
         playBell(R.raw.ring_start);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //参数代表是否开启句尾识别
-                SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().beginVoiceRequest(true);
+                if (jsonObject != null) {
+                    //TODO 向SDK中注入动态离线语法
+                }
+                SdkManager.getInstance().getSdkInternalApi().setAsrMode(mode);
+                SdkManager.getInstance().getSdkInstance().getVoiceRequest().beginVoiceRequest(true);
             }
         }, DELAY_SHORT);
     }
 
     private JSONObject getOfflineAsrSlots() {
-        long startTimemills = System.currentTimeMillis();
-        long endTimemills = 0;
         JSONObject slotJson = new JSONObject();
         try {
             {
@@ -131,12 +131,9 @@ public class RecordController implements IRecordControl {
                 // 通用识别槽位
                 slotJson.put(Constants.SLOT_CONTACTNAME, slotdataArray);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            endTimemills = System.currentTimeMillis();
-            Log.i("liyh","getOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
             return slotJson;
         }
     }

@@ -37,9 +37,7 @@ public class AlarmPresenter extends BasePresenter implements IAlarmPresenter {
                 .putExtra(AlarmClock.EXTRA_DAYS,triggerDays)
                 .putExtra(AlarmClock.EXTRA_MESSAGE,message);
 
-        if (intent.resolveActivity(mAppCtx.getPackageManager()) != null) {
-            mAppCtx.startActivity(intent);
-        }
+        startIntent(intent);
     }
 
     @Override
@@ -48,8 +46,13 @@ public class AlarmPresenter extends BasePresenter implements IAlarmPresenter {
                 .putExtra(AlarmClock.EXTRA_LENGTH,length)
                 .putExtra(AlarmClock.EXTRA_SKIP_UI,false);
 
+        startIntent(intent);
+    }
+
+    private void startIntent(Intent intent) {
         if (intent.resolveActivity(mAppCtx.getPackageManager()) != null) {
             mAppCtx.startActivity(intent);
         }
     }
+
 }

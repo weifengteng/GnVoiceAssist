@@ -1,31 +1,21 @@
 package com.gionee.gnvoiceassist.sdk;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.baidu.duer.dcs.androidsystemimpl.AudioRecordImpl;
-import com.baidu.duer.dcs.androidsystemimpl.player.MediaPlayerImpl;
 import com.baidu.duer.dcs.androidsystemimpl.wakeup.kitt.KittWakeUpImpl;
 import com.baidu.duer.dcs.api.DcsSdkBuilder;
 import com.baidu.duer.dcs.api.IDcsSdk;
-import com.baidu.duer.dcs.devicemodule.audioplayer.AudioPlayerDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
-import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.DialogRequestIdHandler;
 import com.baidu.duer.dcs.framework.ILoginListener;
 import com.baidu.duer.dcs.framework.IMessageSender;
 import com.baidu.duer.dcs.framework.InternalApi;
-import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.baidu.duer.dcs.framework.internalapi.IASROffLineConfigProvider;
 import com.baidu.duer.dcs.framework.internalapi.IWakeupAgent;
 import com.baidu.duer.dcs.framework.internalapi.IWakeupProvider;
-import com.baidu.duer.dcs.framework.location.Location;
-import com.baidu.duer.dcs.framework.message.DcsRequestBody;
-import com.baidu.duer.dcs.framework.message.Directive;
-import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
 import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
 import com.baidu.duer.dcs.systeminterface.BaseAudioRecorder;
@@ -53,36 +43,35 @@ import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * Created by liyingheng on 10/15/17.
+ * 管理SDK的生命周期，取得SDK实例
  */
 
-public class SdkManagerImpl implements ISdkManager {
+public class SdkManager implements ISdkManager {
 
     //Config SDK
     private static final String WAKEUP_WORD = "";
     private static final boolean ENABLE_WAKEUP = false;
 
-    private static final String TAG = SdkManagerImpl.class.getSimpleName();
-    private static SdkManagerImpl sInstance;
+    private static final String TAG = SdkManager.class.getSimpleName();
+    private static SdkManager sInstance;
 
     private IDcsSdk mDcsSdk;
     private Context mAppCtx;
     private IWakeupAgent.IWakeupAgentListener wakeupAgentListener;
 
-    private SdkManagerImpl() {
+    private SdkManager() {
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
     }
 
-    public static synchronized SdkManagerImpl getInstance() {
+    public static synchronized SdkManager getInstance() {
         if (sInstance == null) {
-            sInstance = new SdkManagerImpl();
+            sInstance = new SdkManager();
         }
         return sInstance;
     }
@@ -97,115 +86,46 @@ public class SdkManagerImpl implements ISdkManager {
         mDcsSdk.release();
     }
 
+    @Override
+    public IDcsSdk getSdkInstance() {
+        if (mDcsSdk == null) {
+            init();
+        }
+        return mDcsSdk;
+    }
+
+    @Override
+    public InternalApi getSdkInternalApi() {
+        return ((DcsSdkImpl) mDcsSdk).getInternalApi();
+    }
+
     private void initSdk(final Context context) {
-        // 第一步初始化sdk
-        BaseAudioRecorder audioRecorder = new AudioRecordImpl();
-
-        final BaseWakeup wakeup = new KittWakeUpImpl();
-        IWakeupProvider wakeupProvider = new IWakeupProvider() {
-            @Override
-            public String wakeupWords() {
-                return "你好小金";
-            }
-
-            @Override
-            public boolean enableWarning() {
-                return false;
-            }
-
-            @Override
-            public String warningSource() {
-                return "assets://alarm.mp3";
-            }
-
-            @Override
-            public boolean wakeAlways() {
-                return false;
-            }
-
-            @Override
-            public BaseWakeup wakeupImpl() {
-                return wakeup;
-            }
-
-            @Override
-            public float volume() {
-                return 0;
-            }
-        };
-
+        // 第一步，初始化sdk实例
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
         String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
         String appId = "10290022";
         String apiKey = "bw40xRdDGFclaSIGzgXgNFdG";
         String secretKey = "AkP1XOuGVlrrML7dTs4WqW6bqj8lvv6C";
+        BaseAudioRecorder audioRecorder = new AudioRecordImpl();
         IOauth oauth = new BaiduOauthClientCredentialsImpl(clientId, clientSecret);
-        final ASROffLineConfig asrOffLineConfig = new ASROffLineConfig();
-        asrOffLineConfig.offlineAsrSlots = getOfflineAsrSlots();
-        asrOffLineConfig.asrAppId = appId;
-        asrOffLineConfig.asrAppKey = apiKey;
-        asrOffLineConfig.asrSecretKey = secretKey;
-
-        IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
-            @Override
-            public ASROffLineConfig getOfflineConfig() {
-                return asrOffLineConfig;
-            }
-        };
-
         mDcsSdk = new DcsSdkBuilder()
                 .withClientId(clientId)
                 .withOauth(oauth)
                 .withAudioRecorder(audioRecorder)
                 .build();
+        getSdkInternalApi().setDebug(true);
+        getSdkInternalApi().setAsrMode(GnVoiceAssistApplication.ASR_MODE);
 
-        getInternalApi().setDebug(true);
-        getInternalApi().setWakeupProvider(wakeupProvider);
-        getInternalApi().setAsrMode(GnVoiceAssistApplication.ASR_MODE);
-        getInternalApi().setAsrOffLineConfigProvider(asrOffLineConfigProvider);
-
-        //配置自定义端能力
-        initDeviceModule(context);
+        //二、设置基础功能：DeviceModule、离线功能、唤醒功能
+        setupDeviceModule(context);
+        setupOffline(appId, apiKey, secretKey);
+        setupWakeup();
 
         // 第三步，将sdk跑起来
-        getInternalApi().login(new ILoginListener() {
-            @Override
-            public void onSucceed(String s) {
-                mDcsSdk.run();
-            }
-
-            @Override
-            public void onFailed(String s) {
-                LogUtil.e(TAG,"SDK Login failed! Message = " + s);
-            }
-
-            @Override
-            public void onCancel() {
-                LogUtil.w(TAG,"SDK login cancel!");
-            }
-        });
-
-        IWakeupAgent wakeupAgent = getInternalApi().getWakeupAgent();
-        if (wakeupAgent != null) {
-            wakeupAgentListener = new IWakeupAgent.IWakeupAgentListener() {
-                @Override
-                public void onWakeupSucceed() {
-                    Toast.makeText(context, "唤醒成功",
-                            Toast.LENGTH_SHORT)
-                            .show();
-                }
-
-                @Override
-                public void onWarningCompleted() {
-
-                }
-            };
-            wakeupAgent.addWakeupAgentListener(wakeupAgentListener);
-        }
-
+        runSdk();
     }
 
-    private void initDeviceModule(Context context) {
+    private void setupDeviceModule(Context context) {
         //初始化应用启动模块AppLauncher
         IAppLauncher appLauncher = new IAppLauncherImpl(context);
         IMessageSender messageSender = ((DcsSdkImpl) mDcsSdk).getInternalApi().getMessageSender();
@@ -258,7 +178,94 @@ public class SdkManagerImpl implements ISdkManager {
         OffLineDeviceModule offLineDeviceModule = new OffLineDeviceModule();
         mDcsSdk.putDeviceModule(offLineDeviceModule);
 
-        getInternalApi().getDeviceModule(com.baidu.duer.dcs.devicemodule.custominteraction.ApiConstants.NAMESPACE);
+        getSdkInternalApi().getDeviceModule(com.baidu.duer.dcs.devicemodule.custominteraction.ApiConstants.NAMESPACE);
+    }
+
+    private void setupOffline(String appId, String appKey, String secretKey) {
+        final ASROffLineConfig asrOffLineConfig = new ASROffLineConfig();
+        asrOffLineConfig.offlineAsrSlots = getOfflineAsrSlots();
+        asrOffLineConfig.asrAppId = appId;
+        asrOffLineConfig.asrAppKey = appKey;
+        asrOffLineConfig.asrSecretKey = secretKey;
+        asrOffLineConfig.grammerPath = "assets:///baidu_speech_grammar.bsg";
+        IASROffLineConfigProvider asrOffLineConfigProvider = new IASROffLineConfigProvider() {
+            @Override
+            public ASROffLineConfig getOfflineConfig() {
+                return asrOffLineConfig;
+            }
+        };
+        getSdkInternalApi().setAsrOffLineConfigProvider(asrOffLineConfigProvider);
+    }
+
+    private void setupWakeup() {
+        final BaseWakeup wakeup = new KittWakeUpImpl();
+        IWakeupProvider wakeupProvider = new IWakeupProvider() {
+            @Override
+            public String wakeupWords() {
+                return "你好小金";
+            }
+
+            @Override
+            public boolean enableWarning() {
+                return false;
+            }
+
+            @Override
+            public String warningSource() {
+                return "assets://alarm.mp3";
+            }
+
+            @Override
+            public boolean wakeAlways() {
+                return false;
+            }
+
+            @Override
+            public BaseWakeup wakeupImpl() {
+                return wakeup;
+            }
+
+            @Override
+            public float volume() {
+                return 0;
+            }
+        };
+        getSdkInternalApi().setWakeupProvider(wakeupProvider);
+        IWakeupAgent wakeupAgent = getSdkInternalApi().getWakeupAgent();
+        if (wakeupAgent != null) {
+            wakeupAgentListener = new IWakeupAgent.IWakeupAgentListener() {
+                @Override
+                public void onWakeupSucceed() {
+                    T.showShort("唤醒成功");
+                }
+
+                @Override
+                public void onWarningCompleted() {
+
+                }
+            };
+            wakeupAgent.addWakeupAgentListener(wakeupAgentListener);
+        }
+
+    }
+
+    private void runSdk() {
+        getSdkInternalApi().login(new ILoginListener() {
+            @Override
+            public void onSucceed(String s) {
+                mDcsSdk.run();
+            }
+
+            @Override
+            public void onFailed(String s) {
+                LogUtil.e(TAG,"SDK Login failed! Message = " + s);
+            }
+
+            @Override
+            public void onCancel() {
+                LogUtil.w(TAG,"SDK login cancel!");
+            }
+        });
     }
 
     private JSONObject getOfflineAsrSlots() {
@@ -306,39 +313,6 @@ public class SdkManagerImpl implements ISdkManager {
             Log.i("liyh","getOfflineAsrSlots() duration = " + (endTimemills - startTimemills));
             return slotJson;
         }
-        // 离线识别
-
-//        JSONObject slotJson = new JSONObject();
-//        try {
-//            JSONArray slotdataArray = new JSONArray();
-//            slotdataArray.put("打开空调");
-//            slotdataArray.put("打开电视");
-//            slotdataArray.put("关闭空调");
-//            slotdataArray.put("今天天气怎么样");
-//            // 通用识别槽位
-//            slotJson.put("generalslot", slotdataArray);
-//            JSONArray slotdPhoneNameArray = new JSONArray();
-//            slotdPhoneNameArray.put("张三");
-//            slotdPhoneNameArray.put("李四");
-//            // 通用识别槽位
-//            slotJson.put("phonename", slotdPhoneNameArray);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        } finally {
-//            return slotJson;
-//        }
-    }
-
-    public IDcsSdk getDcsSdk() {
-        if (mDcsSdk == null) {
-            init();
-        }
-        return mDcsSdk;
-    }
-
-
-    public InternalApi getInternalApi() {
-        return ((DcsSdkImpl) mDcsSdk).getInternalApi();
     }
 
 }

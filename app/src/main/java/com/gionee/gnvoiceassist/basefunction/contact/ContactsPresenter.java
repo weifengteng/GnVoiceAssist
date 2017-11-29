@@ -12,7 +12,7 @@ import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
 import com.gionee.gnvoiceassist.basefunction.BasePresenter;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
-import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
+import com.gionee.gnvoiceassist.tts.TtsManager;
 import com.gionee.gnvoiceassist.util.ContactProcessor;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.T;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Created by tengweifeng on 9/14/17.
  *
- * 处理联系人查找功能，并调用系统相应模块，实现：
+ * 处理联系人查找功能，并调用系统相应模块实现：
  * 查找联系人、新建联系人操作。
  */
 
@@ -43,7 +43,7 @@ public class ContactsPresenter extends BasePresenter {
     }
 
     @Override
-    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
+    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
 
     }
 
@@ -54,6 +54,7 @@ public class ContactsPresenter extends BasePresenter {
 
     public void searchContact(List<String> nameList) {
         T.showShort("SearchContact : " + nameList.toString());
+        // TODO 编写针对搜索联系人的单元测试：搜索单个联系人，搜索多个联系人
         for(String name : nameList) {
             ArrayList<String> numberList = getPhoneNumberByName(name);
             LogUtil.d(TAG, "SearchContact :" + numberList.toString());
@@ -63,7 +64,7 @@ public class ContactsPresenter extends BasePresenter {
 
     public void createContact(String name, String phoneNumber) {
         T.showShort("创建联系人： name = " + name + " phoneNumber= " + phoneNumber);
-        // TODO:
+        // TODO: 编写针对创建联系人的单元测试
         try {
             addContact(name, phoneNumber);
         } catch (Exception e) {
@@ -129,8 +130,6 @@ public class ContactsPresenter extends BasePresenter {
                 Cursor phone = mAppCtx.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
                 while (phone.moveToNext()) {
                     String phoneNumber = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    T.showShort("为您查找到联系人号码： " + phoneNumber);
-                    LogUtil.d(TAG, "电话：" + phoneNumber);
                     numberList.add(phoneNumber);
                 }
             }
@@ -161,21 +160,10 @@ public class ContactsPresenter extends BasePresenter {
     }
 
     /**
-     * show contact info for command what is a number
-     * @param names result from DuerOS
+     * 显示联系人信息
+     * @param names 联系人结果列表
      */
     private void showContactInfo(List<String> names) {
-        /*RecognizerManager.resetFailCount();
-        String[] names = xmlResult.getResultObjectData(new String[] { "name" });
-        if (names == null) {
-            names = xmlResult.getResultObjectData(new String[] { "contact" });
-        }
-
-        if(names == null) {
-            Log.e("FocusContacts showContactInfo names == null");
-            showContactInfoWhenNameIsNull();
-            return;
-        }*/
 
         List<SimpleContactInfoItem> resultList = new ArrayList<>();
         putResultListContent(resultList, names);

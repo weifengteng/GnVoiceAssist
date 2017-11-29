@@ -72,11 +72,6 @@ public class Constants {
     public static final String FUN_STATE = "func_state";
 
 
-
-
-
-
-
     // RenderCard
     public static final String TEXT_CARD = "TextCard";
     public static final String STANDARD_CARD = "StandardCard";
@@ -94,6 +89,10 @@ public class Constants {
     public static final String SLOT_CUSTOMACSTATELIST = "customacstate";
     public static final String SLOT_APPNAME = "appname";
     public static final String SLOT_CONTACTNAME = "contactname";
+
+    // TTS模式
+    public static final int TTS_MODE_ONLINE = 1;
+    public static final int TTS_MODE_OFFLINE = 0;
 
 
     public static final int MSG_INIT_SUCCESS = 0x1010;

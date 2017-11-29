@@ -2,15 +2,15 @@ package com.gionee.gnvoiceassist.directiveListener;
 
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.ICUIDirectiveReceivedInterface;
-import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
-import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
+import com.gionee.gnvoiceassist.tts.TtsCallback;
+import com.gionee.gnvoiceassist.tts.TtsManager;
 
 /**
  * Created by twf on 2017/8/14.
  */
 
 public abstract class BaseDirectiveListener
-        implements ISpeakTxtEventListener, ICUIDirectiveReceivedInterface{
+        implements TtsCallback, ICUIDirectiveReceivedInterface{
     protected IBaseFunction iBaseFunction;
 
     public BaseDirectiveListener(IBaseFunction iBaseFunction) {
@@ -31,7 +31,7 @@ public abstract class BaseDirectiveListener
     }
 
     @Override
-    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
+    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
 
     }
 
@@ -49,23 +49,23 @@ public abstract class BaseDirectiveListener
 
     public abstract void stopFocus();*/
 
-    protected void playTTS(String ttsText, String utterId, ISpeakTxtEventListener listener) {
-        TxtSpeakManager.getInstance().playTTS(ttsText, utterId, listener);
+    protected void playTTS(String ttsText, String utterId, TtsCallback listener) {
+        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
     }
 
-    protected void playTTS(String ttsText, String utterId, ISpeakTxtEventListener listener, boolean showPlayTextInScreen) {
-        TxtSpeakManager.getInstance().playTTS(ttsText, utterId, listener);
+    protected void playTTS(String ttsText, String utterId, TtsCallback listener, boolean showPlayTextInScreen) {
+        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
         if(showPlayTextInScreen) {
             iBaseFunction.getScreenRender().renderAnswerInScreen(ttsText);
         }
     }
 
     protected void playTTS(String ttsText) {
-        TxtSpeakManager.getInstance().playTTS(ttsText);
+        TtsManager.getInstance().playTTS(ttsText);
     }
 
     protected void playTTS(String ttsText, boolean showPlayTextInScreen) {
-        TxtSpeakManager.getInstance().playTTS(ttsText);
+        TtsManager.getInstance().playTTS(ttsText);
         if(showPlayTextInScreen) {
             iBaseFunction.getScreenRender().renderAnswerInScreen(ttsText);
         }

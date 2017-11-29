@@ -8,14 +8,12 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,18 +27,16 @@ import com.gionee.gnvoiceassist.basefunction.contact.ContactObserver;
 import com.gionee.gnvoiceassist.directiveListener.audioplayer.IAudioPlayerStateListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.IVoiceInputEventListener;
 import com.gionee.gnvoiceassist.sdk.ISdkManager;
-import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
-import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
-import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
+import com.gionee.gnvoiceassist.sdk.SdkManager;
+import com.gionee.gnvoiceassist.tts.TtsCallback;
+import com.gionee.gnvoiceassist.tts.TtsManager;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.ContactProcessor;
 import com.gionee.gnvoiceassist.util.LogUtil;
 import com.gionee.gnvoiceassist.util.PermissionsChecker;
-import com.gionee.gnvoiceassist.util.Preconditions;
 import com.gionee.gnvoiceassist.util.SharedData;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.gionee.gnvoiceassist.util.kookong.KookongCustomDataHelper;
-import com.gionee.gnvoiceassist.util.threadpool.ThreadPoolManager;
 import com.gionee.gnvoiceassist.widget.HomeRecyclerView;
 import com.gionee.gnvoiceassist.widget.HomeRecyclerViewAdapter;
 import com.gionee.gnvoiceassist.widget.HomeScrollView;
@@ -51,7 +47,7 @@ import java.lang.ref.WeakReference;
 /**
  * 没有启动唤醒功能
  */
-public class MainActivity extends GNBaseActivity implements View.OnClickListener, IVoiceInputEventListener, IAudioPlayerStateListener, ISpeakTxtEventListener {
+public class MainActivity extends GNBaseActivity implements View.OnClickListener, IVoiceInputEventListener, IAudioPlayerStateListener, TtsCallback {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String UTTER_ID_WELCOME = "utter_id_welcome";
     private static final int REQUEST_CODE = 0; // 请求码
@@ -67,7 +63,6 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
-    private long startTimeStopListen;
     private static Handler mMainHandler;
     private IBaseFunction baseFunctionManager;
     private ContactObserver mContactObserver;
@@ -104,12 +99,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         long startTs = System.currentTimeMillis();
         LogUtil.d(TAG, "onCreate");
         setContentView(R.layout.home_activity_layout);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        initData();
-        initHandler();
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         initView();
-        registerContentObserver();
-        KookongCustomDataHelper.bindDataRetriveService();
         long endTs = System.currentTimeMillis();
         LogUtil.i("liyh","onCreate() duration = " + (endTs - startTs));
     }
@@ -117,36 +108,19 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     @Override
     protected void onResume() {
         LogUtil.d(TAG, "onResume");
-        long startTs = System.currentTimeMillis();
         // 缺少权限时, 进入权限配置页面
-        if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
-            startPermissionsActivity();
-        } else {
+        if (checkPermission(PERMISSIONS)) {
+            LogUtil.d("liyh", "needInitFramework = " + needInitFramework);
             if(needInitFramework) {
-                handleUpdateContacts();
-                initDuerSDK();
-                initFrameWork();
-//                Runnable r = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Looper.prepare();
-//                        handleUpdateContacts();
-//                        initDuerSDK();
-////                        Looper.loop();
-//                        mMainHandler.sendEmptyMessage(Constants.MSG_INIT_SUCCESS);
-////                        initFrameWork();
-////                        needInitFramework = false;
-//                    }
-//                };
-//                ThreadPoolManager.getInstance().executeTask(r);
-//                TxtSpeakManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, this);
-//                startVoiceCommand();
-                TxtSpeakManager.getInstance().playTTS("您好", UTTER_ID_WELCOME, this);
-                needInitFramework = false;
+                getWindow().getDecorView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        initHandler();
+                        initData();
+                    }
+                });
             }
         }
-        long endTs = System.currentTimeMillis();
-        LogUtil.i("liyh","onResume() duration = " + (endTs - startTs));
         super.onResume();
     }
 
@@ -159,8 +133,21 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         }
     }
 
-    private void startPermissionsActivity() {
-        PermissionsActivity.startActivityForResult(this, REQUEST_CODE, PERMISSIONS);
+    /**
+     * 检查权限的授予情况
+     * @param requiredPermissions 需要检查的权限
+     * @return 权限是否已被授予。True为全部授予，False为未授予
+     */
+    private boolean checkPermission(String[] requiredPermissions) {
+        if (mPermissionsChecker == null) {
+            mPermissionsChecker = new PermissionsChecker(this);
+        }
+        boolean lackPermissions = mPermissionsChecker.lacksPermissions(requiredPermissions);
+        if (lackPermissions) {
+            PermissionsActivity.startActivityForResult(this, REQUEST_CODE, PERMISSIONS);
+            return false;
+        }
+        return true;
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -172,12 +159,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
             } else if(resultCode == PermissionsActivity.PERMISSIONS_GRANTED) {
                 LogUtil.d(TAG, "onActivityResult    PERMISSIONS_GRANTED needInitFramework= " + needInitFramework);
                 if(needInitFramework) {
-                    handleUpdateContacts();
-                    initDuerSDK();
-                    initFrameWork();
-                    TxtSpeakManager.getInstance().playTTS("您好", UTTER_ID_WELCOME, this);
-                    needInitFramework = false;
-                    mMainHandler.sendEmptyMessage(Constants.MSG_INIT_SUCCESS);
+                    initData();
                 }
             }
 
@@ -205,12 +187,9 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         rl.setOnClickListener(this);
     }
 
-    private void initDuerSDK() {
-        long startTs = System.currentTimeMillis();
-        mSdkManager = SdkManagerImpl.getInstance();
+    private void initSDK() {
+        mSdkManager = SdkManager.getInstance();
         mSdkManager.init();
-        long endTs = System.currentTimeMillis();
-        LogUtil.i("liyh","initDuerSDK() duration = " + (endTs - startTs));
     }
 
     private void initFrameWork() {
@@ -224,8 +203,14 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void initData() {
-        mPermissionsChecker = new PermissionsChecker(this);
-        needInitFramework = true;
+        LogUtil.d("liyh", "MainActivity, initData()");
+        initSDK();
+        initFrameWork();
+        KookongCustomDataHelper.bindDataRetriveService();
+        registerContentObserver();
+        mMainHandler.sendEmptyMessage(Constants.MSG_INIT_SUCCESS);
+        handleUpdateContacts();
+        needInitFramework = false;
     }
 
     private void initHandler() {
@@ -245,49 +230,21 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void updateStopRecordingUI() {
-        SharedData.getInstance().setStopListenReceiving(false);
-
-        tip.setVisibility(View.GONE);
         LogUtil.d(TAG, "setUIByClick stopRippleAnimation");
+        tip.setVisibility(View.GONE);
         help.setVisibility(View.VISIBLE);
         rl.stopRippleAnimation();
+        SharedData.getInstance().setStopListenReceiving(false);
         mVoiceStatus = VoiceStatus.INPUT;
     }
 
     private void updateStartRecordingUI() {
-        startTimeStopListen = System.currentTimeMillis();
+//        startTimeStopListen = System.currentTimeMillis();
         SharedData.getInstance().setStopListenReceiving(true);
-
         LogUtil.i(TAG, "setUIByClick startRippleAnimation");
         rl.startRippleAnimation();
-        /*if(myService != null && myService.needShowTip() && help_command.getVisibility() != View.VISIBLE){
-            LogUtil.e(TAG, "setUIByClick needShowTip");
-            tip.setVisibility(View.VISIBLE);
-        }*/
         help.setVisibility(View.GONE);
     }
-
-    /*public void setUIByClick(int clickId){
-        switch (clickId) {
-            case  DataKit.HOME_MSG_VOICE_STOP:
-                tip.setVisibility(View.GONE);
-                Log.e("setUIByClick stopRippleAnimation");
-                help.setVisibility(View.VISIBLE);
-                rl.stopRippleAnimation();
-                mVoiceStatus = VoiceStatus.INPUT;
-                break;
-            case  DataKit.HOME_MSG_VOICE_START:
-                Log.e("setUIByClick startRippleAnimation");
-                rl.startRippleAnimation();
-                if(myService != null && myService.needShowTip() && help_command.getVisibility() != View.VISIBLE){
-                    Log.e("setUIByClick needShowTip");
-                    tip.setVisibility(View.VISIBLE);
-                }
-                help.setVisibility(View.GONE);
-//                help_command.setVisibility(View.GONE);
-                break;
-        }
-    }*/
 
     public void setStatus(VoiceStatus status) {
         LogUtil.d(TAG, "VoiceHomeActivity setStatus status = " + status);
@@ -344,10 +301,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 
         help_command.setVisibility(View.GONE);
         sv.setVisibility(View.VISIBLE);
-        //Implement RecyclerView for better performance
-//        rv.setVisibility(View.VISIBLE);
         sv_ll.addView(showView);
-//        rvAdapter.addChildView(showView);
         final int measuredHeight = sv_ll.getMeasuredHeight();
         LogUtil.d(TAG, "VoiceHomeActivity measuredHeight  = " + measuredHeight);
         sv.post(new Runnable() {
@@ -381,8 +335,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
-        //note by liyh [refactor]: 此处原来还有一个参数是错误信息码，但是引用了百度自身的sdk包的enum。建议使用自己的enum。
+    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
 
     }
 
@@ -397,7 +350,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         // TODO:
         switch (v.getId()) {
             case R.id.help :
-                LogUtil.i(TAG,"onClick help help_command.getVisibility() = " + help_command.getVisibility());
+//                LogUtil.i(TAG,"onClick help visibility" + help_command.getVisibility());
                 //TODO Implement click help operate
 //                if(help_command.getVisibility() == View.GONE){
 //                    visibleListView();
@@ -419,7 +372,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 //                // TODO：强制退出云端多轮交互场景(权宜之计)
 ////                DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
 ////                ((SystemDeviceModule)
-////                        (DcsSdkImpl.getInstance().getInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
+////                        (DcsSdkImpl.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
 ////                        .release();
                 if(CommonUtil.isFastDoubleClick()) {
                     return;
@@ -431,18 +384,6 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         }
     }
 
-    /*@Override
-    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-        LogUtil.d(TAG, "VoiceHomeActivity onKey event.getAction() = " + event.getAction() + ", KeyEvent.ACTION_UP = " + KeyEvent.ACTION_UP
-                + ", keyCode = " + keyCode + ", KeyEvent.KEYCODE_BACK = " + KeyEvent.KEYCODE_BACK);
-        if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-//            stopCurOperation();
-            // TODO:
-            return true;
-        }
-        return false;
-    }*/
-
     private void startVoiceCommand() {
         if(SharedData.getInstance().isStopListenReceiving()) {
             baseFunctionManager.getRecordController().stopRecord();
@@ -450,16 +391,15 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
             return;
         }
         SharedData.getInstance().setStopListenReceiving(true);
-        startTimeStopListen = System.currentTimeMillis();
+//        startTimeStopListen = System.currentTimeMillis();
         // TODO：强制退出云端多轮交互场景(权宜之计)
 //                DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
 //                ((SystemDeviceModule)
-//                        (DcsSdkImpl.getInstance().getInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
+//                        (DcsSdkImpl.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
 //                        .release();
 //                baseFunctionManager.getRecordController().startRecordOfflineOnly();
 //        baseFunctionManager.getRecordController().startRecordOfflinePrior();
-
-        baseFunctionManager.getRecordController().startRecordOnline();
+        baseFunctionManager.getRecordController().startRecord();
     }
 
     private void registerContentObserver() {
@@ -481,19 +421,14 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void handleUpdateContacts() {
-        LogUtil.d(TAG, "handleUpdateContacts");
-        long startTs = System.currentTimeMillis();
-        Utils.uploadContacts();
         boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
-        long endTs = System.currentTimeMillis();
-        LogUtil.i("liyh","handleUpdateContacts() duration = " + (endTs - startTs));
+        if (needupdate) {
+            Utils.uploadContacts();
+        }
     }
 
-    private void initSuccess() {
-        LogUtil.i("liyh","initSuccess()");
-        initFrameWork();
-        needInitFramework = false;
-        TxtSpeakManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
+    private void sdkInitSuccess() {
+        TtsManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
     }
 
 
@@ -530,7 +465,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 
                 case Constants.MSG_INIT_SUCCESS:
                     if (mainActivity != null) {
-                        mainActivity.initSuccess();
+                        mainActivity.sdkInitSuccess();
                     }
                     break;
                 case Constants.MSG_SHOW_QUERY:

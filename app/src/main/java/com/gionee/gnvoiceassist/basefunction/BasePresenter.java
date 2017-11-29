@@ -1,14 +1,14 @@
 package com.gionee.gnvoiceassist.basefunction;
 
 import com.gionee.gnvoiceassist.basefunction.screenrender.ScreenRender;
-import com.gionee.gnvoiceassist.tts.ISpeakTxtEventListener;
-import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
+import com.gionee.gnvoiceassist.tts.TtsCallback;
+import com.gionee.gnvoiceassist.tts.TtsManager;
 
 /**
  * Created by tengweifeng on 9/27/17.
  */
 
-public abstract class BasePresenter implements ISpeakTxtEventListener {
+public abstract class BasePresenter implements TtsCallback {
     protected IBaseFunction baseFunction;
     protected ScreenRender screenRender;
 
@@ -31,27 +31,27 @@ public abstract class BasePresenter implements ISpeakTxtEventListener {
     }
 
     @Override
-    public void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s) {
+    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
 
     }
 
-    protected void playAndRenderText(String ttsText, String utterId, ISpeakTxtEventListener listener) {
-        TxtSpeakManager.getInstance().playTTS(ttsText, utterId, listener);
+    protected void playAndRenderText(String ttsText, String utterId, TtsCallback listener) {
+        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
     }
 
-    protected void playAndRenderText(String ttsText, String utterId, ISpeakTxtEventListener listener, boolean showPlayTextInScreen) {
-        TxtSpeakManager.getInstance().playTTS(ttsText, utterId, listener);
+    protected void playAndRenderText(String ttsText, String utterId, TtsCallback listener, boolean showPlayTextInScreen) {
+        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
         if(showPlayTextInScreen) {
             screenRender.renderAnswerInScreen(ttsText);
         }
     }
 
     protected void playAndRenderText(String ttsText) {
-        TxtSpeakManager.getInstance().playTTS(ttsText);
+        TtsManager.getInstance().playTTS(ttsText);
     }
 
     protected void playAndRenderText(String ttsText, boolean showPlayTextInScreen) {
-        TxtSpeakManager.getInstance().playTTS(ttsText);
+        TtsManager.getInstance().playTTS(ttsText);
         if(showPlayTextInScreen) {
             screenRender.renderAnswerInScreen(ttsText);
         }

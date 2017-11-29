@@ -7,7 +7,7 @@ import android.text.TextUtils;
 
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
-import com.gionee.gnvoiceassist.tts.TxtSpeakManager;
+import com.gionee.gnvoiceassist.tts.TtsManager;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.Utils;
 import com.kookong.app.aidl.ManagerCallback;
@@ -88,7 +88,7 @@ public class TeleControlPresenter extends KookongBaseService.SimpleKookongServic
 //            DcsSDK.getInstance().getSpeak().speakTxt(cmdResult,
 //                    SpeakInterface.SpeakTxtMixMode.MIX_MODE_MIXTURE_NETWORK);
             //TODO: 将处理结果用tts播报
-            TxtSpeakManager.getInstance().playTTS("正在" + voiceCmd);
+            TtsManager.getInstance().playTTS("正在" + voiceCmd);
         }
     };
 }

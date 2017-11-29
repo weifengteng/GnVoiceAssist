@@ -4,11 +4,11 @@ package com.gionee.gnvoiceassist.tts;
  * Created by twf on 2017/8/26.
  */
 
-public interface ISpeakTxtEventListener {
+public interface TtsCallback {
 
     void onSpeakStart();
 
     void onSpeakFinish(String utterId);
 
-    void onSpeakError(TxtSpeakManager.TxtSpeakResult txtSpeakResult, String s);
+    void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s);
 }

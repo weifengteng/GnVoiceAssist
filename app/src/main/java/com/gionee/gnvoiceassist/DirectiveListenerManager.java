@@ -8,13 +8,11 @@ import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDe
 import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
 import com.baidu.duer.dcs.framework.BaseDeviceModule;
-import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.internalapi.IDcsRequestBodySentListener;
 import com.baidu.duer.dcs.framework.internalapi.IDirectiveReceivedListener;
 import com.baidu.duer.dcs.framework.internalapi.IErrorListener;
 import com.baidu.duer.dcs.framework.message.DcsRequestBody;
 import com.baidu.duer.dcs.framework.message.Directive;
-import com.baidu.duer.dcs.framework.message.Payload;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
 import com.gionee.gnvoiceassist.directiveListener.alarm.AlarmDirectiveListener;
 import com.gionee.gnvoiceassist.directiveListener.applauncher.AppLauncherListener;
@@ -34,7 +32,7 @@ import com.gionee.gnvoiceassist.directiveListener.tvLive.TvLiveListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinput.AsrVoiceInputListener;
 import com.gionee.gnvoiceassist.directiveListener.voiceinputvolume.VoiceInputVolumeListener;
 import com.gionee.gnvoiceassist.directiveListener.webbrowser.WebBrowserListener;
-import com.gionee.gnvoiceassist.sdk.SdkManagerImpl;
+import com.gionee.gnvoiceassist.sdk.SdkManager;
 import com.gionee.gnvoiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.contacts.ContactsDeviceModule;
@@ -46,7 +44,7 @@ import com.gionee.gnvoiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.sms.SmsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
-import com.gionee.gnvoiceassist.tts.SpeakTxtListener;
+import com.gionee.gnvoiceassist.tts.TtsEventListener;
 import com.gionee.gnvoiceassist.util.T;
 
 /**
@@ -59,7 +57,7 @@ public class DirectiveListenerManager {
     private IBaseFunction baseFunctionManager;
     private PhoneCallDirectiveListener phoneCallDirectiveListener;
     private SmsDirectiveListener smsDirectiveListener;
-    private SpeakTxtListener speakTxtListener;
+    private TtsEventListener ttsEventListener;
     private CUIDirectiveListener cuiDirectiveListener;
     private VoiceInputVolumeListener voiceInputVolumeListener;
     private AudioPlayerListener audioPlayerListener;
@@ -86,7 +84,7 @@ public class DirectiveListenerManager {
 //        DcsSDK.getInstance().getAsr().registOfflineListener(offlineAsrListener);
 //        DcsSDK.getInstance().getAudioRecord().registerRecordListener(voiceInputVolumeListener);
 
-        SdkManagerImpl.getInstance().getInternalApi().addDirectiveReceivedListener(new IDirectiveReceivedListener() {
+        SdkManager.getInstance().getSdkInternalApi().addDirectiveReceivedListener(new IDirectiveReceivedListener() {
             @Override
             public void onDirective(Directive directive) {
                 //TODO: 处理IDirectiveReceivedListener，评估是否可以拿掉
@@ -100,7 +98,7 @@ public class DirectiveListenerManager {
         });
 
         //初始化错误回调接口
-        SdkManagerImpl.getInstance().getInternalApi().addErrorListener(new IErrorListener() {
+        SdkManager.getInstance().getSdkInternalApi().addErrorListener(new IErrorListener() {
             @Override
             public void onErrorCode(ErrorCode errorCode) {
                 T.showShort("SDK出现错误" + errorCode.getMessage());
@@ -108,7 +106,7 @@ public class DirectiveListenerManager {
         });
 
         //初始化事件监听回调接口
-        SdkManagerImpl.getInstance().getInternalApi().addRequestBodySentListener(new IDcsRequestBodySentListener() {
+        SdkManager.getInstance().getSdkInternalApi().addRequestBodySentListener(new IDcsRequestBodySentListener() {
             @Override
             public void onDcsRequestBody(DcsRequestBody event) {
                 String eventName = event.getEvent().getHeader().getName();
@@ -124,8 +122,8 @@ public class DirectiveListenerManager {
         });
 
         //初始化对话回调接口
-        SdkManagerImpl.getInstance().getDcsSdk().getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
-        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(locationHandler);
+        SdkManager.getInstance().getSdkInstance().getVoiceRequest().addDialogStateListener(asrVoiceInputListener);
+        SdkManager.getInstance().getSdkInternalApi().setLocationHandler(locationHandler);
         ((AudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.audio_player")).addAudioPlayListener(audioPlayerListener);
         ((SystemDeviceModule)getDeviceModule("ai.dueros.device_interface.system")).addModuleListener(deviceModuleListener);
         ((PhoneCallDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.telephone")).addPhoneCallListener(phoneCallDirectiveListener);
@@ -139,7 +137,7 @@ public class DirectiveListenerManager {
         ((TeleControllerDeviceModule)getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.voiceassist")).addDirectiveListener(teleControllerListener);
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(localAudioPlayerListener);
-        ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).addVoiceOutputListener(speakTxtListener);
+        ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).addVoiceOutputListener(ttsEventListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).addOfflineDirectiveListener(offlineAsrListener);
     }
 
@@ -160,16 +158,16 @@ public class DirectiveListenerManager {
         ((TeleControllerDeviceModule)getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.voiceassist")).addDirectiveListener(null);
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(null);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(null);
-        ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(speakTxtListener);
+        ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(ttsEventListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).removeOfflineDirectiveListener(offlineAsrListener);
-        SdkManagerImpl.getInstance().getInternalApi().setLocationHandler(null);
+        SdkManager.getInstance().getSdkInternalApi().setLocationHandler(null);
 
     }
 
     public void initDirectiveListener() {
 
         //语音识别、TTS监听器
-        speakTxtListener = new SpeakTxtListener();
+        ttsEventListener = new TtsEventListener();
 
         offlineAsrListener = new OfflineAsrListener(baseFunctionManager);
 
@@ -237,6 +235,6 @@ public class DirectiveListenerManager {
     }
 
     private BaseDeviceModule getDeviceModule(String namespace) {
-        return SdkManagerImpl.getInstance().getInternalApi().getDeviceModule(namespace);
+        return SdkManager.getInstance().getSdkInternalApi().getDeviceModule(namespace);
     }
 }
