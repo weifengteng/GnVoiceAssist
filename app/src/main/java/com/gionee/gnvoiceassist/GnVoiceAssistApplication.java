@@ -8,7 +8,7 @@ import com.gionee.gnvoiceassist.directiveListener.telecontroller.TeleControllerL
 import com.gionee.gnvoiceassist.util.Constants;
 import com.squareup.leakcanary.LeakCanary;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;

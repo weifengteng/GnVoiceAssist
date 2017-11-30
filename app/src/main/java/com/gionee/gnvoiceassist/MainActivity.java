@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.util.CommonUtil;
 import com.gionee.gnvoiceassist.basefunction.BaseFunctionManager;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
@@ -391,14 +392,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
             return;
         }
         SharedData.getInstance().setStopListenReceiving(true);
-//        startTimeStopListen = System.currentTimeMillis();
-        // TODO：强制退出云端多轮交互场景(权宜之计)
-//                DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
-//                ((SystemDeviceModule)
-//                        (DcsSdkImpl.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
-//                        .release();
-//                baseFunctionManager.getRecordController().startRecordOfflineOnly();
-//        baseFunctionManager.getRecordController().startRecordOfflinePrior();
+        // 退出云端及本地多轮交互场景(权宜之计)
+        baseFunctionManager.getRecordController().stopCustomInteractContext();
         baseFunctionManager.getRecordController().startRecord();
     }
 

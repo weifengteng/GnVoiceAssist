@@ -3,14 +3,22 @@ package com.gionee.gnvoiceassist.directiveListener.contacts;
 import android.text.TextUtils;
 
 
+import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
 import com.baidu.duer.dcs.framework.message.Directive;
+import com.baidu.duer.dcs.framework.message.Payload;
 import com.gionee.gnvoiceassist.basefunction.IBaseFunction;
+import com.gionee.gnvoiceassist.customlink.CustomLinkSchema;
 import com.gionee.gnvoiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.gnvoiceassist.sdk.module.contacts.ContactsDeviceModule;
 import com.gionee.gnvoiceassist.sdk.module.contacts.message.CreateContactPayload;
 import com.gionee.gnvoiceassist.sdk.module.contacts.message.SearchContactPayload;
 import com.gionee.gnvoiceassist.util.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +29,8 @@ public class ContactsDirectiveListener extends BaseDirectiveListener implements 
     public static final String TAG = ContactsDirectiveListener.class.getSimpleName();
     public static final String SEARCHCONTACT = "SearchContact";
     public static final String CREATECONTACT = "CreateContact";
+
+
 
     public ContactsDirectiveListener(IBaseFunction iBaseFunction) {
         super(iBaseFunction);
@@ -57,6 +67,44 @@ public class ContactsDirectiveListener extends BaseDirectiveListener implements 
             String phoneNumber = createContactPayload.getPhoneNumber();
             iBaseFunction.getContactsPresenter().createContact(name, phoneNumber);
         }
+    }
+
+    private void initiateAddContactsNumber(String name) {
+        CustomUserInteractionDeviceModule.PayLoadGenerator generator = new CustomUserInteractionDeviceModule.PayLoadGenerator() {
+            @Override
+            public Payload generateContextPayloadByInteractionState(CustomClicentContextMachineState state) {
+                LogUtil.d(TAG, "generateContextPayloadByInteractionState");
+                if(CustomUserInteractionManager.getInstance().shouldStopCurrentInteraction()) {
+                    return new CustomClientContextPayload(null);
+                }
+
+                int index;
+                Payload payload;
+                ArrayList<CustomClientContextHyperUtterace> hyperUtterances = new ArrayList<>();
+
+                payload = new CustomClientContextPayload(false, hyperUtterances);
+                return payload;
+            }
+        };
+    }
+
+    private void initiateAddContactsName(String number) {
+        CustomUserInteractionDeviceModule.PayLoadGenerator generator = new CustomUserInteractionDeviceModule.PayLoadGenerator() {
+            @Override
+            public Payload generateContextPayloadByInteractionState(CustomClicentContextMachineState state) {
+                LogUtil.d(TAG, "generateContextPayloadByInteractionState");
+                if(CustomUserInteractionManager.getInstance().shouldStopCurrentInteraction()) {
+                    return new CustomClientContextPayload(null);
+                }
+
+                int index;
+                Payload payload;
+                ArrayList<CustomClientContextHyperUtterace> hyperUtterances = new ArrayList<>();
+
+                payload = new CustomClientContextPayload(false, hyperUtterances);
+                return payload;
+            }
+        };
     }
 
 

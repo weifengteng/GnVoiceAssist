@@ -41,7 +41,7 @@ import com.gionee.gnvoiceassist.widget.SimpleListCardItem;
 import com.gionee.gnvoiceassist.widget.SimpleStandardCardItem;
 import com.gionee.gnvoiceassist.widget.SimpleTextCardItem;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Map;

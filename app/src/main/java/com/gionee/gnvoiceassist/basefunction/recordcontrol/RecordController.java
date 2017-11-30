@@ -3,11 +3,14 @@ package com.gionee.gnvoiceassist.basefunction.recordcontrol;
 import android.os.Handler;
 import android.util.Log;
 
+import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.gnvoiceassist.GnVoiceAssistApplication;
 import com.gionee.gnvoiceassist.R;
+import com.gionee.gnvoiceassist.basefunction.MaxUpriseCounter;
+import com.gionee.gnvoiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.gnvoiceassist.sdk.SdkManager;
 import com.gionee.gnvoiceassist.util.Constants;
 import com.gionee.gnvoiceassist.util.SoundPlayer;
@@ -77,9 +80,20 @@ public class RecordController implements IRecordControl {
         startRecord(ASR_MODE_OFFLINE, getOfflineAsrSlots());
     }
 
+    public void stopCustomInteractContext() {
+        // 退出云端的多轮交互
+        ((SystemDeviceModule)
+                (SdkManager.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
+                .sendExitedEvent();
+
+        // 退出本地发起的多轮交互
+        CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
+        MaxUpriseCounter.resetUpriseCount();
+    }
+
     private void startRecord(final int mode, final JSONObject jsonObject) {
         // TODO: 当正在录音时，停止上一次录音进度
-        playBell(R.raw.ring_start);
+//        playBell(R.raw.ring_start);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
