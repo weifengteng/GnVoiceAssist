@@ -4,7 +4,7 @@ android {
     compileSdkVersion 24
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.gionee.gnvoiceassist"
+        applicationId "com.gionee.voiceassist"
         minSdkVersion 19
         targetSdkVersion 24
         versionCode 1
@@ -53,6 +53,11 @@ android {
         exclude 'META-INF/LGPL2.1'
         exclude 'META-INF/ASL2.0'
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 }
 
 repositories {
@@ -85,6 +90,6 @@ dependencies {
         exclude module: "support-v13"
     }
     annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:3.0.1"
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    compile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 
 }

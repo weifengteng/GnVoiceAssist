@@ -45,7 +45,7 @@
 						android:scrollbarStyle="outsideOverlay" />
 				</LinearLayout>
 
-				<com.gionee.gnvoiceassist.widget.HomeScrollView
+				<com.gionee.voiceassist.widget.HomeScrollView
 					android:id="@+id/sv"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
@@ -56,9 +56,9 @@
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:orientation="vertical"/>
-				</com.gionee.gnvoiceassist.widget.HomeScrollView>
+				</com.gionee.voiceassist.widget.HomeScrollView>
 
-				<com.gionee.gnvoiceassist.widget.HomeRecyclerView
+				<com.gionee.voiceassist.widget.HomeRecyclerView
 					android:id="@+id/rv"
 					android:layout_height="match_parent"
 					android:layout_width="match_parent"
@@ -84,7 +84,7 @@
 						android:gravity="center_horizontal"
 						android:layout_alignParentBottom="true">
 
-						<com.gionee.gnvoiceassist.widget.RippleLayout
+						<com.gionee.voiceassist.widget.RippleLayout
 							android:id="@+id/ripple_layout"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
 								android:layout_height="wrap_content"
 								android:src="@drawable/processing_anim_outside"
 								android:visibility="gone"/>
-						</com.gionee.gnvoiceassist.widget.RippleLayout>
+						</com.gionee.voiceassist.widget.RippleLayout>
 
 					</LinearLayout>
 			</LinearLayout>
