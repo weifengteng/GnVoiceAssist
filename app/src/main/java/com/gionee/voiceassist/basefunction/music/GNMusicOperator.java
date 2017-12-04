@@ -61,7 +61,7 @@ public class GNMusicOperator extends BasePresenter {
 
         String tip = getTip(singer, song);
         LogUtil.d(TAG, "GNMusicOperator singer = " + singer + ", song = " + song + ", tip = " + tip);
-        playAndRenderText(tip, UTTER_ID_FIRE_FOCUS, this, true);
+        playTextAndModifyLast(tip, UTTER_ID_FIRE_FOCUS, this);
 
     }
 

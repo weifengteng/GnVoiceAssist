@@ -12,6 +12,7 @@ import com.baidu.duer.dcs.util.CommonUtil;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.voiceassist.basefunction.phonecall.PhoneCallPresenter;
+import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.voiceassist.customlink.CustomLinkSchema;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
@@ -45,6 +46,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     public static final String CUI_SELECT_PHONE_SIM = "cui_select_phone_sim";
     private List<ContactInfo> mContactInfos;
     private PhoneCallPresenter mPhoneCallPresenter;
+    private ScreenRender mScreenRender;
     private PhoneCardSelectCallback mCardSelectCallback;
     private IPhoneCallImpl mPhonecallImpl;
 
@@ -52,6 +54,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
         super(iBaseFunction);
         mPhonecallImpl = new IPhoneCallImpl();
         mPhoneCallPresenter = iBaseFunction.getPhoneCallPresenter();
+        mScreenRender = iBaseFunction.getScreenRender();
         mCardSelectCallback = new PhoneCardSelectCallback() {
             @Override
             public void onSelectContact(String phoneNumber) {
@@ -149,6 +152,12 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
                 }
 
             } else if(contents.length == 2) {
+                String asrResult = mScreenRender.getAsrResult();
+                if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
+                    mScreenRender. modifyLastTextInScreen("卡1");
+                } else if(TextUtils.equals(asrResult, "卡尔") || TextUtils.equals(asrResult, "卡而")) {
+                    mScreenRender.modifyLastTextInScreen("卡2");
+                }
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
                 String simId = contents[1].substring(contents[1].indexOf("=") + 1);
                 LogUtil.d(TAG, "customUserInteractionDirectiveReceived phoneNumber= " + phoneNumber + " simId= " + simId);
@@ -157,12 +166,6 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
                 mPhoneCallPresenter.setContactInfo(phoneNumber, simId);
                 mPhoneCallPresenter.readyToCallPhone();
 //                playTTS("正在为您呼叫", UTTER_READY_TO_CALL, this, true);
-                String asrResult = iBaseFunction.getScreenRender().getAsrResult();
-                if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
-                    iBaseFunction.getScreenRender().renderQueryInScreen("卡一");
-                } else if(TextUtils.equals(asrResult, "卡尔") || TextUtils.equals(asrResult, "卡而")) {
-                    iBaseFunction.getScreenRender().renderQueryInScreen("卡二");
-                }
             }
         }
     }

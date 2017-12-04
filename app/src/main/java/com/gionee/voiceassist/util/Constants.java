@@ -101,4 +101,5 @@ public class Constants {
     public static final int MSG_SHOW_INFO_PANEL = 0x1013;
     public static final int MSG_UPDATE_CONTACTS = 0x1014;
     public static final int MSG_UPDATE_INPUTVOLUME = 0x1015;
+    public static final int MSG_MODIFY_LAST_TEXT = 0x1016;
 }

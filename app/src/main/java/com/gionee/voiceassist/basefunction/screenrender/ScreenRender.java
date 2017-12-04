@@ -22,7 +22,6 @@ public class ScreenRender {
     }
 
     public void renderQueryInScreen(String asrResult) {
-        this.asrResult = asrResult;
         Message msg = Message.obtain();
         msg.what = Constants.MSG_SHOW_QUERY;
         msg.obj = asrResult;
@@ -34,6 +33,15 @@ public class ScreenRender {
         if(!TextUtils.isEmpty(content) && !"null".equals(content) && !"NULL".equals(content)) {
             Message msg = Message.obtain();
             msg.what = Constants.MSG_SHOW_ANSWER;
+            msg.obj = content;
+            mHandler.sendMessage(msg);
+        }
+    }
+
+    public void modifyLastTextInScreen(String content) {
+        if(!TextUtils.isEmpty(content) && !"null".equals(content) && !"NULL".equals(content)) {
+            Message msg = Message.obtain();
+            msg.what = Constants.MSG_MODIFY_LAST_TEXT;
             msg.obj = content;
             mHandler.sendMessage(msg);
         }
@@ -57,6 +65,10 @@ public class ScreenRender {
 
     public String getAsrResult() {
         return asrResult;
+    }
+
+    public void setAsrResult(String asrResult) {
+        this.asrResult = asrResult;
     }
 
     public void onDestroy() {

@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.util.CommonUtil;
 import com.gionee.voiceassist.basefunction.BaseFunctionManager;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
@@ -88,6 +87,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private VoiceStatus mVoiceStatus = VoiceStatus.INPUT;
     private PermissionsChecker mPermissionsChecker; // 权限检测器
     private boolean needInitFramework = true;
+    private View mLastTextView;
 
     public static enum VoiceStatus {
         INPUT,
@@ -286,19 +286,22 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 //        isPause = false;
     }
 
-    private void addView(String recordResult,String backResult,View view) {
+    private View addView(String recordResult,String backResult,View view) {
 
         View showView = view;
+        mLastTextView = null;
         if(!TextUtils.isEmpty(recordResult)){
             showView = View.inflate(this, R.layout.reco_result, null);
             TextView reco_result = (TextView)showView.findViewById(R.id.reco_result);
             reco_result.setText(recordResult);
+            mLastTextView = reco_result;
         }
 
         if(!TextUtils.isEmpty(backResult)){
             showView = View.inflate(this,R.layout.simple_host_info, null);
             TextView info = (TextView)showView.findViewById(R.id.info);
             info.setText(backResult);
+            mLastTextView = info;
         }
 
         help_command.setVisibility(View.GONE);
@@ -312,6 +315,13 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                 sv.scrollTo(0,measuredHeight);
             }
         });
+        return showView;
+    }
+
+    private void modifyView(String text) {
+        if(mLastTextView != null && mLastTextView instanceof TextView) {
+            ((TextView) mLastTextView).setText(text);
+        }
     }
 
     private void updateVoiceInputVolume(int volume) {
@@ -478,6 +488,12 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                         mainActivity.addView(null, answer, null);
                     }
                     break;
+                case Constants.MSG_MODIFY_LAST_TEXT:
+                    String textTobeModified = String.valueOf(msg.obj);
+                    if(mainActivity != null) {
+                        mainActivity.modifyView(textTobeModified);
+                    }
+                    break;
                 case Constants.MSG_SHOW_INFO_PANEL:
 //                    LogUtil.d(TAG, "MainHandler MSG_SHOW_INFO_PANEL");
                     View infoPanel = (View) msg.obj;
@@ -498,6 +514,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                         mainActivity.updateVoiceInputVolume(volume);
                     }
                     break;
+                    default:
+                        break;
             }
         }
     }

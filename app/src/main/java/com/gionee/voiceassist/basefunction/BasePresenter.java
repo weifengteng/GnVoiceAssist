@@ -46,6 +46,11 @@ public abstract class BasePresenter implements TtsCallback {
         }
     }
 
+    protected void playTextAndModifyLast(String ttsText, String utterId, TtsCallback listener) {
+        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
+        screenRender.modifyLastTextInScreen(ttsText);
+    }
+
     protected void playAndRenderText(String ttsText) {
         TtsManager.getInstance().playTTS(ttsText);
     }
@@ -55,6 +60,11 @@ public abstract class BasePresenter implements TtsCallback {
         if(showPlayTextInScreen) {
             screenRender.renderAnswerInScreen(ttsText);
         }
+    }
+
+    protected void playTextAndModifyLast(String ttsText) {
+        TtsManager.getInstance().playTTS(ttsText);
+        screenRender.modifyLastTextInScreen(ttsText);
     }
 
     /**

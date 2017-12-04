@@ -11,6 +11,7 @@ import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.CommonUtil;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
+import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.voiceassist.basefunction.smssend.SmsSendPresenter;
 import com.gionee.voiceassist.customlink.CustomLinkSchema;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
@@ -49,6 +50,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
 
     private List<SmsInfo> mSmsInfos;
     private SmsSendPresenter smsSendPresenter;
+    private ScreenRender screenRender;
     private SmsSimQueryInterface smsSimQueryInterface;
     private ISmsImpl mSmsImpl;
 
@@ -56,6 +58,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
         super(iBaseFunction);
         mSmsImpl = new ISmsImpl();
         smsSendPresenter = iBaseFunction.getSmsSendPresenter();
+        screenRender = iBaseFunction.getScreenRender();
         smsSimQueryInterface = new SmsSimQueryInterface() {
             @Override
             public void querySmsSim(String phoneNumber, String smsContent) {
@@ -147,19 +150,19 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
                 }
 
             } else if(contents.length == 3){
-                CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
+                String asrResult = iBaseFunction.getScreenRender().getAsrResult();
+                if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
+                    screenRender.modifyLastTextInScreen("卡1");
+                } else if(TextUtils.equals(asrResult, "卡尔") || TextUtils.equals(asrResult, "卡而")) {
+                    screenRender.modifyLastTextInScreen("卡2");
+                }
 
+                CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
                 String simId = contents[2].substring(contents[2].indexOf("=") + 1);
                 LogUtil.d(TAG, "customUserInteractionDirectiveReceived phoneNumber= " + phoneNumber + " msgContent= " + msgContent + "simId= " + simId);
                 smsSendPresenter.disableChooseSimCard();
                 // TODO:
                 smsSendPresenter.sendSms(phoneNumber, msgContent, simId);
-                String asrResult = iBaseFunction.getScreenRender().getAsrResult();
-                if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
-                    iBaseFunction.getScreenRender().renderQueryInScreen("卡一");
-                } else if(TextUtils.equals(asrResult, "卡尔") || TextUtils.equals(asrResult, "卡而")) {
-                    iBaseFunction.getScreenRender().renderQueryInScreen("卡二");
-                }
             }
         }
     }

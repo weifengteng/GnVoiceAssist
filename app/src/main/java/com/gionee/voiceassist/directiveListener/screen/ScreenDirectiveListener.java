@@ -54,6 +54,7 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
     public static final String TAG = ScreenDirectiveListener.class.getSimpleName();
     private ScreenRender screenRender;
     private Context mAppCtx;
+    private boolean isLastAsrRoundComplete = true;
 
     public ScreenDirectiveListener(IBaseFunction baseFunction) {
         super(baseFunction);
@@ -183,9 +184,22 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
             String asrResult = renderVoiceInputTextPayload.text;
             RenderVoiceInputTextPayload.Type type = renderVoiceInputTextPayload.type;
             LogUtil.d(TAG, "asrResult= " + asrResult);
+            // 实时显示识别结果
+            if(isLastAsrRoundComplete) {
+                screenRender.renderQueryInScreen(asrResult);
+                isLastAsrRoundComplete = false;
+            } else {
+                screenRender.modifyLastTextInScreen(asrResult);
+                if(type == RenderVoiceInputTextPayload.Type.FINAL) {
+                    isLastAsrRoundComplete = true;
+                    screenRender.setAsrResult(asrResult);
+                }
+            }
+
+            /*// 只显示最终结果
             if(type == RenderVoiceInputTextPayload.Type.FINAL) {
                 screenRender.renderQueryInScreen(asrResult);
-            }
+            }*/
         }
     }
 
@@ -237,11 +251,6 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
                     View textCardView = cardItem.getView();
                     screenRender.renderInfoPanel(textCardView);
                 } else {
-                    // TODO: 本地音乐播放Query 会返回一个“play”的字符串
-                    if(payload.content.equals("play")) {
-                        return;
-                    }
-
                     screenRender.renderAnswerInScreen(payload.content);
                 }
                 break;
