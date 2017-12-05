@@ -4,12 +4,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.os.UserHandle;
+import android.support.annotation.RequiresApi;
 
 import com.gionee.voiceassist.basefunction.devicecontrol.sysinterface.IScreenshot;
 
@@ -29,6 +31,7 @@ public class ScreenshotController extends BaseController implements IScreenshot 
     private Handler mHandler = new Handler();
     private ServiceConnection mScreenshotConnection;
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void takeScreenshot() {
         synchronized (mScreenshotLock) {
@@ -85,10 +88,10 @@ public class ScreenshotController extends BaseController implements IScreenshot 
                 e.printStackTrace();
             }
 
-            if (mAppCtx.bindService(intent, conn, Context.BIND_AUTO_CREATE)) {
-                mScreenshotConnection = conn;
-                mHandler.postDelayed(mScreenshotTimeout, GN_SCREENSHOT_TIMEOUT);
-            }
+//            if (mAppCtx.bindServiceAsUser(intent, conn, Context.BIND_AUTO_CREATE, UserHandle.CURRENT)) {
+//                mScreenshotConnection = conn;
+//                mHandler.postDelayed(mScreenshotTimeout, GN_SCREENSHOT_TIMEOUT);
+//            }
         }
     }
 

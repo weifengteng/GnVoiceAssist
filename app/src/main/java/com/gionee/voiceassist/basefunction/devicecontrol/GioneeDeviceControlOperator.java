@@ -6,6 +6,7 @@ import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.devicecontrol.impl.AirplaneModeController;
 import com.gionee.voiceassist.basefunction.devicecontrol.impl.BluetoothController;
 import com.gionee.voiceassist.basefunction.devicecontrol.impl.FlashlightController;
+import com.gionee.voiceassist.basefunction.devicecontrol.impl.GioneeAirplaneModeController;
 import com.gionee.voiceassist.basefunction.devicecontrol.impl.GioneeMobileDataController;
 import com.gionee.voiceassist.basefunction.devicecontrol.impl.GioneeNoDisturbController;
 import com.gionee.voiceassist.basefunction.devicecontrol.impl.HotspotController;
@@ -54,7 +55,7 @@ public class GioneeDeviceControlOperator extends DeviceControlOperator {
 
     @Override
     public void operateAirPlaneMode(boolean mode) {
-        IAirplaneMode controller = new AirplaneModeController(mAppCtx);
+        IAirplaneMode controller = new GioneeAirplaneModeController(mAppCtx);
         controller.setAirplaneModeEnabled(mode);
     }
 

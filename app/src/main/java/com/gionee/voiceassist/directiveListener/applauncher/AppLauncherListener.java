@@ -124,14 +124,14 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
                 return;
             }
 
-            if(SharedData.getInstance().isStopListenReceiving()) {
+            if(SharedData.getInstance().isVadReceiving()) {
                 iBaseFunction.getRecordController().stopRecord();
-                SharedData.getInstance().setStopListenReceiving(false);
+                SharedData.getInstance().setVadReceiving(false);
                 return;
             }
 
             LogUtil.d(TAG, "DCSF ---------- onSpeakFinish startRecordOnline");
-            SharedData.getInstance().setStopListenReceiving(true);
+            SharedData.getInstance().setVadReceiving(true);
             iBaseFunction.getRecordController().startRecordOnline();
             doUserActivity();
         }

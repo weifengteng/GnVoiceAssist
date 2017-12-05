@@ -84,7 +84,6 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private TextView tip;
     private ImageButton help;
 
-    private VoiceStatus mVoiceStatus = VoiceStatus.INPUT;
     private PermissionsChecker mPermissionsChecker; // 权限检测器
     private boolean needInitFramework = true;
     private View mLastTextView;
@@ -232,33 +231,18 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void updateStopRecordingUI() {
-        LogUtil.d(TAG, "setUIByClick stopRippleAnimation");
         tip.setVisibility(View.GONE);
         help.setVisibility(View.VISIBLE);
         rl.stopRippleAnimation();
-        SharedData.getInstance().setStopListenReceiving(false);
-        mVoiceStatus = VoiceStatus.INPUT;
+        SharedData.getInstance().setVadReceiving(false);
+        LogUtil.d(TAG, "setUIByClick stopRippleAnimation");
     }
 
     private void updateStartRecordingUI() {
-//        startTimeStopListen = System.currentTimeMillis();
-        SharedData.getInstance().setStopListenReceiving(true);
-        LogUtil.i(TAG, "setUIByClick startRippleAnimation");
+        SharedData.getInstance().setVadReceiving(true);
         rl.startRippleAnimation();
         help.setVisibility(View.GONE);
-    }
-
-    public void setStatus(VoiceStatus status) {
-        LogUtil.d(TAG, "VoiceHomeActivity setStatus status = " + status);
-        mVoiceStatus = status;
-        if(mVoiceStatus == VoiceStatus.RECOG) {
-            anim_outside.setVisibility(View.VISIBLE);
-            rl.stopRippleAnimation();
-            mRotationor.start();
-        }else{
-            anim_outside.setVisibility(View.GONE);
-            mRotationor.end();
-        }
+        LogUtil.i(TAG, "setUIByClick startRippleAnimation");
     }
 
 
@@ -373,19 +357,6 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
                 break;
             case R.id.ripple_layout :
                 LogUtil.e(TAG, "onClick ripple_layout");
-
-//                if(SharedData.getInstance().isStopListenReceiving()) {
-//                    baseFunctionManager.getRecordController().stopRecord();
-//                    SharedData.getInstance().setStopListenReceiving(false);
-//                    return;
-//                }
-//                SharedData.getInstance().setStopListenReceiving(true);
-//                startTimeStopListen = System.currentTimeMillis();
-//                // TODO：强制退出云端多轮交互场景(权宜之计)
-////                DcsSDK.getInstance().getSystemDeviceModule().sendExitedEvent();
-////                ((SystemDeviceModule)
-////                        (DcsSdkImpl.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
-////                        .release();
                 if(CommonUtil.isFastDoubleClick()) {
                     return;
                 }
@@ -397,12 +368,12 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void startVoiceCommand() {
-        if(SharedData.getInstance().isStopListenReceiving()) {
+        if(SharedData.getInstance().isVadReceiving()) {
             baseFunctionManager.getRecordController().stopRecord();
-            SharedData.getInstance().setStopListenReceiving(false);
+//            SharedData.getInstance().setVadReceiving(false);
             return;
         }
-        SharedData.getInstance().setStopListenReceiving(true);
+//        SharedData.getInstance().setVadReceiving(true);
         // 退出云端及本地多轮交互场景(权宜之计)
         baseFunctionManager.getRecordController().stopCustomInteractContext();
         baseFunctionManager.getRecordController().startRecord();

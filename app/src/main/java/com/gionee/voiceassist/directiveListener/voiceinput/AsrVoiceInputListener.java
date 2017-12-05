@@ -12,6 +12,7 @@ import com.gionee.voiceassist.util.LogUtil;
 public class AsrVoiceInputListener extends BaseDirectiveListener implements IDialogStateListener {
     public static final String TAG = AsrVoiceInputListener.class.getSimpleName();
     private IVoiceInputEventListener voiceInputEventListener;
+    private DialogState mPreviousState = DialogState.IDLE;
 
     public AsrVoiceInputListener(IBaseFunction baseFunction) {
         super(baseFunction);
@@ -71,10 +72,13 @@ public class AsrVoiceInputListener extends BaseDirectiveListener implements IDia
     @Override
     public void onDialogStateChanged(DialogState dialogState) {
         LogUtil.i("liyh","onDialogStateChanged() " + dialogState);
-        if (dialogState == DialogState.LISTENING) {
-            voiceInputEventListener.onVoiceInputStart();
-        } else {
-            voiceInputEventListener.onVoiceInputStop();
+        if (dialogState != mPreviousState) {
+            if (dialogState == DialogState.LISTENING) {
+                voiceInputEventListener.onVoiceInputStart();
+            } else if (mPreviousState == DialogState.LISTENING){
+                voiceInputEventListener.onVoiceInputStop();
+            }
+            mPreviousState = dialogState;
         }
     }
 

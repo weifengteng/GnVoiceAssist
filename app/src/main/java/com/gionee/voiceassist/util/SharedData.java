@@ -3,7 +3,6 @@ package com.gionee.voiceassist.util;
 import com.gionee.voiceassist.statemachine.Scene;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,17 +13,11 @@ public class SharedData {
     private static SharedData mInstance;
     private String currDirectiveListenerClassName;
     private String desiredScene;
-    private String answerWord;
-    private List<String> utteranceWords;
-    private List<String> utteranceExtraInfo;
-    private boolean isStopListenReceiving;
+    private boolean isVadReceiving;
     private Scene currentScene;
 
     private SharedData(){
         currentScene = Scene.IDLE;
-        answerWord = "";
-        utteranceWords = new ArrayList<>();
-        utteranceExtraInfo = new ArrayList<>();
     }
 
     public static synchronized SharedData getInstance() {
@@ -51,12 +44,13 @@ public class SharedData {
         setCurrDirectiveListenerClassName("");
     }
 
-    public boolean isStopListenReceiving() {
-        return isStopListenReceiving;
+    public boolean isVadReceiving() {
+        return isVadReceiving;
     }
 
-    public void setStopListenReceiving(boolean stopListenReceiving) {
-        isStopListenReceiving = stopListenReceiving;
+    public void setVadReceiving(boolean vadReceiving) {
+        isVadReceiving = vadReceiving;
+        LogUtil.d(SharedData.class, "setVadReceiving = " + isVadReceiving());
     }
 
     public void setCurrentCuiScene(Scene currentScene) {
@@ -67,29 +61,4 @@ public class SharedData {
         return currentScene;
     }
 
-    public void setUtteranceWords(List<String> utterances) {
-        utteranceWords.clear();
-        utteranceWords.addAll(utterances);
-    }
-
-    public List<String> getUtteranceWords() {
-        return utteranceWords;
-    }
-
-    public void setUtteranceExtraInfo(List<String> extraInfo) {
-        utteranceExtraInfo.clear();
-        utteranceExtraInfo = extraInfo;
-    }
-
-    public List<String> getUtteranceExtraInfo() {
-        return utteranceExtraInfo;
-    }
-
-    public String getAnswerWord() {
-        return answerWord;
-    }
-
-    public void setAnswerWord(String answerWord) {
-        this.answerWord = answerWord;
-    }
 }

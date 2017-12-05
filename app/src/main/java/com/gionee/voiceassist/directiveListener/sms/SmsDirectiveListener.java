@@ -6,7 +6,6 @@ import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDe
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
-import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.util.CommonUtil;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
@@ -180,14 +179,14 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
                 return;
             }
 
-            if(SharedData.getInstance().isStopListenReceiving()) {
+            if(SharedData.getInstance().isVadReceiving()) {
                 iBaseFunction.getRecordController().stopRecord();
-                SharedData.getInstance().setStopListenReceiving(false);
+                SharedData.getInstance().setVadReceiving(false);
                 return;
             }
 
             LogUtil.d(TAG, "DCSF ----------- onSpeechFinish startRecordOnline");
-            SharedData.getInstance().setStopListenReceiving(true);
+            SharedData.getInstance().setVadReceiving(true);
             iBaseFunction.getRecordController().startRecordOnline();
             doUserActivity();
         }

@@ -9,7 +9,6 @@ import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUser
 import com.gionee.voiceassist.statemachine.Scene;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ContactProcessor;
-import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.SharedData;
 import com.gionee.voiceassist.util.T;
 
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.gionee.voiceassist.util.Utils.doUserActivity;
 
 /**
  * Created by liyingheng on 11/14/17.
@@ -90,12 +87,12 @@ public class OfflineAsrHandler extends BasePresenter{
             case UTTER_ID_CHOOSE_CONTACT:
             case UTTER_ID_CUI_IRRELEVENT:
             {
-                if(SharedData.getInstance().isStopListenReceiving()) {
+                if(SharedData.getInstance().isVadReceiving()) {
                     iBaseFunction.getRecordController().stopRecord();
-                    SharedData.getInstance().setStopListenReceiving(false);
+                    SharedData.getInstance().setVadReceiving(false);
                     return;
                 }
-                SharedData.getInstance().setStopListenReceiving(true);
+                SharedData.getInstance().setVadReceiving(true);
                 iBaseFunction.getRecordController().startRecordOnline();
             }
         }

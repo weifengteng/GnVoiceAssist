@@ -14,14 +14,45 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+
 }
 
 allprojects {
     repositories {
         jcenter()
     }
+
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+//def pushDownSDK() {
+//    def imlFile = file("app/app.iml")
+//    println 'Change app.iml order'
+//    try {
+//        def parsedXml = (new XmlParser()).parse(imlFile)
+//        def jdkNode = parsedXml.component[1].orderEntry.find { it.'@type' == 'jdk' }
+//        parsedXml.component[1].remove(jdkNode)
+//        new Node(parsedXml.component[1], 'orderEntry', ['type': 'jdk', 'jdkName': "Android API 24 Platform", 'jdkType': 'Android SDK'])
+//        def writer = new StringWriter()
+//        new XmlNodePrinter(new PrintWriter(writer)).print(parsedXml)
+//        imlFile.text = writer.toString()
+//    } catch (FileNotFoundException e) {
+//        // nop, iml not found
+//        println('Change app.iml went wrong' + e)
+//    }
+//}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile){
+        options.compilerArgs.add('-Xbootclasspath/p:systemlibs/framework.jar')
+    }
+}
+
+//gradle.buildFinished {
+//    pushDownSDK()
+//}
+
+
