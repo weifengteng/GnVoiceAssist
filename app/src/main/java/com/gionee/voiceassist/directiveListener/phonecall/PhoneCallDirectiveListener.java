@@ -23,11 +23,16 @@ import com.gionee.voiceassist.sdk.module.phonecall.message.ContactInfo;
 import com.gionee.voiceassist.sdk.module.phonecall.message.PhonecallByNamePayload;
 import com.gionee.voiceassist.sdk.module.phonecall.message.PhonecallByNumberPayload;
 import com.gionee.voiceassist.sdk.module.phonecall.message.SelectCalleePayload;
+import com.gionee.voiceassist.util.CUInteractionUrlParser;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.SharedData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.gionee.voiceassist.util.Utils.doUserActivity;
 
@@ -132,25 +137,26 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
         super.handleCUInteractionTargetUrl(id, url);
         if(url.startsWith(CustomLinkSchema.LINK_PHONE)) {
             // Phone协议eg: phone://{num=phonenumber}#{sim=sim_idx(可选字段)}#{carrier=carrier(可选字段)}
-            int beginIdx = url.indexOf(":");
-            String realContent = url.substring(beginIdx + 1);
-            String[] contents = realContent.split("#");
-            String phoneNumber = contents[0].substring(contents[0].indexOf("=") + 1);
-            LogUtil.d(TAG, "customUserInteractionDirectiveReceived contents[0]= " + contents[0]);
+            Map<String, String> result = CUInteractionUrlParser.parsePhonecallUrl(url);
+            String phoneNumber = result.get("num");
+            String simId = result.get("sim");
+            boolean hasPhoneNumber = !TextUtils.isEmpty(phoneNumber);
+            boolean hasSimId = !TextUtils.isEmpty(simId);
+            LogUtil.d(TAG, "customUserInteractionDirectiveReceived phoneNumber= " + phoneNumber + " simId= " + simId);
 
-            if(contents.length == 1) {
+            if(!hasSimId && hasPhoneNumber) {
+                // 有电话，询问用户是否需要选卡
                 mPhoneCallPresenter.disableSelectContact();
                 mPhoneCallPresenter.setContactInfo(phoneNumber, null);
                 if(mPhoneCallPresenter.isNeedChoosePhoneSim()) {
                     initiatePhoneSimSelect(phoneNumber);
                 } else {
                     CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
-//                    mPhoneCallPresenter.callPhone(phoneNumber, "1");
-//                    playTTS("正在为您呼叫", UTTER_READY_TO_CALL, this, true);
                     mPhoneCallPresenter.readyToCallPhone();
                 }
 
-            } else if(contents.length == 2) {
+            } else if(hasSimId && hasPhoneNumber) {
+                // 有电话，有选卡号，发起拨打电话的操作
                 String asrResult = mScreenRender.getAsrResult();
                 if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
                     mScreenRender. modifyLastTextInScreen("卡1");
@@ -158,13 +164,9 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
                     mScreenRender.modifyLastTextInScreen("卡2");
                 }
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
-                String simId = contents[1].substring(contents[1].indexOf("=") + 1);
-                LogUtil.d(TAG, "customUserInteractionDirectiveReceived phoneNumber= " + phoneNumber + " simId= " + simId);
                 mPhoneCallPresenter.disableSelectSimCard();
-//                mPhoneCallPresenter.callPhone(phoneNumber, simId);
                 mPhoneCallPresenter.setContactInfo(phoneNumber, simId);
                 mPhoneCallPresenter.readyToCallPhone();
-//                playTTS("正在为您呼叫", UTTER_READY_TO_CALL, this, true);
             }
         }
     }

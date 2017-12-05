@@ -23,6 +23,7 @@ import com.gionee.voiceassist.sdk.module.sms.message.SelectRecipientPayload;
 import com.gionee.voiceassist.sdk.module.sms.message.SendSmsByNamePayload;
 import com.gionee.voiceassist.sdk.module.sms.message.SendSmsByNumberPayload;
 import com.gionee.voiceassist.sdk.module.sms.message.SmsInfo;
+import com.gionee.voiceassist.util.CUInteractionUrlParser;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.SharedData;
 
@@ -31,6 +32,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.gionee.voiceassist.util.Utils.doUserActivity;
 
@@ -126,19 +128,17 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
         super.handleCUInteractionTargetUrl(id, url);
         if(url.startsWith(CustomLinkSchema.LINK_SMS)) {
             // 短信协议：sms://{num=phonenumber}#{msg=messageContent}#{sim=sim_idx(可选字段)}#{carrier=carrier(可选字段)}
-            int beginIdx = url.indexOf(":");
-            String realContent = url.substring(beginIdx + 1);
-            String[] contents = realContent.split("#");
-            // phoneNumber
-            String phoneNumber =  contents[0].substring(contents[0].indexOf("=") + 1);
-            // messageContent
-            String msgContent = contents[1].substring(contents[1].indexOf("=") + 1);
-            try {
-                msgContent = URLDecoder.decode(msgContent, "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            if(contents.length == 2) {
+            Map<String, String> result = CUInteractionUrlParser.parseSmsUrl(url);
+            String phoneNumber = result.get("num");
+            String msgContent = result.get("msg");
+            String simId = result.get("sim");
+
+            //判断字段是否为空
+            boolean hasPhoneNumber = !TextUtils.isEmpty(phoneNumber);
+            boolean hasMsgContent = !TextUtils.isEmpty(msgContent);
+            boolean hasSimId = !TextUtils.isEmpty(simId);
+
+            if(!hasSimId && hasPhoneNumber && hasMsgContent) {
                 smsSendPresenter.disableContactSelect();
                 smsSendPresenter.setSmsParam(phoneNumber, msgContent);
                 if(smsSendPresenter.isNeedChoosePhoneSim()) {
@@ -148,7 +148,7 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
                     smsSendPresenter.sendSms(phoneNumber, msgContent, "1");
                 }
 
-            } else if(contents.length == 3){
+            } else if(hasSimId && hasPhoneNumber && hasMsgContent){
                 String asrResult = iBaseFunction.getScreenRender().getAsrResult();
                 if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
                     screenRender.modifyLastTextInScreen("卡1");
@@ -157,7 +157,6 @@ public class SmsDirectiveListener extends BaseDirectiveListener implements SmsDe
                 }
 
                 CustomUserInteractionManager.getInstance().setStopCurrentInteraction(true);
-                String simId = contents[2].substring(contents[2].indexOf("=") + 1);
                 LogUtil.d(TAG, "customUserInteractionDirectiveReceived phoneNumber= " + phoneNumber + " msgContent= " + msgContent + "simId= " + simId);
                 smsSendPresenter.disableChooseSimCard();
                 // TODO:
