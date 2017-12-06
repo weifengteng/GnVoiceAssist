@@ -1,5 +1,6 @@
 package com.gionee.voiceassist.util;
 
+import android.os.Debug;
 import android.util.Log;
 
 /**

@@ -6,7 +6,10 @@ import android.text.TextUtils;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.BasePresenter;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
+import com.gionee.voiceassist.systemctrl.SystemCtrlProvider;
+import com.gionee.voiceassist.systemctrl.iface.ISwitchCtrl;
 import com.gionee.voiceassist.util.Constants;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.T;
 
 /**
@@ -16,14 +19,16 @@ import com.gionee.voiceassist.util.T;
  * 实现以下离线指令的功能：设置Wifi状态，设置蓝牙、数据流量、飞行模式开关，关机、重启点那个操作。
  */
 
-public abstract class DeviceControlOperator extends BasePresenter {
+public class DeviceControlOperator extends BasePresenter {
     public static final String TAG = DeviceControlOperator.class.getSimpleName();
 
     protected Context mAppCtx;
+    private SystemCtrlProvider mCtrlProvider;
 
     public DeviceControlOperator(IBaseFunction baseFunction) {
         super(baseFunction);
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
+        mCtrlProvider = new SystemCtrlProvider();
     }
 
     @Override
@@ -61,7 +66,7 @@ public abstract class DeviceControlOperator extends BasePresenter {
     }
 
     public void operateOnlineDeviceControlCmd(String deviceOperator, boolean state) {
-        com.baidu.duer.dcs.util.LogUtil.d(TAG, "devcie Operator = " + deviceOperator + " state = " + state);
+        LogUtil.d(TAG, "devcie Operator = " + deviceOperator + " state = " + state);
         try {
             switch (deviceOperator) {
                 case Constants.JSON_KEY_WIFI:
@@ -104,63 +109,170 @@ public abstract class DeviceControlOperator extends BasePresenter {
      * 操作手电筒
      * @param mode 手电筒开(true)，关(false)
      */
-    public abstract void operateFlashLight(boolean mode);
+    public void operateFlashLight(boolean mode) {
+        mCtrlProvider.getFlashlightSwitch().toggle(mode, new ISwitchCtrl.Callback() {
+            @Override
+            public void onSuccess() {
+                playAndRenderText("手电筒已打开");
+            }
+
+            @Override
+            public void onFailure(ISwitchCtrl.FailureCode code, String reason) {
+                switch (code) {
+                    case NOT_SUPPORT:
+                        playAndRenderText("手电筒不支持");
+                        break;
+                    case UNKNOWN_FAILURE:
+                        playAndRenderText("手电筒打开错误");
+                        break;
+                }
+            }
+        });
+    }
 
     /**
      * 操作WiFi开关
      * @param mode Wifi开、关
      */
-    public abstract void operateWifi(boolean mode);
+    public void operateWifi(boolean mode) {
+        mCtrlProvider.getWifiSwitch().toggle(mode, new ISwitchCtrl.Callback() {
+            @Override
+            public void onSuccess() {
+                playAndRenderText("WLAN已打开");
+            }
+
+            @Override
+            public void onFailure(ISwitchCtrl.FailureCode code, String reason) {
+                switch (code) {
+                    case NOT_SUPPORT:
+                        playAndRenderText("WiFi不支持");
+                        break;
+                    case UNKNOWN_FAILURE:
+                        playAndRenderText("WiFi打开错误");
+                        break;
+                }
+            }
+        });
+    }
 
     /**
      * 操作蓝牙开关
      * @param mode 蓝牙开、关
      */
-    public abstract void operateBluetooth(boolean mode);
+    public void operateBluetooth(boolean mode) {
+
+    }
 
     /**
      * 控制飞行模式开关
      * @param mode
      */
-    public abstract void operateAirPlaneMode(boolean mode);
+    public void operateAirPlaneMode(boolean mode) {
+        mCtrlProvider.getAirplaneModeSwitch().toggle(mode, new ISwitchCtrl.Callback() {
+            @Override
+            public void onSuccess() {
+                playAndRenderText("飞行模式已打开");
+            }
+
+            @Override
+            public void onFailure(ISwitchCtrl.FailureCode code, String reason) {
+                playAndRenderText("飞行模式打开错误");
+            }
+        });
+    }
 
     /**
      * 控制勿扰模式开关
      * @param mode
      */
-    public abstract void operateNoDisturbMode(boolean mode);
+    public void operateNoDisturbMode(boolean mode) {
+        mCtrlProvider.getNotDisturbSwitch().toggle(mode, new ISwitchCtrl.Callback() {
+            @Override
+            public void onSuccess() {
+                playAndRenderText("已打开勿扰模式");
+            }
+
+            @Override
+            public void onFailure(ISwitchCtrl.FailureCode code, String reason) {
+                playAndRenderText("勿扰模式打开错误");
+            }
+        });
+    }
 
     /**
      * 控制移动数据（流量）开关
      * @param mode
      */
-    public abstract void operateMobileData(boolean mode);
+    public void operateMobileData(final boolean mode) {
+        mCtrlProvider.getNotDisturbSwitch().toggle(mode, new ISwitchCtrl.Callback() {
+            @Override
+            public void onSuccess() {
+                playAndRenderText(mode ? "已打开流量":"已关闭流量");
+            }
 
-    public abstract void operateNfc(boolean mode);
+            @Override
+            public void onFailure(ISwitchCtrl.FailureCode code, String reason) {
+                playAndRenderText("开关流量操作错误");
+            }
+        });
+    }
 
-    public abstract void operateVpn(boolean mode);
+    public void operateNfc(boolean mode) {
+        mCtrlProvider.getWifiSwitch().toggle(mode, new ISwitchCtrl.Callback() {
+            @Override
+            public void onSuccess() {
+                playAndRenderText("NFC已打开");
+            }
 
-    public abstract void operateHotspot(boolean mode) throws ControllerNotSupported;
+            @Override
+            public void onFailure(ISwitchCtrl.FailureCode code, String reason) {
+                switch (code) {
+                    case NOT_SUPPORT:
+                        playAndRenderText("不支持NFC");
+                        break;
+                    case UNKNOWN_FAILURE:
+                        playAndRenderText("NFC操作错误");
+                        break;
+                }
+            }
+        });
+    }
+
+    public void operateVpn(boolean mode) {
+
+    }
+
+    public void operateHotspot(boolean mode) throws ControllerNotSupported {
+
+    }
 
     /**
      * 打开关闭位置信息
      * @param mode
      */
-    public abstract void operateLocation(boolean mode);
+    public void operateLocation(boolean mode) {
+
+    }
 
     /**
      * 截屏
      */
-    public abstract void operateCaptureScreen();
+    public void operateCaptureScreen() {
+
+    }
 
     /**
      * 关机
      */
-    public abstract void operateDeviceShutDown();
+    public void operateDeviceShutDown() {
+
+    }
 
     /**
      *
      */
-    public abstract void operateDeviceReboot();
+    public void operateDeviceReboot() {
+
+    }
 
 }

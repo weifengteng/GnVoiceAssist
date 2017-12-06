@@ -120,10 +120,10 @@ public class BaseFunctionManager implements IBaseFunction {
         if(deviceControlOperator == null) {
             switch (Build.BRAND.toLowerCase()) {
                 case "gionee":
-                    deviceControlOperator = new GioneeDeviceControlOperator(this);
+                    deviceControlOperator = new DeviceControlOperator(this);
                     break;
                 default:
-                    deviceControlOperator = new GenericDeviceControlOperator(this);
+                    deviceControlOperator = new DeviceControlOperator(this);
                     break;
             }
         }
