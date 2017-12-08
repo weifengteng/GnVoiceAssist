@@ -175,11 +175,11 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         sv_ll = (LinearLayout)findViewById(R.id.sv_ll);
         sv = (HomeScrollView) findViewById(R.id.sv);
         rl = (RippleLayout)findViewById(R.id.ripple_layout);
-        rv = (HomeRecyclerView) findViewById(R.id.rv);
-        rvAdapter = new HomeRecyclerViewAdapter(this);
-        rvLayoutManager = new LinearLayoutManager(this);
-        rv.setAdapter(rvAdapter);
-        rv.setLayoutManager(rvLayoutManager);
+//        rv = (HomeRecyclerView) findViewById(R.id.rv);
+//        rvAdapter = new HomeRecyclerViewAdapter(this);
+//        rvLayoutManager = new LinearLayoutManager(this);
+//        rv.setAdapter(rvAdapter);
+//        rv.setLayoutManager(rvLayoutManager);
         anim_outside = (ImageView)findViewById(R.id.anim_outside);
         mRotationor = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.rotation_animator);
         mRotationor.setTarget(anim_outside);

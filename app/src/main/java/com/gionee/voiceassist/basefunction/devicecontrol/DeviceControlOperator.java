@@ -258,14 +258,16 @@ public class DeviceControlOperator extends BasePresenter {
      * 截屏
      */
     public void operateCaptureScreen() {
-
+        mCtrlProvider.getScreenshotCtrl().takeScreenShot();
     }
 
     /**
      * 关机
      */
     public void operateDeviceShutDown() {
-
+        int simId = mCtrlProvider.getPhonecallCtrl().defaultSimId();
+        LogUtil.d("liyh", "Sim卡共有" + simId);
+        playAndRenderText("SIM卡共有" + simId, true);
     }
 
     /**

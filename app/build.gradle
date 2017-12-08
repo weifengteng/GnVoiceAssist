@@ -53,6 +53,13 @@ android {
         exclude 'META-INF/LGPL2.1'
         exclude 'META-INF/ASL2.0'
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
 }
 
 repositories {
@@ -73,6 +80,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile(name: 'dlp-1.0.0', ext: 'aar')
     compile(name: 'ijkmedia-1.0.0', ext: 'aar')
+    compile(name: 'AmigoLib', ext: 'aar')
     compile 'com.squareup.picasso:picasso:2.5.2'
     def jacksonVersion = '2.9.1'
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
@@ -100,22 +108,6 @@ dependencies {
             'libs/okhttp-3.8.1.jar',
             'libs/okio-1.14.0.jar',
             'libs/turbonet.jar')
-}
-
-ext{
-    jar_lib_bdasrv3 = "libs/bdasrv3.jar"
-    jar_lib_bolts_tasks = "libs/bolts-tasks-1.4.0.jar"
-    jar_lib_baidutts = "libs/com.baidu.tts_2.3.0.jar"
-    jar_lib_commons_fileupload = "libs/commons-fileupload-1.3.2.jar"
-    jar_lib_commons_io = "libs/commons-io-2.5.jar"
-    jar_lib_commons_lang3 = "libs/commons-lang3-3.4.jar"
-    jar_lib_crablite = "libs/crablite2.0.jar"
-    jar_lib_dcssdk = "libs/dcssdk-1.2.0.jar"
-    jar_lib_galaxy_lite = "libs/galaxy-lite-2.0.0.jar"
-    jar_lib_jlayer = "libs/jlayer-1.0.1.jar"
-    jar_lib_okhttp = "libs/okhttp-3.8.1.jar"
-    jar_lib_okio = "libs/okio-1.14.0.jar"
-    jar_lib_turbonet = "libs/turbonet.jar"
 }
 
 

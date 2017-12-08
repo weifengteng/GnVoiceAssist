@@ -26,13 +26,10 @@ public class NotdisturbSwitchImpl extends BaseCtrlImpl implements ISwitchCtrl {
     public void toggle(boolean enabled, Callback callback) {
         NotificationManager notificationManager = (NotificationManager) mAppCtx.getSystemService(Context.NOTIFICATION_SERVICE);
 //        notificationManager.setZenMode(enabled ? Settings.Global.ZEN_MODE_ALARMS : Settings.Global.ZEN_MODE_OFF, null, "By Gionee VoiceAssist");
-        try {
-            Method doNotDisturbModeMethod = notificationManager.getClass().getMethod("setZenMode", int.class, Uri.class, String.class);
-            doNotDisturbModeMethod.invoke(notificationManager, enabled ? 3:0, null, "By Gionee VoiceAssist");
-            callback.onSuccess();
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            callback.onFailure(FailureCode.UNKNOWN_FAILURE, "开启勿扰模式错误, 调用反射错误");
-        }
+
+//            Method doNotDisturbModeMethod = notificationManager.getClass().getMethod("setZenMode", int.class, Uri.class, String.class);
+//            doNotDisturbModeMethod.invoke(notificationManager, enabled ? 3:0, null, "By Gionee VoiceAssist");
+        notificationManager.setZenMode(enabled ? 3:0, null, "Test");
+        callback.onSuccess();
     }
 }
