@@ -18,6 +18,8 @@ import com.gionee.voiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.voiceassist.sdk.module.phonecall.message.ContactInfo;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ContactProcessor;
+import com.gionee.voiceassist.util.ErrorCode;
+import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.T;
 import com.gionee.voiceassist.util.Utils;
@@ -191,7 +193,7 @@ public class OfflineAsrListener extends BaseDirectiveListener
         if(!NetWorkUtil.isNetworkConnected(GnVoiceAssistApplication.getInstance())) {
             playTTS("没联网我懂得很少，你可以说打电话给小明或打开相机试试看", true);
         }
-        LogUtil.e(TAG, "onAsrFinishError(), 错误信息：" + s + s1);
+        ErrorHelper.sendError(ErrorCode.ASR_OFFLINE_RECOGNIZE_FAILED, "离线识别错误。错误信息：" + s + s1);
     }
 
     @Override

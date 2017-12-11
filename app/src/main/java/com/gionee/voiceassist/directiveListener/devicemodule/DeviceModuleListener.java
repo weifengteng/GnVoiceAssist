@@ -12,6 +12,8 @@ import com.gionee.voiceassist.GNOAuthActivity;
 import com.gionee.voiceassist.MainActivity;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.voiceassist.util.ErrorCode;
+import com.gionee.voiceassist.util.ErrorHelper;
 
 /**
  * Created by twf on 2017/8/18.
@@ -38,13 +40,15 @@ public class DeviceModuleListener extends BaseDirectiveListener implements Syste
                 Activity mainActivity = (Activity) activityContext;
                 mainActivity.finish();
             }
+            ErrorHelper.sendError(ErrorCode.SDK_TOKEN_INVALIDATE, "SDK Token过期。错误信息:" + throwExceptionPayload.getDescription());
             LogUtil.e("DCSF", " ********************  onThrowException by TWF = " + throwExceptionPayload.toString());
         }
     }
 
     @Override
     public void onExceptionEncountered(ExceptionEncounteredPayload exceptionEncounteredPayload) {
-
+        ErrorHelper.sendError(ErrorCode.SDK_INTERNAL_ERROR, "SDK内部错误。错误信息："
+                + exceptionEncounteredPayload.getError().message);
     }
 
     @Override

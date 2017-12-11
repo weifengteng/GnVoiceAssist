@@ -37,6 +37,8 @@ import com.gionee.voiceassist.sdk.module.sms.SmsDeviceModule;
 import com.gionee.voiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.voiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.voiceassist.util.Constants;
+import com.gionee.voiceassist.util.ErrorCode;
+import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.T;
 import com.gionee.voiceassist.util.Utils;
@@ -259,11 +261,13 @@ public class SdkManager implements ISdkManager {
             @Override
             public void onFailed(String s) {
                 LogUtil.e(TAG,"SDK Login failed! Message = " + s);
+                ErrorHelper.sendError(ErrorCode.SDK_LOGIN_FAILED, "登录失败。原因：" + s);
             }
 
             @Override
             public void onCancel() {
                 LogUtil.w(TAG,"SDK login cancel!");
+                ErrorHelper.sendError(ErrorCode.SDK_LOGIN_CANCELED, "登录被取消");
             }
         });
     }
@@ -307,6 +311,7 @@ public class SdkManager implements ISdkManager {
             }
 
         } catch (Exception e) {
+            ErrorHelper.sendError(ErrorCode.GENERATE_OFFLINESLOT_ERROR, "生成动态离线指令失败。失败原因：" + e);
             e.printStackTrace();
         } finally {
             endTimemills = System.currentTimeMillis();

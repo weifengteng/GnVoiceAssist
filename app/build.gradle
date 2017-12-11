@@ -82,6 +82,7 @@ dependencies {
     compile(name: 'ijkmedia-1.0.0', ext: 'aar')
     compile(name: 'AmigoLib', ext: 'aar')
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'org.greenrobot:eventbus:3.1.1'
     def jacksonVersion = '2.9.1'
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"

@@ -12,6 +12,8 @@ import com.baidu.duer.dcs.framework.location.Location;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.voiceassist.util.ErrorCode;
+import com.gionee.voiceassist.util.ErrorHelper;
 
 /**
  * Created by twf on 2017/8/16.
@@ -80,6 +82,7 @@ public class LocationHandler extends BaseDirectiveListener implements Location.L
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            ErrorHelper.sendError(ErrorCode.PERMISSION_ERROR, "没有授予位置权限");
             return 116.404;
         }
         return mLongitude;
@@ -107,6 +110,7 @@ public class LocationHandler extends BaseDirectiveListener implements Location.L
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            ErrorHelper.sendError(ErrorCode.PERMISSION_ERROR, "没有授予位置权限");
             return 39.915;
         }
 //        return mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();

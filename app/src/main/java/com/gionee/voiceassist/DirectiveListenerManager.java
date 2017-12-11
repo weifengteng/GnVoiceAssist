@@ -45,6 +45,8 @@ import com.gionee.voiceassist.sdk.module.sms.SmsDeviceModule;
 import com.gionee.voiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.voiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.voiceassist.tts.TtsEventListener;
+import com.gionee.voiceassist.util.ErrorCode;
+import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.T;
 
 /**
@@ -87,8 +89,6 @@ public class DirectiveListenerManager {
         SdkManager.getInstance().getSdkInternalApi().addDirectiveReceivedListener(new IDirectiveReceivedListener() {
             @Override
             public void onDirective(Directive directive) {
-                //TODO: 处理IDirectiveReceivedListener，评估是否可以拿掉
-
                 if (!TextUtils.isEmpty(directive.rawMessage)) {
                     Log.v(TAG, "directive-rawMessage:" + directive.rawMessage);
                 }
@@ -101,7 +101,8 @@ public class DirectiveListenerManager {
         SdkManager.getInstance().getSdkInternalApi().addErrorListener(new IErrorListener() {
             @Override
             public void onErrorCode(ErrorCode errorCode) {
-                T.showShort("SDK出现错误" + errorCode.getMessage());
+                ErrorHelper.sendError(com.gionee.voiceassist.util.ErrorCode.SDK_INTERNAL_ERROR,
+                        "SDK内部错误。错误信息：" + errorCode.getMessage());
             }
         });
 

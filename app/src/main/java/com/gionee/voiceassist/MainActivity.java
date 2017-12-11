@@ -32,6 +32,7 @@ import com.gionee.voiceassist.tts.TtsCallback;
 import com.gionee.voiceassist.tts.TtsManager;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ContactProcessor;
+import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.PermissionsChecker;
 import com.gionee.voiceassist.util.SharedData;
@@ -69,6 +70,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private ContentResolver mContentResolver;
 
     private ISdkManager mSdkManager;
+    private ErrorHelper mErrorHelper;
 
 
     private LinearLayout help_command;
@@ -205,6 +207,10 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
 
     private void initData() {
         LogUtil.d("liyh", "MainActivity, initData()");
+        if (mErrorHelper == null) {
+            mErrorHelper = new ErrorHelper();
+        }
+        mErrorHelper.registerErrorHandler();
         initSDK();
         initFrameWork();
         KookongCustomDataHelper.bindDataRetriveService();
@@ -419,8 +425,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         super.onDestroy();
         if(!needInitFramework) {
             mSdkManager.destroy();
-
         }
+        mErrorHelper.unregisterErrorHandler();
     }
 
     static class MainHandler extends Handler {

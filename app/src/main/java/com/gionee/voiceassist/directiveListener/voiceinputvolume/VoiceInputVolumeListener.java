@@ -4,6 +4,8 @@ import com.baidu.duer.dcs.systeminterface.BaseAudioRecorder;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
+import com.gionee.voiceassist.util.ErrorCode;
+import com.gionee.voiceassist.util.ErrorHelper;
 
 /**
  * Created by twf on 2017/8/16.
@@ -26,7 +28,7 @@ public class VoiceInputVolumeListener extends BaseDirectiveListener implements B
 
     @Override
     public void onError(String s) {
-
+        ErrorHelper.sendError(ErrorCode.SDK_UNKNOWN_ERROR, "SDK音量输出错误。错误信息：" + s);
     }
 
     //TODO Deprecated. onVolumeChange Should migrate to new SDK API
