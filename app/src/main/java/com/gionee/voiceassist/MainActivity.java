@@ -413,7 +413,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void sdkInitSuccess() {
-//        TtsManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
+        TtsManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
         T.showShort("SDK 初始化成功");
     }
 

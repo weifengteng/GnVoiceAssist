@@ -6,11 +6,13 @@ import android.util.Log;
 import com.baidu.duer.dcs.api.IDialogStateListener;
 import com.baidu.duer.dcs.api.IVoiceRequestListener;
 import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
+import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.voiceassist.sdk.SdkManager;
+import com.gionee.voiceassist.util.ConnectivityUtils;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.SoundPlayer;
@@ -67,7 +69,8 @@ public class RecordController implements IRecordControl {
     }
 
     public void startRecord() {
-        startRecord(GnVoiceAssistApplication.ASR_MODE);
+        boolean isOnline = ConnectivityUtils.isOnline(GnVoiceAssistApplication.getInstance().getApplicationContext());
+        startRecord(isOnline ? GnVoiceAssistApplication.ASR_MODE : DcsConfig.ASR_MODE_OFFLINE);
     }
 
     public void startRecord(int mode) {
@@ -112,8 +115,7 @@ public class RecordController implements IRecordControl {
                 if (jsonObject != null) {
                     //TODO 向SDK中注入动态离线语法
                 }
-//                SdkManager.getInstance().getSdkInternalApi().setAsrMode(mode);
-
+                SdkManager.getInstance().getSdkInternalApi().setAsrMode(mode);
                 if (SdkManager.getInstance().getSdkInstance().getVoiceRequest().getDialogState() == IDialogStateListener.DialogState.LISTENING) {
                     SdkManager.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest(new IVoiceRequestListener() {
                         @Override
