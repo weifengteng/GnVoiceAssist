@@ -20,7 +20,10 @@ import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
 import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
 import com.baidu.duer.dcs.systeminterface.BaseAudioRecorder;
 import com.baidu.duer.dcs.systeminterface.BaseWakeup;
+import com.baidu.duer.dcs.systeminterface.IMediaPlayer;
 import com.baidu.duer.dcs.systeminterface.IOauth;
+import com.baidu.duer.dcs.wakeup.WakeUpConfig;
+import com.baidu.duer.dcs.wakeup.WakeUpWord;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.voiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
@@ -114,6 +117,7 @@ public class SdkManager implements ISdkManager {
                 .withClientId(clientId)
                 .withOauth(oauth)
                 .withAudioRecorder(audioRecorder)
+                .withPid(729)
                 .build();
         getSdkInternalApi().setDebug(true);
         getSdkInternalApi().setAsrMode(GnVoiceAssistApplication.ASR_MODE);
@@ -202,9 +206,15 @@ public class SdkManager implements ISdkManager {
     private void setupWakeup() {
         final BaseWakeup wakeup = new KittWakeUpImpl();
         IWakeupProvider wakeupProvider = new IWakeupProvider() {
+
             @Override
-            public String wakeupWords() {
-                return "你好小金";
+            public WakeUpConfig wakeUpConfig() {
+                return new WakeUpConfig.Builder()
+                        .resPath("snowboy/common.res")
+                        .umdlPath("snowboy/xiaoduxiaodu_all_11272017.umdl")
+                        .sensitivity("0.35,0.35,0.40")
+                        .highSensitivity("0.45,0.45,0.55")
+                        .build();
             }
 
             @Override
@@ -236,13 +246,25 @@ public class SdkManager implements ISdkManager {
         IWakeupAgent wakeupAgent = getSdkInternalApi().getWakeupAgent();
         if (wakeupAgent != null) {
             wakeupAgentListener = new IWakeupAgent.IWakeupAgentListener() {
+
+
                 @Override
-                public void onWakeupSucceed() {
-                    T.showShort("唤醒成功");
+                public void onInitWakeUpSucceed() {
+
+                }
+
+                @Override
+                public void onWakeupSucceed(WakeUpWord wakeUpWord) {
+
                 }
 
                 @Override
                 public void onWarningCompleted() {
+
+                }
+
+                @Override
+                public void onWarningError(String s, IMediaPlayer.ErrorType errorType) {
 
                 }
             };

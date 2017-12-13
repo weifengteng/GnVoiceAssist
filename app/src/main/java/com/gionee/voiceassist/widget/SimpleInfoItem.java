@@ -10,8 +10,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.voiceassist.R;
+import com.gionee.voiceassist.util.LogUtil;
 
 public class SimpleInfoItem extends BaseItem {
 	public static final String TAG = SimpleInfoItem.class.getSimpleName();

@@ -7,7 +7,7 @@ import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentCo
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
 import com.baidu.duer.dcs.framework.message.Payload;
-import com.baidu.duer.dcs.util.CommonUtil;
+import com.baidu.duer.dcs.common.util.CommonUtil;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;

@@ -3,7 +3,7 @@ package com.gionee.voiceassist;
 import android.app.Application;
 
 import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.directiveListener.telecontroller.TeleControllerListener;
 import com.gionee.voiceassist.util.Constants;
 import com.squareup.leakcanary.LeakCanary;
@@ -49,7 +49,7 @@ public class GnVoiceAssistApplication extends Application{
     }
 
     //全局控制
-    public static final int ASR_MODE = DcsConfig.ASR_MODE_ONLINE;
+    public static final int ASR_MODE = DcsConfig.ASR_MODE_OFFLINE_PRIORITY;
     public static final int TTS_MODE = Constants.TTS_MODE_OFFLINE;
 
 }

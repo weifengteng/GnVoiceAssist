@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
 import com.baidu.duer.dcs.framework.message.Directive;
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.T;
 

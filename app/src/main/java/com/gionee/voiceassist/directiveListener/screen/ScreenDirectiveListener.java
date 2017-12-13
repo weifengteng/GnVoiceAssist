@@ -17,7 +17,7 @@ import android.view.View;
 //import com.baidu.duer.dcs.devicemodule.screen.message.TextCardPayload;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;

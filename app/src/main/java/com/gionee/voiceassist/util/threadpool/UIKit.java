@@ -2,7 +2,7 @@ package com.gionee.voiceassist.util.threadpool;
 
 import android.os.Looper;
 
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 
 /**
  * Created by twf on 2017/6/18.

@@ -12,7 +12,7 @@ import android.provider.ContactsContract.Data;
 import android.text.TextUtils;
 
 import com.baidu.duer.dcs.framework.message.Payload;
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.contact.db.DataBaseAccess;

@@ -1,6 +1,6 @@
 package com.gionee.voiceassist.basefunction;
 
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 
 /**
  * Created by twf on 2017/9/1.

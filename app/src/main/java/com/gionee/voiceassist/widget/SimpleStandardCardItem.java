@@ -13,13 +13,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.sdk.module.screen.message.Image;
 import com.gionee.voiceassist.sdk.module.screen.message.Link;
 import com.gionee.voiceassist.sdk.module.screen.message.RenderCardPayload;
 import com.gionee.voiceassist.sdk.module.screen.message.StandardCardPayload;
+import com.gionee.voiceassist.util.LogUtil;
 import com.squareup.picasso.Picasso;
 
 import static android.R.id.list;

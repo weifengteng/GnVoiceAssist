@@ -1,7 +1,8 @@
 package com.gionee.voiceassist.directiveListener.voiceinput;
 
+import com.baidu.dcs.acl.AsrEventStatus;
 import com.baidu.duer.dcs.devicemodule.voiceinput.VoiceInputDeviceModule;
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
@@ -56,6 +57,11 @@ public class VoiceInputListener extends BaseDirectiveListener implements VoiceIn
         String errorMsg = GnVoiceAssistApplication.getInstance().
                 getResources().getString(R.string.voice_err_msg) + "onFailed    errMsg：" + s;
         T.showShort(errorMsg);
+    }
+
+    @Override
+    public void onAsrEventStatus(AsrEventStatus asrEventStatus) {
+        LogUtil.d(TAG, "onAsrEventStatus():" + asrEventStatus);
     }
 
     /**

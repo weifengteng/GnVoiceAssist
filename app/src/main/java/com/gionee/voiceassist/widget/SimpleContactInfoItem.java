@@ -24,9 +24,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.util.ContactProcessor;
+import com.gionee.voiceassist.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

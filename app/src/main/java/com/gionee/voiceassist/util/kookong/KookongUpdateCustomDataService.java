@@ -2,7 +2,7 @@ package com.gionee.voiceassist.util.kookong;
 
 import android.os.RemoteException;
 
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
 
 /**

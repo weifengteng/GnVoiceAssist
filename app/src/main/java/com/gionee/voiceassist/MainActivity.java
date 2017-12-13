@@ -19,8 +19,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.baidu.duer.dcs.util.CommonUtil;
+import com.baidu.duer.dcs.common.util.CommonUtil;
 import com.gionee.voiceassist.basefunction.BaseFunctionManager;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.contact.ContactObserver;
@@ -36,6 +37,7 @@ import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.PermissionsChecker;
 import com.gionee.voiceassist.util.SharedData;
+import com.gionee.voiceassist.util.T;
 import com.gionee.voiceassist.util.Utils;
 import com.gionee.voiceassist.util.kookong.KookongCustomDataHelper;
 import com.gionee.voiceassist.widget.HomeRecyclerView;
@@ -411,7 +413,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void sdkInitSuccess() {
-        TtsManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
+//        TtsManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
+        T.showShort("SDK 初始化成功");
     }
 
 

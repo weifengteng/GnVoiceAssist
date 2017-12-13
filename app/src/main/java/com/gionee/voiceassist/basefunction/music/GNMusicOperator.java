@@ -10,12 +10,12 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.voiceassist.BuildConfig;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.BasePresenter;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
 
 import java.io.File;

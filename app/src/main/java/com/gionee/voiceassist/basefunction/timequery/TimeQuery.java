@@ -3,11 +3,11 @@ package com.gionee.voiceassist.basefunction.timequery;
 import android.content.Context;
 import android.text.format.Time;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.BasePresenter;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
+import com.gionee.voiceassist.util.LogUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -8,7 +8,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.SparseIntArray;
 
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 

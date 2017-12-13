@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 
 /**

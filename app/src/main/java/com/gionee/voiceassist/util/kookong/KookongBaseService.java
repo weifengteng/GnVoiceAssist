@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.util.Constants;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
 import com.kookong.app.aidl.IKookongManager;
 

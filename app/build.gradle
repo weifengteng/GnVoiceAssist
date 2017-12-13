@@ -80,6 +80,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile(name: 'dlp-1.0.0', ext: 'aar')
     compile(name: 'ijkmedia-1.0.0', ext: 'aar')
+    compile(name: 'bdplayer-1.0.0', ext: 'aar')
     compile(name: 'AmigoLib', ext: 'aar')
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'org.greenrobot:eventbus:3.1.1'
@@ -96,19 +97,19 @@ dependencies {
 
     // Compile DuerOS Dependencies
     compile files(
-            'libs/bdasrv3.jar',
             'libs/bolts-tasks-1.4.0.jar',
             'libs/com.baidu.tts_2.3.0.jar',
             'libs/commons-fileupload-1.3.2.jar',
             'libs/commons-io-2.5.jar',
             'libs/commons-lang3-3.4.jar',
             'libs/crablite2.0.jar',
-            'libs/dcssdk-1.2.0.jar',
+            'libs/dcssdk-1.3.0.jar',
             'libs/galaxy-lite-2.0.0.jar',
             'libs/jlayer-1.0.1.jar',
             'libs/okhttp-3.8.1.jar',
             'libs/okio-1.14.0.jar',
-            'libs/turbonet.jar')
+            'libs/turbonet.jar',
+            'libs/speechv3.jar')
 }
 
 

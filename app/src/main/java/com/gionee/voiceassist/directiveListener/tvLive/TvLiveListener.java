@@ -1,7 +1,7 @@
 package com.gionee.voiceassist.directiveListener.tvLive;
 
 import com.baidu.duer.dcs.framework.message.Directive;
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.voiceassist.sdk.module.tvlive.TvLiveDeviceModule;

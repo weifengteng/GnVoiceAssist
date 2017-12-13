@@ -7,7 +7,7 @@ import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.devicemodule.system.message.ExceptionEncounteredPayload;
 import com.baidu.duer.dcs.devicemodule.system.message.SetEndPointPayload;
 import com.baidu.duer.dcs.devicemodule.system.message.ThrowExceptionPayload;
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.GNOAuthActivity;
 import com.gionee.voiceassist.MainActivity;
 import com.gionee.voiceassist.basefunction.IBaseFunction;

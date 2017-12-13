@@ -8,8 +8,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.voiceassist.R;
+import com.gionee.voiceassist.util.LogUtil;
 
 public class SimpleAppItem extends BaseItem {
 	public static final String TAG = SimpleAppItem.class.getSimpleName();

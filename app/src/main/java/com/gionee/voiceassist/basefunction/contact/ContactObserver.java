@@ -7,7 +7,7 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.os.Handler;
 
-import com.baidu.duer.dcs.util.LogUtil;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.Utils;
 

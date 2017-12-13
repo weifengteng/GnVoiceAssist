@@ -75,7 +75,17 @@ public class Utils {
         try{
             String contacts = ContactsChoiceUtil.getAllContacts(GnVoiceAssistApplication.getInstance());
             IUpload contactUploader = new UploadImpl();
-            contactUploader.uploadPhoneContacts(GnVoiceAssistApplication.getInstance(), contacts);
+            contactUploader.uploadPhoneContacts(GnVoiceAssistApplication.getInstance(), contacts, new IUpload.IUploadListener() {
+                @Override
+                public void onSucceed(int i) {
+                    LogUtil.d(getClass(),"上传联系人成功");
+                }
+
+                @Override
+                public void onFailed() {
+                    LogUtil.e(getClass(), "上传联系人失败");
+                }
+            });
             LogUtil.d("DCSF", "DCSF------------- contacts=  " + contacts);
         }catch (JSONException e) {
             e.printStackTrace();

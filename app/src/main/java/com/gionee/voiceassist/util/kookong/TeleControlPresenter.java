@@ -5,10 +5,10 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.util.LogUtil;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.tts.TtsManager;
 import com.gionee.voiceassist.util.Constants;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
 import com.kookong.app.aidl.ManagerCallback;
 

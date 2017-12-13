@@ -24,7 +24,7 @@ import com.baidu.duer.dcs.framework.message.Event;
 import com.baidu.duer.dcs.framework.message.Header;
 import com.baidu.duer.dcs.framework.message.MessageIdHeader;
 import com.baidu.duer.dcs.framework.message.Payload;
-import com.baidu.duer.dcs.util.FileUtil;
+import com.baidu.duer.dcs.common.util.FileUtil;
 import com.gionee.voiceassist.sdk.module.screen.message.HtmlPayload;
 import com.gionee.voiceassist.sdk.module.screen.message.LinkClickedPayload;
 import com.gionee.voiceassist.sdk.module.screen.message.RenderCardPayload;
