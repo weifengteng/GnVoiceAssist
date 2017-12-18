@@ -22,6 +22,7 @@ package com.gionee.voiceassist.sdk.module.telecontroller;
  */
 
 public class ApiConstants {
+    // 自定义指令集 v3  修改了遥控器指令的命名空间
     public static final String NAMESPACE = "ai.dueros.device_interface.thirdparty.gionee.voiceassist";
     public static final String NAME = "TeleControllerInterface";
 
@@ -32,6 +33,18 @@ public class ApiConstants {
     public static final class Directives {
         public static final class OperateBluetooth {
             public static final String NAME = OperateBluetooth.class.getSimpleName();
+        }
+
+        public static final class SearchTime {
+            public static final String NAME = SearchTime.class.getSimpleName();
+        }
+
+        public static final class OperatePrintscreen {
+            public static final String NAME = OperatePrintscreen.class.getSimpleName();
+        }
+
+        public static final class OperateFlashlight {
+            public static final String NAME = OperateFlashlight.class.getSimpleName();
         }
     }
 }

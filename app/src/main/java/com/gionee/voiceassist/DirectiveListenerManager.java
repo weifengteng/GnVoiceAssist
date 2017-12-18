@@ -42,6 +42,7 @@ import com.gionee.voiceassist.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.voiceassist.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.voiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.voiceassist.sdk.module.sms.SmsDeviceModule;
+import com.gionee.voiceassist.sdk.module.telecontroller.ApiConstants;
 import com.gionee.voiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.voiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.voiceassist.tts.TtsEventListener;
@@ -135,11 +136,11 @@ public class DirectiveListenerManager {
         ((AlarmsDeviceModule)getDeviceModule("ai.dueros.device_interface.android.alerts")).addDirectiveListener(alarmDirectiveListener);
         ((DeviceControlDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.device_control")).addDirectiveListener(deviceControlListener);
         ((ScreenDeviceModule)getDeviceModule("ai.dueros.device_interface.screen")).addScreenListener(screenDirectiveListener);
-        ((TeleControllerDeviceModule)getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.voiceassist")).addDirectiveListener(teleControllerListener);
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(localAudioPlayerListener);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).addVoiceOutputListener(ttsEventListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).addOfflineDirectiveListener(offlineAsrListener);
+        ((TeleControllerDeviceModule)getDeviceModule(com.gionee.voiceassist.sdk.module.telecontroller.ApiConstants.NAMESPACE)).addDirectivieListener(teleControllerListener);
     }
 
     public void unRegisterDirectiveListener() {
@@ -156,7 +157,7 @@ public class DirectiveListenerManager {
         ((AlarmsDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.alert_smartphone")).removeDirectiveLIstener(alarmDirectiveListener);
         ((DeviceControlDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.device_control")).removeDirectiveListener(deviceControlListener);
         ((ScreenDeviceModule)getDeviceModule("ai.dueros.device_interface.screen")).removeScreenListener(screenDirectiveListener);
-        ((TeleControllerDeviceModule)getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.voiceassist")).addDirectiveListener(null);
+        ((TeleControllerDeviceModule)getDeviceModule(com.gionee.voiceassist.sdk.module.telecontroller.ApiConstants.NAMESPACE)).addDirectivieListener(null);
         ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(null);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(null);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(ttsEventListener);

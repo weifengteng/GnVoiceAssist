@@ -1,11 +1,12 @@
 package com.gionee.voiceassist.directiveListener.telecontroller;
 
-import android.text.TextUtils;
-
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.voiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
+import com.gionee.voiceassist.sdk.module.telecontroller.message.AskTimePayload;
+import com.gionee.voiceassist.sdk.module.telecontroller.message.OperateFlashLightPayload;
+import com.gionee.voiceassist.sdk.module.telecontroller.message.PrintScreenPayload;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
 
@@ -14,6 +15,7 @@ import com.gionee.voiceassist.util.Utils;
  */
 
 public class TeleControllerListener extends BaseDirectiveListener implements TeleControllerDeviceModule.ITeleControllerDirectiveListener{
+    private static final String TAG = TeleControllerListener.class.getSimpleName();
     private String customCmd;
 
     public TeleControllerListener(IBaseFunction iBaseFunction) {
@@ -30,34 +32,35 @@ public class TeleControllerListener extends BaseDirectiveListener implements Tel
 
     @Override
     public void onTeleControllerDirectiveReceived(Directive directive) {
+        // KooKongCmd
         String msg = directive.rawMessage;
-
-        LogUtil.d("DCSF", "TeleControllerListener: " + msg);
         customCmd = Utils.getCustomDirectiveCmdFromJson(msg);
         customCmd = customCmd.replace("null", "");
-        LogUtil.d("DCSF", "TeleControllerListener customCmd: " + customCmd);
-        if(TextUtils.equals(customCmd, "打开手电筒") ||
-                TextUtils.equals(customCmd, "关闭手电筒") ||
-                TextUtils.equals(customCmd, "截屏") ||
-                TextUtils.equals(customCmd, "截一下屏")
-                ) {
-            if(iBaseFunction != null) {
-                iBaseFunction.getDeviceControlOperator().operateOfflineDeviceControlCmd(customCmd);
-            }
-        } else if(TextUtils.equals(customCmd, "现在几点了") ||
-                TextUtils.equals(customCmd, "现在几点") ||
-                TextUtils.equals(customCmd, "几点了") ||
-                TextUtils.equals(customCmd, "查一下现在几点了") ||
-                TextUtils.equals(customCmd, "查一下几点了")) {
-            if(iBaseFunction != null) {
-                iBaseFunction.getTimerQuery().queryNowTime();
-            }
-        } else {
-                if(iBaseFunction != null) {
-                    iBaseFunction.getKookongOperator().executeVoiceCmd(customCmd);
-                }
+        LogUtil.d(TAG, "TeleControllerListener customCmd: " + customCmd);
+
+        if(iBaseFunction != null) {
+            iBaseFunction.getKookongOperator().executeVoiceCmd(customCmd);
         }
-//        KookongExecuteVoiceCmdService executeVoiceCmdService = new KookongExecuteVoiceCmdService(customCmd);
-//        executeVoiceCmdService.execute();
+    }
+
+    @Override
+    public void onAskingTime(AskTimePayload askTimePayload) {
+        if(iBaseFunction != null) {
+            iBaseFunction.getTimerQuery().queryNowTime();
+        }
+    }
+
+    @Override
+    public void onPrintScreen(PrintScreenPayload printScreenPayload) {
+        if(iBaseFunction != null) {
+            iBaseFunction.getDeviceControlOperator().operateOfflineDeviceControlCmd(printScreenPayload.getQuery());
+        }
+    }
+
+    @Override
+    public void onOperateFlashLight(OperateFlashLightPayload operateFlashLightPayload) {
+        if(iBaseFunction != null) {
+            iBaseFunction.getDeviceControlOperator().operateOfflineDeviceControlCmd(operateFlashLightPayload.getQuery());
+        }
     }
 }
