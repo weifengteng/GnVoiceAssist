@@ -2,9 +2,6 @@
     "BarginOper": [
         "barginoper"
     ],
-    "NumberSelectCancel": [
-        "poscancel"
-    ],
     "AirConditionerTemperature2": [
         "airconditioner",
         "temperature"
@@ -13,11 +10,6 @@
         "airconditioner",
         "num",
         "unit"
-    ],
-    "SearchTime": [
-        "search",
-        "now",
-        "what"
     ],
     "DeviceFantype": [
         "device",
@@ -34,16 +26,8 @@
         "device",
         "confirm"
     ],
-    "OperatePrintscreen": [
+    "PrintScreen": [
         "printscreen"
-    ],
-    "DownloadSelect": [
-        "select"
-    ],
-    "NumberSelect": [
-        "selectpre",
-        "num",
-        "selecttail"
     ],
     "DeviceOpencloseVoice": [
         "device",
@@ -88,5 +72,23 @@
         "device",
         "voice",
         "changevoice"
+    ],
+    "MobileDeviceInfo": [
+        "deviceinfo"
+    ],
+    "InstantHeartRate": [
+        "heartrate"
+    ],
+    "PaiLiTao": [
+        "pailitao"
+    ],
+    "AliPayPaymentCode": [
+        "alipaypaymentcode"
+    ],
+    "ALiPayScan": [
+        "alipayscan"
+    ],
+    "StartTimer": [
+        "starttimer"
     ]
 }

@@ -30,6 +30,7 @@ import com.gionee.voiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.voiceassist.sdk.module.applauncher.IAppLauncher;
 import com.gionee.voiceassist.sdk.module.applauncher.IAppLauncherImpl;
 import com.gionee.voiceassist.sdk.module.contacts.ContactsDeviceModule;
+import com.gionee.voiceassist.sdk.module.customcmd.CustomCmdDeviceModule;
 import com.gionee.voiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.voiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
 import com.gionee.voiceassist.sdk.module.offlineasr.OffLineDeviceModule;
@@ -38,6 +39,7 @@ import com.gionee.voiceassist.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.voiceassist.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
 import com.gionee.voiceassist.sdk.module.sms.SmsDeviceModule;
 import com.gionee.voiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
+import com.gionee.voiceassist.sdk.module.tvlive.TvLiveDeviceModule;
 import com.gionee.voiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ErrorCode;
@@ -171,6 +173,14 @@ public class SdkManager implements ISdkManager {
         //初始化telecontrollerDeviceModule
         TeleControllerDeviceModule teleControllerDeviceModule = new TeleControllerDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(teleControllerDeviceModule);
+
+        // 初始化tvLiveDeviceModule
+        TvLiveDeviceModule tvLiveDeviceModule = new TvLiveDeviceModule(messageSender);
+        mDcsSdk.putDeviceModule(tvLiveDeviceModule);
+
+        // 初始化 CustomCmdDeviceModule
+        CustomCmdDeviceModule customCmdDeviceModule = new CustomCmdDeviceModule(messageSender);
+        mDcsSdk.putDeviceModule(customCmdDeviceModule);
 
         //初始化localAudioPlayerDeviceModule
         LocalAudioPlayerDeviceModule localAudioPlayerDeviceModule = new LocalAudioPlayerDeviceModule(messageSender);

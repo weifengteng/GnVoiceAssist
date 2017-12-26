@@ -22,14 +22,12 @@ import com.baidu.duer.dcs.framework.IMessageSender;
 import com.baidu.duer.dcs.framework.message.ClientContext;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
-import com.gionee.voiceassist.sdk.module.telecontroller.message.AskTimePayload;
 import com.gionee.voiceassist.sdk.module.telecontroller.message.OperateBluetoothPayload;
-import com.gionee.voiceassist.sdk.module.telecontroller.message.OperateFlashLightPayload;
-import com.gionee.voiceassist.sdk.module.telecontroller.message.PrintScreenPayload;
 
 import java.util.HashMap;
 
 /**
+ * 自定义指令 v3版本修改后，只处理 kookong 相关的自定义指令的 DeviceModule
  * Created by caoyushu01 on 2017/7/25.
  */
 
@@ -50,32 +48,16 @@ public class TeleControllerDeviceModule extends BaseDeviceModule {
     public void handleDirective (Directive directive) throws HandleDirectiveException {
         String headerName = directive.getName();
         Payload payload = directive.getPayload();
-        if(ApiConstants.Directives.OperatePrintscreen.NAME.equals(headerName)) {
-            if(payload instanceof PrintScreenPayload) {
-                handlePrintScreenPayload((PrintScreenPayload) payload);
-            }
-        } else if(ApiConstants.Directives.SearchTime.NAME.equals(headerName)) {
-            if(payload instanceof AskTimePayload) {
-                handleAskTimePayload((AskTimePayload) payload);
-            }
-        } else if(ApiConstants.Directives.OperateFlashlight.NAME.equals(headerName)) {
-            if(payload instanceof OperateFlashLightPayload) {
-                handleOperateFlashLight((OperateFlashLightPayload) payload);
-            }
-        } else {
-            if (teleControllerDirectiveListener != null) {
-                teleControllerDirectiveListener.onTeleControllerDirectiveReceived(directive);
-            }
+
+        if (teleControllerDirectiveListener != null) {
+            teleControllerDirectiveListener.onTeleControllerDirectiveReceived(directive);
         }
     }
 
     @Override
     public HashMap<String, Class<?>> supportPayload() {
         HashMap<String, Class<?>> map = new HashMap<>();
-        map.put(getNameSpace() + ApiConstants.Directives.OperatePrintscreen.NAME, PrintScreenPayload.class);
-        map.put(getNameSpace() + ApiConstants.Directives.SearchTime.NAME, AskTimePayload.class);
         map.put(getNameSpace() + ApiConstants.Directives.OperateBluetooth.NAME, OperateBluetoothPayload.class);
-        map.put(getNameSpace() + ApiConstants.Directives.OperateFlashlight.NAME, OperateFlashLightPayload.class);
         return map;
     }
 
@@ -84,29 +66,11 @@ public class TeleControllerDeviceModule extends BaseDeviceModule {
         teleControllerDirectiveListener = null;
     }
 
-    private void handlePrintScreenPayload(PrintScreenPayload printScreenPayload) {
-        teleControllerDirectiveListener.onPrintScreen(printScreenPayload);
-    }
-
-    private void handleAskTimePayload(AskTimePayload askTimePayload) {
-        teleControllerDirectiveListener.onAskingTime(askTimePayload);
-    }
-
-    private void handleOperateFlashLight(OperateFlashLightPayload operateFlashLightPayload) {
-        teleControllerDirectiveListener.onOperateFlashLight(operateFlashLightPayload);
-    }
-
     public void addDirectivieListener (ITeleControllerDirectiveListener listener) {
         teleControllerDirectiveListener = listener;
     }
 
     public interface ITeleControllerDirectiveListener {
         void onTeleControllerDirectiveReceived(Directive directive);
-
-        void onAskingTime(AskTimePayload askTimePayload);
-
-        void onPrintScreen(PrintScreenPayload printScreenPayload);
-
-        void onOperateFlashLight(OperateFlashLightPayload operateFlashLightPayload);
     }
 }

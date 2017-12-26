@@ -88,7 +88,7 @@ public class TeleControlPresenter extends KookongBaseService.SimpleKookongServic
 //            DcsSDK.getInstance().getSpeak().speakTxt(cmdResult,
 //                    SpeakInterface.SpeakTxtMixMode.MIX_MODE_MIXTURE_NETWORK);
             //TODO: 将处理结果用tts播报
-            TtsManager.getInstance().playTTS("正在" + voiceCmd);
+            TtsManager.getInstance().playTTS(cmdResult);
         }
     };
 }

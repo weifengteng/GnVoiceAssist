@@ -134,6 +134,6 @@ public class LocationHandler extends BaseDirectiveListener implements Location.L
      */
     @Override
     public void onDestroy() {
-
+        mLocationManager = null;
     }
 }

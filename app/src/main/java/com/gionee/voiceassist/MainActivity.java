@@ -92,6 +92,8 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private boolean needInitFramework = true;
     private View mLastTextView;
 
+    private DirectiveListenerManager mDirectiveListenerManager;
+
     public static enum VoiceStatus {
         INPUT,
         RECOG
@@ -202,9 +204,9 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
         baseFunctionManager.setHandler(mMainHandler);
         baseFunctionManager.setMainActivity(this);
 
-        DirectiveListenerManager directiveListenerManager = new DirectiveListenerManager(baseFunctionManager);
-        directiveListenerManager.initDirectiveListener();
-        directiveListenerManager.registerDirectiveListener();
+        mDirectiveListenerManager = new DirectiveListenerManager(baseFunctionManager);
+        mDirectiveListenerManager.initDirectiveListener();
+        mDirectiveListenerManager.registerDirectiveListener();
     }
 
     private void initData() {
@@ -430,6 +432,11 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
             mSdkManager.destroy();
         }
         mErrorHelper.unregisterErrorHandler();
+
+        if(mDirectiveListenerManager != null) {
+            mDirectiveListenerManager.onDestroy();
+            mDirectiveListenerManager = null;
+        }
     }
 
     static class MainHandler extends Handler {

@@ -146,15 +146,6 @@ public class BaseFunctionManager implements IBaseFunction {
         return timeQuery;
     }
 
-
-    @Override
-    public void onDestroy() {
-        if(mMainHandler != null) {
-            mMainHandler.removeCallbacksAndMessages(null);
-            mMainHandler = null;
-        }
-    }
-
     @Override
     public IVoiceInputEventListener getVoiceInputEventListener() {
         if(voiceInputEventListener == null && mainActivity != null
@@ -187,5 +178,25 @@ public class BaseFunctionManager implements IBaseFunction {
             offlineAsrHandler = new OfflineAsrHandler(this);
         }
         return offlineAsrHandler;
+    }
+
+    @Override
+    public void onDestroy() {
+        if(mMainHandler != null) {
+            mMainHandler.removeCallbacksAndMessages(null);
+            mMainHandler = null;
+        }
+
+        if(audioPlayerStateListener != null) {
+            audioPlayerStateListener = null;
+        }
+
+        if(voiceInputEventListener != null) {
+            voiceInputEventListener = null;
+        }
+
+        if(offlineAsrHandler != null) {
+            offlineAsrHandler = null;
+        }
     }
 }

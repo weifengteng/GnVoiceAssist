@@ -1,17 +1,17 @@
-package com.gionee.voiceassist.sdk.module.telecontroller.message;
+package com.gionee.voiceassist.sdk.module.customcmd.message;
 
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Created by twf on 2017/12/15.
+ * Created by twf on 2017/12/18.
  */
 
-public class PrintScreenPayload extends Payload {
+public class OperateFlashLightPayload extends Payload {
     private String query;
 
-    public PrintScreenPayload(@JsonProperty("printscreen") String query) {
-        this.query = query;
+    public OperateFlashLightPayload(@JsonProperty("operateflashlight") String operateCmd) {
+        this.query = operateCmd;
     }
 
     public String getQuery() {

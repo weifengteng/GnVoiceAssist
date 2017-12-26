@@ -11,7 +11,7 @@ public class Constants {
     public static final String KOOKONG_CLASSNAME = "com.kookong.app.service.KookongService";
 
     // namespace
-    public static final String NAMESPACE_CUSTOM_CMD_NORMAL = "ai.dueros.device_interface.thirdparty.gionee.voiceassist";
+    public static final String NAMESPACE_CUSTOM_CMD_NORMAL = "ai.dueros.device_interface.thirdparty.gionee.kookong";
     public static final String NAMESPACE_CUSTOM_CMD_TV = "ai.dueros.device_interface.tv_live";
     public static final String NAMESPACE_DEVICECONTROL = "ai.dueros.device_interface.extensions.device_control";
 
