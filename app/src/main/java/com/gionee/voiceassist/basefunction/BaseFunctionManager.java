@@ -60,7 +60,7 @@ public class BaseFunctionManager implements IBaseFunction {
     @Override
     public RecordController getRecordController() {
         if(recordController == null) {
-            recordController = new RecordController();
+            recordController = RecordController.getInstance();
         }
         return recordController;
     }
