@@ -19,18 +19,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.duer.dcs.common.util.CommonUtil;
 import com.gionee.voiceassist.basefunction.BaseFunctionManager;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.contact.ContactObserver;
+import com.gionee.voiceassist.directiveListener.DirectiveListenerManager;
 import com.gionee.voiceassist.directiveListener.audioplayer.IAudioPlayerStateListener;
 import com.gionee.voiceassist.directiveListener.voiceinput.IVoiceInputEventListener;
-import com.gionee.voiceassist.sdk.ISdkManager;
-import com.gionee.voiceassist.sdk.SdkManager;
-import com.gionee.voiceassist.tts.TtsCallback;
-import com.gionee.voiceassist.tts.TtsManager;
+import com.gionee.voiceassist.sdk.ISdkController;
+import com.gionee.voiceassist.sdk.SdkController;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.ErrorHelper;
@@ -71,7 +71,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     private ContactObserver mContactObserver;
     private ContentResolver mContentResolver;
 
-    private ISdkManager mSdkManager;
+    private ISdkController mSdkManager;
     private ErrorHelper mErrorHelper;
 
 
@@ -195,7 +195,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void initSDK() {
-        mSdkManager = SdkManager.getInstance();
+        mSdkManager = SdkController.getInstance();
         mSdkManager.init();
     }
 
@@ -341,7 +341,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
+    public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
 
     }
 
@@ -415,7 +415,7 @@ public class MainActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void sdkInitSuccess() {
-        TtsManager.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
+        TtsController.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
         T.showShort("SDK 初始化成功");
     }
 

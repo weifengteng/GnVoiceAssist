@@ -1,17 +1,15 @@
-package com.gionee.voiceassist.basefunction.recordcontrol;
+package com.gionee.voiceassist.controller.recordcontrol;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.baidu.duer.dcs.api.IDialogStateListener;
 import com.baidu.duer.dcs.api.IVoiceRequestListener;
 import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
-import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
-import com.gionee.voiceassist.sdk.SdkManager;
+import com.gionee.voiceassist.sdk.SdkController;
 import com.gionee.voiceassist.util.ConnectivityUtils;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.LogUtil;
@@ -45,7 +43,7 @@ public class RecordController implements IRecordControl {
 
     @Override
     public void stopRecord() {
-        SdkManager.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest(new IVoiceRequestListener() {
+        SdkController.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest(new IVoiceRequestListener() {
             @Override
             public void onSucceed() {
 
@@ -55,7 +53,7 @@ public class RecordController implements IRecordControl {
 
     @Override
     public void cancelRecord() {
-        SdkManager.getInstance().getSdkInstance().getVoiceRequest().cancelVoiceRequest(new IVoiceRequestListener() {
+        SdkController.getInstance().getSdkInstance().getVoiceRequest().cancelVoiceRequest(new IVoiceRequestListener() {
             @Override
             public void onSucceed() {
 
@@ -96,7 +94,7 @@ public class RecordController implements IRecordControl {
     public void stopCustomInteractContext() {
         // 退出云端的多轮交互
         ((SystemDeviceModule)
-                (SdkManager.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
+                (SdkController.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.system")))
                 .sendExitedEvent();
 
         // 退出本地发起的多轮交互
@@ -115,19 +113,19 @@ public class RecordController implements IRecordControl {
                 if (jsonObject != null) {
                     //TODO 向SDK中注入动态离线语法
                 }
-                SdkManager.getInstance().getSdkInternalApi().setAsrMode(mode);
-                if (SdkManager.getInstance().getSdkInstance().getVoiceRequest().getDialogState() == IDialogStateListener.DialogState.LISTENING) {
-                    SdkManager.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest(new IVoiceRequestListener() {
+                SdkController.getInstance().getSdkInternalApi().setAsrMode(mode);
+                if (SdkController.getInstance().getSdkInstance().getVoiceRequest().getDialogState() == IDialogStateListener.DialogState.LISTENING) {
+                    SdkController.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest(new IVoiceRequestListener() {
                         @Override
                         public void onSucceed() {
 
                         }
                     });
                 } else {
-                    SdkManager.getInstance().getSdkInstance().getVoiceRequest().cancelVoiceRequest(new com.baidu.duer.dcs.api.IVoiceRequestListener() {
+                    SdkController.getInstance().getSdkInstance().getVoiceRequest().cancelVoiceRequest(new com.baidu.duer.dcs.api.IVoiceRequestListener() {
                         @Override
                         public void onSucceed() {
-                            SdkManager.getInstance().getSdkInstance().getVoiceRequest().beginVoiceRequest(true);
+                            SdkController.getInstance().getSdkInstance().getVoiceRequest().beginVoiceRequest(true);
                         }
                     });
                 }

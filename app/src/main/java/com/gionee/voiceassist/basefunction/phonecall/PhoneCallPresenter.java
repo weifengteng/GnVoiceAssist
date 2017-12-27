@@ -12,7 +12,7 @@ import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.BasePresenter;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
-import com.gionee.voiceassist.basefunction.recordcontrol.RecordController;
+import com.gionee.voiceassist.controller.recordcontrol.RecordController;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.voiceassist.directiveListener.phonecall.PhoneCallDirectiveListener;
 import com.gionee.voiceassist.sdk.module.phonecall.message.ContactInfo;

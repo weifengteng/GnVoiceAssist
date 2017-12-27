@@ -7,7 +7,7 @@ import com.baidu.duer.dcs.framework.InternalApi;
  * Created by liyingheng on 10/15/17.
  */
 
-public interface ISdkManager {
+public interface ISdkController {
     void init();
 
     void destroy();

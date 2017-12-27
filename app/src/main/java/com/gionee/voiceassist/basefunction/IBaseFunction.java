@@ -11,7 +11,7 @@ import com.gionee.voiceassist.basefunction.kookong.KookongOperator;
 import com.gionee.voiceassist.basefunction.music.GNMusicOperator;
 import com.gionee.voiceassist.basefunction.offlineasr.OfflineAsrHandler;
 import com.gionee.voiceassist.basefunction.phonecall.PhoneCallPresenter;
-import com.gionee.voiceassist.basefunction.recordcontrol.RecordController;
+import com.gionee.voiceassist.controller.recordcontrol.RecordController;
 import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.voiceassist.basefunction.smssend.SmsSendPresenter;
 import com.gionee.voiceassist.basefunction.timequery.TimeQuery;

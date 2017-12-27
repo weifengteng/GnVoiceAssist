@@ -1,12 +1,11 @@
 package com.gionee.voiceassist.basefunction.devicecontrol;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.BasePresenter;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
-import com.gionee.voiceassist.systemctrl.SystemCtrlProvider;
+import com.gionee.voiceassist.systemctrl.SystemCtrlManager;
 import com.gionee.voiceassist.systemctrl.iface.ISwitchCtrl;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.LogUtil;
@@ -23,12 +22,12 @@ public class DeviceControlOperator extends BasePresenter {
     public static final String TAG = DeviceControlOperator.class.getSimpleName();
 
     protected Context mAppCtx;
-    private SystemCtrlProvider mCtrlProvider;
+    private SystemCtrlManager mCtrlProvider;
 
     public DeviceControlOperator(IBaseFunction baseFunction) {
         super(baseFunction);
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
-        mCtrlProvider = new SystemCtrlProvider();
+        mCtrlProvider = new SystemCtrlManager();
     }
 
     @Override

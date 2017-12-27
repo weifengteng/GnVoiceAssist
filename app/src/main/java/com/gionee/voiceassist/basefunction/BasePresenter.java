@@ -1,8 +1,8 @@
 package com.gionee.voiceassist.basefunction;
 
 import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
-import com.gionee.voiceassist.tts.TtsCallback;
-import com.gionee.voiceassist.tts.TtsManager;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 
 /**
  * Created by tengweifeng on 9/27/17.
@@ -31,39 +31,39 @@ public abstract class BasePresenter implements TtsCallback {
     }
 
     @Override
-    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
+    public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
 
     }
 
     protected void playAndRenderText(String ttsText, String utterId, TtsCallback listener) {
-        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
+        TtsController.getInstance().playTTS(ttsText, utterId, listener);
     }
 
     protected void playAndRenderText(String ttsText, String utterId, TtsCallback listener, boolean showPlayTextInScreen) {
-        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
+        TtsController.getInstance().playTTS(ttsText, utterId, listener);
         if(showPlayTextInScreen) {
             screenRender.renderAnswerInScreen(ttsText);
         }
     }
 
     protected void playTextAndModifyLast(String ttsText, String utterId, TtsCallback listener) {
-        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
+        TtsController.getInstance().playTTS(ttsText, utterId, listener);
         screenRender.modifyLastTextInScreen(ttsText);
     }
 
     protected void playAndRenderText(String ttsText) {
-        TtsManager.getInstance().playTTS(ttsText);
+        TtsController.getInstance().playTTS(ttsText);
     }
 
     protected void playAndRenderText(String ttsText, boolean showPlayTextInScreen) {
-        TtsManager.getInstance().playTTS(ttsText);
+        TtsController.getInstance().playTTS(ttsText);
         if(showPlayTextInScreen) {
             screenRender.renderAnswerInScreen(ttsText);
         }
     }
 
     protected void playTextAndModifyLast(String ttsText) {
-        TtsManager.getInstance().playTTS(ttsText);
+        TtsController.getInstance().playTTS(ttsText);
         screenRender.modifyLastTextInScreen(ttsText);
     }
 

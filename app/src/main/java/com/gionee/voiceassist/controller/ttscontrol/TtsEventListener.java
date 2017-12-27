@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.tts;
+package com.gionee.voiceassist.controller.ttscontrol;
 
 
 import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
@@ -12,8 +12,8 @@ public class TtsEventListener implements VoiceOutputDeviceModule.IVoiceOutputLis
 
 //    @Override
 //    public void onTtsStart() {
-//        TtsManager.getInstance().setPlayingState(true);
-//        TtsCallback listener = TtsManager.getInstance().getSpeakTxtCallbackListener();
+//        TtsController.getInstance().setPlayingState(true);
+//        TtsCallback listener = TtsController.getInstance().getSpeakTxtCallbackListener();
 //        listener.onSpeakStart();
 //    }
 //
@@ -24,10 +24,10 @@ public class TtsEventListener implements VoiceOutputDeviceModule.IVoiceOutputLis
 //
 //    @Override
 //    public void onTtsFinish() {
-//        TtsManager.getInstance().setPlayingState(false);
-//        TtsCallback listener = TtsManager.getInstance().getSpeakTxtCallbackListener();
+//        TtsController.getInstance().setPlayingState(false);
+//        TtsCallback listener = TtsController.getInstance().getSpeakTxtCallbackListener();
 //        if(listener != null) {
-//            listener.onSpeakFinish(TtsManager.getInstance().getCurrUtterId());
+//            listener.onSpeakFinish(TtsController.getInstance().getCurrUtterId());
 //        } else {
 //            // TODO:
 //        }
@@ -35,10 +35,10 @@ public class TtsEventListener implements VoiceOutputDeviceModule.IVoiceOutputLis
 //
 //    @Override
 //    public void onTtsError(String errMsg) {
-//        TtsManager.getInstance().setPlayingState(false);
-//        TtsCallback listener = TtsManager.getInstance().getSpeakTxtCallbackListener();
+//        TtsController.getInstance().setPlayingState(false);
+//        TtsCallback listener = TtsController.getInstance().getSpeakTxtCallbackListener();
 //        if(listener != null) {
-//            listener.onSpeakError(TtsManager.TtsResultCode.ERROR,errMsg);
+//            listener.onSpeakError(TtsController.TtsResultCode.ERROR,errMsg);
 //        } else {
 //            // TODO:
 //        }
@@ -46,15 +46,15 @@ public class TtsEventListener implements VoiceOutputDeviceModule.IVoiceOutputLis
 
     @Override
     public void onVoiceOutputStarted() {
-        TtsManager.getInstance().setPlayingState(true);
+        TtsController.getInstance().setPlayingState(true);
     }
 
     @Override
     public void onVoiceOutputFinished() {
-        TtsManager.getInstance().setPlayingState(false);
-        TtsCallback listener = TtsManager.getInstance().getSpeakTxtCallbackListener();
+        TtsController.getInstance().setPlayingState(false);
+        TtsCallback listener = TtsController.getInstance().getSpeakTxtCallbackListener();
         if(listener != null) {
-            listener.onSpeakFinish(TtsManager.getInstance().getCurrUtterId());
+            listener.onSpeakFinish(TtsController.getInstance().getCurrUtterId());
         } else {
             // TODO:
         }
@@ -63,16 +63,16 @@ public class TtsEventListener implements VoiceOutputDeviceModule.IVoiceOutputLis
     //TODO Deprecated. Offline TTS should migrate to newer SDK API
     @Deprecated
     public void onTtsOutputStarted() {
-        TtsManager.getInstance().setPlayingState(true);
+        TtsController.getInstance().setPlayingState(true);
     }
 
     //TODO Deprecated. Offline TTS should migrate to newer SDK API
     @Deprecated
     public void onTtsOutputFinished() {
-        TtsManager.getInstance().setPlayingState(false);
-        TtsCallback listener = TtsManager.getInstance().getSpeakTxtCallbackListener();
+        TtsController.getInstance().setPlayingState(false);
+        TtsCallback listener = TtsController.getInstance().getSpeakTxtCallbackListener();
         if(listener != null) {
-            listener.onSpeakFinish(TtsManager.getInstance().getCurrUtterId());
+            listener.onSpeakFinish(TtsController.getInstance().getCurrUtterId());
         } else {
             // TODO:
         }

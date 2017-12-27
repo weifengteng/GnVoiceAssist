@@ -6,7 +6,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 
 import com.gionee.voiceassist.basefunction.IBaseFunction;
-import com.gionee.voiceassist.tts.TtsManager;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
@@ -88,7 +88,7 @@ public class TeleControlPresenter extends KookongBaseService.SimpleKookongServic
 //            DcsSDK.getInstance().getSpeak().speakTxt(cmdResult,
 //                    SpeakInterface.SpeakTxtMixMode.MIX_MODE_MIXTURE_NETWORK);
             //TODO: 将处理结果用tts播报
-            TtsManager.getInstance().playTTS(cmdResult);
+            TtsController.getInstance().playTTS(cmdResult);
         }
     };
 }

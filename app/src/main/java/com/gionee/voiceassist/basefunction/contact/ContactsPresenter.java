@@ -12,7 +12,7 @@ import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.BasePresenter;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
-import com.gionee.voiceassist.tts.TtsManager;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.T;
@@ -43,7 +43,7 @@ public class ContactsPresenter extends BasePresenter {
     }
 
     @Override
-    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
+    public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
 
     }
 

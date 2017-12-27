@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.basefunction.recordcontrol;
+package com.gionee.voiceassist.controller.recordcontrol;
 
 /**
  * Created by twf on 2017/8/31.

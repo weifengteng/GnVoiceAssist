@@ -45,7 +45,6 @@ import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ErrorCode;
 import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.util.T;
 import com.gionee.voiceassist.util.Utils;
 import com.gionee.voiceassist.util.kookong.KookongCustomDataHelper;
 
@@ -59,26 +58,26 @@ import java.util.Map;
  * 管理SDK的生命周期，取得SDK实例
  */
 
-public class SdkManager implements ISdkManager {
+public class SdkController implements ISdkController {
 
     //Config SDK
     private static final String WAKEUP_WORD = "";
     private static final boolean ENABLE_WAKEUP = false;
 
-    private static final String TAG = SdkManager.class.getSimpleName();
-    private static SdkManager sInstance;
+    private static final String TAG = SdkController.class.getSimpleName();
+    private static SdkController sInstance;
 
     private IDcsSdk mDcsSdk;
     private Context mAppCtx;
     private IWakeupAgent.IWakeupAgentListener wakeupAgentListener;
 
-    private SdkManager() {
+    private SdkController() {
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
     }
 
-    public static synchronized SdkManager getInstance() {
+    public static synchronized SdkController getInstance() {
         if (sInstance == null) {
-            sInstance = new SdkManager();
+            sInstance = new SdkController();
         }
         return sInstance;
     }

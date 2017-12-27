@@ -20,7 +20,7 @@ import com.gionee.voiceassist.systemctrl.impl.sysswitch.WifiSwitchImpl;
  * Created by liyingheng on 12/6/17.
  */
 
-public class SystemCtrlProvider {
+public class SystemCtrlManager {
 
     IPhonecallCtrl phonecallCtrl;
     IScreenshotCtrl screenshotCtrl;
@@ -37,7 +37,7 @@ public class SystemCtrlProvider {
 
 
 
-    public SystemCtrlProvider() {
+    public SystemCtrlManager() {
 
     }
 

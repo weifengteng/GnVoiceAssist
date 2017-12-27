@@ -2,32 +2,23 @@ package com.gionee.voiceassist.directiveListener.offlineasr;
 
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.OffLineAsrDirective;
 import com.baidu.duer.dcs.offline.asr.bean.ErrorTranslation;
 import com.baidu.duer.dcs.offline.asr.bean.RecogResult;
 import com.baidu.duer.dcs.offline.asr.listener.IRecogListener;
 import com.baidu.duer.dcs.util.NetWorkUtil;
-import com.gionee.voiceassist.DirectiveListenerManager;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
-import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.voiceassist.basefunction.offlineasr.OfflineAsrHandler;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.voiceassist.sdk.module.offlineasr.OffLineDeviceModule;
-import com.gionee.voiceassist.sdk.module.phonecall.message.ContactInfo;
 import com.gionee.voiceassist.util.Constants;
-import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.ErrorCode;
 import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.util.T;
 import com.gionee.voiceassist.util.Utils;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

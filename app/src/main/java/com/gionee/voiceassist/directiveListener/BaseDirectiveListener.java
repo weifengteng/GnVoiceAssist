@@ -2,8 +2,8 @@ package com.gionee.voiceassist.directiveListener;
 
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.ICUIDirectiveReceivedInterface;
-import com.gionee.voiceassist.tts.TtsCallback;
-import com.gionee.voiceassist.tts.TtsManager;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 
 /**
  * Created by twf on 2017/8/14.
@@ -31,7 +31,7 @@ public abstract class BaseDirectiveListener
     }
 
     @Override
-    public void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s) {
+    public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
 
     }
 
@@ -50,22 +50,22 @@ public abstract class BaseDirectiveListener
     public abstract void stopFocus();*/
 
     protected void playTTS(String ttsText, String utterId, TtsCallback listener) {
-        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
+        TtsController.getInstance().playTTS(ttsText, utterId, listener);
     }
 
     protected void playTTS(String ttsText, String utterId, TtsCallback listener, boolean showPlayTextInScreen) {
-        TtsManager.getInstance().playTTS(ttsText, utterId, listener);
+        TtsController.getInstance().playTTS(ttsText, utterId, listener);
         if(showPlayTextInScreen) {
             iBaseFunction.getScreenRender().renderAnswerInScreen(ttsText);
         }
     }
 
     protected void playTTS(String ttsText) {
-        TtsManager.getInstance().playTTS(ttsText);
+        TtsController.getInstance().playTTS(ttsText);
     }
 
     protected void playTTS(String ttsText, boolean showPlayTextInScreen) {
-        TtsManager.getInstance().playTTS(ttsText);
+        TtsController.getInstance().playTTS(ttsText);
         if(showPlayTextInScreen) {
             iBaseFunction.getScreenRender().renderAnswerInScreen(ttsText);
         }

@@ -1,9 +1,9 @@
-package com.gionee.voiceassist.tts;
+package com.gionee.voiceassist.controller.ttscontrol;
 
 import android.text.TextUtils;
 
 import com.gionee.voiceassist.GnVoiceAssistApplication;
-import com.gionee.voiceassist.sdk.SdkManager;
+import com.gionee.voiceassist.sdk.SdkController;
 import com.gionee.voiceassist.util.Constants;
 
 import java.util.HashMap;
@@ -12,13 +12,13 @@ import java.util.HashMap;
  * Created by tengweifeng on 9/14/17.
  */
 
-public class TtsManager {
-    public static TtsManager mInstance;
+public class TtsController {
+    public static TtsController mInstance;
     private volatile boolean isPlaying;
     private String mCurrUtterId;
     private HashMap<String, TtsCallback> mTtsListenerMap = new HashMap<>();
 
-    private TtsManager() {}
+    private TtsController() {}
 
     public enum TtsResultCode {
         OFFLINEENGINE_NOT_AVAILABLE,
@@ -26,11 +26,11 @@ public class TtsManager {
         FINISH;
     }
 
-    public static TtsManager getInstance() {
+    public static TtsController getInstance() {
         if(mInstance == null) {
-            synchronized (TtsManager.class) {
+            synchronized (TtsController.class) {
                 if(mInstance == null) {
-                    mInstance = new TtsManager();
+                    mInstance = new TtsController();
                 }
             }
         }
@@ -63,10 +63,10 @@ public class TtsManager {
         }
         switch (GnVoiceAssistApplication.TTS_MODE) {
             case Constants.TTS_MODE_ONLINE:
-                SdkManager.getInstance().getSdkInternalApi().speakRequest(ttsText);
+                SdkController.getInstance().getSdkInternalApi().speakRequest(ttsText);
                 break;
             case Constants.TTS_MODE_OFFLINE:
-                SdkManager.getInstance().getSdkInternalApi().speakOfflineQuery(ttsText);
+                SdkController.getInstance().getSdkInternalApi().speakOfflineQuery(ttsText);
                 break;
         }
     }

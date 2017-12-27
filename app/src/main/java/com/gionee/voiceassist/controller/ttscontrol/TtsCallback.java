@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.tts;
+package com.gionee.voiceassist.controller.ttscontrol;
 
 /**
  * Created by twf on 2017/8/26.
@@ -10,5 +10,5 @@ public interface TtsCallback {
 
     void onSpeakFinish(String utterId);
 
-    void onSpeakError(TtsManager.TtsResultCode ttsResultCode, String s);
+    void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s);
 }
