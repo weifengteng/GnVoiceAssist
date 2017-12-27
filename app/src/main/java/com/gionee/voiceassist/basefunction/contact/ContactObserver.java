@@ -7,6 +7,8 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.os.Handler;
 
+import com.gionee.voiceassist.GnVoiceAssistApplication;
+import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.Utils;
@@ -21,13 +23,11 @@ public class ContactObserver extends ContentObserver {
     /**************************** 构造方法 & Override **************************/
     /**
      * 描述：构造方法
-     * @param handler
-     * @param cxt
      */
-    public ContactObserver(Handler handler, Context cxt) {
-        super(handler);
-        mHandler = handler;
-        mCxt = cxt;
+    public ContactObserver() {
+        super(null);
+//        mHandler = handler;
+        mCxt = GnVoiceAssistApplication.getInstance().getApplicationContext();
     }
 
     /**
@@ -42,9 +42,13 @@ public class ContactObserver extends ContentObserver {
 //            return;
         }
 
-        if (mHandler.hasMessages(MSG_UPDATE_CONTACTS)) {
-            mHandler.removeMessages(MSG_UPDATE_CONTACTS);
+//        if (mHandler.hasMessages(MSG_UPDATE_CONTACTS)) {
+//            mHandler.removeMessages(MSG_UPDATE_CONTACTS);
+//        }
+//        mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_CONTACTS), HANDLER_UPDATE_CONTACTS_DELAYMILLIS);
+        boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
+        if (needupdate) {
+            Utils.uploadContacts();
         }
-        mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_CONTACTS), HANDLER_UPDATE_CONTACTS_DELAYMILLIS);
     }
 }

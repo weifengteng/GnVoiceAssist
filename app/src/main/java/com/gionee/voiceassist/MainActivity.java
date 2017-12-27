@@ -4,12 +4,10 @@ import android.Manifest;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -20,21 +18,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gionee.voiceassist.basefunction.contact.ContactObserver;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
-import com.gionee.voiceassist.directiveListener.DirectiveListenerManager;
 import com.gionee.voiceassist.directiveListener.audioplayer.IAudioPlayerStateListener;
 import com.gionee.voiceassist.directiveListener.voiceinput.IVoiceInputEventListener;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.util.Constants;
-import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.PermissionsChecker;
 import com.gionee.voiceassist.util.SharedData;
-import com.gionee.voiceassist.util.T;
-import com.gionee.voiceassist.util.Utils;
 import com.gionee.voiceassist.widget.HomeRecyclerView;
 import com.gionee.voiceassist.widget.HomeRecyclerViewAdapter;
 import com.gionee.voiceassist.widget.HomeScrollView;
@@ -63,11 +56,7 @@ public class MainActivity extends GNBaseActivity
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
     private static Handler mMainHandler;
-    private ContactObserver mContactObserver;
-    private ContentResolver mContentResolver;
-
     private ErrorHelper mErrorHelper;
-
     private MainContract.Presenter mPresenter;
 
 
@@ -96,7 +85,9 @@ public class MainActivity extends GNBaseActivity
     @Override
     public void onRecordingEnabled(boolean enabled) {
         if (enabled) {
-            sdkInitSuccess();
+            rl.setEnabled(true);
+        } else {
+            rl.setEnabled(false);
         }
     }
 
@@ -229,8 +220,6 @@ public class MainActivity extends GNBaseActivity
             mErrorHelper = new ErrorHelper();
         }
         mErrorHelper.registerErrorHandler();
-        registerContentObserver();
-        handleUpdateContacts();
         needInitFramework = false;
     }
 
@@ -380,39 +369,8 @@ public class MainActivity extends GNBaseActivity
         }
     }
 
-
-
-    private void registerContentObserver() {
-        //TODO: 将联系人变化检测Observer放到单独的类中
-        if(mContactObserver == null) {
-            mContactObserver = new ContactObserver(mMainHandler, this.getApplicationContext());
-        }
-        if(mContentResolver == null) {
-            mContentResolver = this.getApplicationContext().getContentResolver();
-        }
-        mContentResolver.registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, mContactObserver);
-    }
-
-    private void unRegisterContentObserver() {
-        mContentResolver.unregisterContentObserver(mContactObserver);
-    }
-
-    private void handleUpdateContacts() {
-        boolean needupdate = ContactProcessor.getContactProcessor().needUpdateContacts();
-        if (needupdate) {
-            Utils.uploadContacts();
-        }
-    }
-
-    private void sdkInitSuccess() {
-        TtsController.getInstance().playTTS("你好", UTTER_ID_WELCOME, MainActivity.this);
-        T.showShort("SDK 初始化成功");
-    }
-
-
     @Override
     protected void onDestroy() {
-        unRegisterContentObserver();
         if(mMainHandler != null) {
             mMainHandler.removeCallbacksAndMessages(null);
             mMainHandler = null;
@@ -440,11 +398,6 @@ public class MainActivity extends GNBaseActivity
 
             switch (msg.what) {
 
-                case Constants.MSG_INIT_SUCCESS:
-                    if (mainActivity != null) {
-                        mainActivity.sdkInitSuccess();
-                    }
-                    break;
                 case Constants.MSG_SHOW_QUERY:
                     String text = String.valueOf(msg.obj);
                     if(mainActivity != null) {
@@ -467,11 +420,6 @@ public class MainActivity extends GNBaseActivity
                     View infoPanel = (View) msg.obj;
                     if(mainActivity != null) {
                         mainActivity.addView(null, null, infoPanel);
-                    }
-                    break;
-                case Constants.MSG_UPDATE_CONTACTS:
-                    if(mainActivity != null) {
-                        mainActivity.handleUpdateContacts();
                     }
                     break;
                 case Constants.MSG_UPDATE_INPUTVOLUME:

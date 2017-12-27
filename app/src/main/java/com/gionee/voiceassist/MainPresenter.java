@@ -1,15 +1,21 @@
 package com.gionee.voiceassist;
 
+import android.content.ContentResolver;
 import android.os.Handler;
+import android.provider.ContactsContract;
 
 import com.baidu.duer.dcs.common.util.CommonUtil;
 import com.gionee.voiceassist.basefunction.BaseFunctionManager;
+import com.gionee.voiceassist.basefunction.contact.ContactObserver;
 import com.gionee.voiceassist.controller.recordcontrol.RecordController;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.directiveListener.DirectiveListenerManager;
 import com.gionee.voiceassist.directiveListener.voiceinput.IVoiceInputEventListener;
 import com.gionee.voiceassist.sdk.SdkController;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.SharedData;
+import com.gionee.voiceassist.util.T;
 import com.gionee.voiceassist.util.kookong.KookongCustomDataHelper;
 
 /**
@@ -19,12 +25,16 @@ import com.gionee.voiceassist.util.kookong.KookongCustomDataHelper;
 
 public class MainPresenter implements MainContract.Presenter {
 
+    public static final String UTTER_ID_WELCOME = "utter_id_welcome";
+
     private MainContract.View mHostView;
     private static final String TAG = MainPresenter.class.getSimpleName();
 
     private BaseFunctionManager baseFunctionManager;
     private DirectiveListenerManager mDirectiveListenerManager;
     private SdkController mSdkController;
+    private ContactObserver mContactObserver;
+    private ContentResolver mContentResolver;
 
     //监听器
     private IVoiceInputEventListener voiceInputEventListener = new IVoiceInputEventListener() {
@@ -52,11 +62,13 @@ public class MainPresenter implements MainContract.Presenter {
         initSDK();
         initFrameWork();
         KookongCustomDataHelper.bindDataRetriveService();
+        registerContentObserver();
         mHostView.onRecordingEnabled(true);
     }
 
     @Override
     public void detach() {
+        unRegisterContentObserver();
         mDirectiveListenerManager.onDestroy();
         baseFunctionManager.onDestroy();
         mSdkController.destroy();
@@ -115,6 +127,41 @@ public class MainPresenter implements MainContract.Presenter {
     private void initSDK() {
         mSdkController = SdkController.getInstance();
         mSdkController.init();
+        sdkInitSuccess();
+    }
+
+    private void sdkInitSuccess() {
+        TtsController.getInstance().playTTS("你好", UTTER_ID_WELCOME, new TtsCallback() {
+            @Override
+            public void onSpeakStart() {
+
+            }
+
+            @Override
+            public void onSpeakFinish(String utterId) {
+                startVoiceCommand();
+            }
+
+            @Override
+            public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
+
+            }
+        });
+        T.showShort("SDK 初始化成功");
+    }
+
+    private void registerContentObserver() {
+        if(mContactObserver == null) {
+            mContactObserver = new ContactObserver();
+        }
+        if(mContentResolver == null) {
+            mContentResolver = GnVoiceAssistApplication.getInstance().getContentResolver();
+        }
+        mContentResolver.registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, mContactObserver);
+    }
+
+    private void unRegisterContentObserver() {
+        mContentResolver.unregisterContentObserver(mContactObserver);
     }
 
 }
