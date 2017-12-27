@@ -41,6 +41,23 @@ public class RecordController implements IRecordControl {
     public static final int ASR_MODE_OFFLINE = 2;
     public static final int ASR_MODE_OFFLINE_PRIORITY = 3;
 
+    private static RecordController sINSTANCE;
+
+    private RecordController() {
+
+    }
+
+    public static RecordController getInstance() {
+        if (sINSTANCE == null) {
+            synchronized (RecordController.class) {
+                if (sINSTANCE == null) {
+                    sINSTANCE = new RecordController();
+                }
+            }
+        }
+        return sINSTANCE;
+    }
+
     @Override
     public void stopRecord() {
         SdkController.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest(new IVoiceRequestListener() {
