@@ -5,7 +5,7 @@ import android.util.Log;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
-import com.gionee.voiceassist.sdk.module.devicecontrol.DeviceControlDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.Utils;
 

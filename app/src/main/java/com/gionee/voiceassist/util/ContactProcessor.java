@@ -11,17 +11,10 @@ import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Data;
 import android.text.TextUtils;
 
-import com.baidu.duer.dcs.framework.message.Payload;
-import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.contact.db.DataBaseAccess;
-import com.gionee.voiceassist.sdk.module.phonecall.message.CandidateCallee;
-import com.gionee.voiceassist.sdk.module.phonecall.message.CandidateCalleeNumber;
-import com.gionee.voiceassist.sdk.module.phonecall.message.ContactInfo;
-import com.gionee.voiceassist.sdk.module.phonecall.message.PhonecallByNamePayload;
-import com.gionee.voiceassist.sdk.module.phonecall.message.PhonecallByNumberPayload;
-import com.gionee.voiceassist.sdk.module.phonecall.message.SelectCalleePayload;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.ContactInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

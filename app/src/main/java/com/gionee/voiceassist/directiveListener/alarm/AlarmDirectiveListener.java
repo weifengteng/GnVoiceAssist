@@ -1,15 +1,14 @@
 package com.gionee.voiceassist.directiveListener.alarm;
 
 
-import com.gionee.voiceassist.basefunction.BaseFunctionManager;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.alarm.IAlarmPresenter;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
-import com.gionee.voiceassist.sdk.module.alarms.AlarmsDeviceModule;
-import com.gionee.voiceassist.sdk.module.alarms.message.SetAlarmPayload;
-import com.gionee.voiceassist.sdk.module.alarms.message.SetTimerPayload;
-import com.gionee.voiceassist.sdk.module.alarms.message.ShowAlarmsPayload;
-import com.gionee.voiceassist.sdk.module.alarms.message.ShowTimersPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.alarms.AlarmsDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.alarms.message.SetAlarmPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.alarms.message.SetTimerPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.alarms.message.ShowAlarmsPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.alarms.message.ShowTimersPayload;
 import com.gionee.voiceassist.util.LogUtil;
 
 import java.util.ArrayList;

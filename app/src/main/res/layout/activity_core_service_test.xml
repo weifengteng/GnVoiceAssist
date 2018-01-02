@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:minHeight="100dp"
+        android:text="结果将显示在此处"/>
+
+    <Button
+        android:id="@+id/btn_test_init_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试SDK初始化及状态回调"/>
+
+    <Button
+        android:id="@+id/btn_test_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试录音"/>
+    <Button
+        android:id="@+id/btn_test_tts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试tts"/>
+    <Button
+        android:id="@+id/btn_test_directive_parse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试Directive解析"/>
+    <Button
+        android:id="@+id/btn_test_render_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试界面信息回调"/>
+
+</LinearLayout>

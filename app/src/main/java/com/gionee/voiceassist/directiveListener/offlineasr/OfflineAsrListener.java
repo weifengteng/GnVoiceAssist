@@ -11,7 +11,7 @@ import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.offlineasr.OfflineAsrHandler;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
-import com.gionee.voiceassist.sdk.module.offlineasr.OffLineDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ErrorCode;
 import com.gionee.voiceassist.util.ErrorHelper;

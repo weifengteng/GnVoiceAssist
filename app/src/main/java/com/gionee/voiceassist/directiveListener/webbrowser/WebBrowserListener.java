@@ -8,7 +8,7 @@ import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
-import com.gionee.voiceassist.sdk.module.webbrowser.WebBrowserDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.webbrowser.WebBrowserDeviceModule;
 
 /**
  * Created by twf on 2017/8/16.

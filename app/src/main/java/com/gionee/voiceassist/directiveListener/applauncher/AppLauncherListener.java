@@ -18,7 +18,7 @@ import com.gionee.voiceassist.basefunction.applaunch.AppLaunchPresenter;
 import com.gionee.voiceassist.customlink.CustomLinkSchema;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
-import com.gionee.voiceassist.sdk.module.applauncher.AppLauncherDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.voiceassist.util.SharedData;
 
 import java.util.ArrayList;

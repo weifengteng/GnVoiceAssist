@@ -9,8 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.gionee.voiceassist.R;
-import com.gionee.voiceassist.sdk.module.screen.message.Image;
-import com.gionee.voiceassist.sdk.module.screen.message.RenderCardPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderCardPayload;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
 import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
-import com.gionee.voiceassist.sdk.SdkController;
+import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.statemachine.Scene;
 
 import java.util.ArrayList;

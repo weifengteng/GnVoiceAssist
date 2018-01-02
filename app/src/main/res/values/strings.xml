@@ -276,7 +276,7 @@
     <string name="app_download">搜索%1$s</string>
     <string name="say_again">没听清楚，请再说一遍</string>
     <string name="do_fail_and_again">操作失败，请重试！</string>
-    <string name="reminder_clock_content" >内容:</string>
+    <string name="reminder_clock_content">内容:</string>
     <string name="reminder_clock_time">时间:</string>
     <string name="voice_set_alarm_success">创建成功!</string>
     <string name="voice_set_alarm_cancel">已取消</string>

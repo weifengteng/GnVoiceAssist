@@ -3,7 +3,9 @@ package com.gionee.voiceassist.controller.ttscontrol;
 import android.text.TextUtils;
 
 import com.gionee.voiceassist.GnVoiceAssistApplication;
-import com.gionee.voiceassist.sdk.SdkController;
+import com.gionee.voiceassist.coreservice.CoreService;
+import com.gionee.voiceassist.coreservice.CoreServiceConfig;
+import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.util.Constants;
 
 import java.util.HashMap;
@@ -61,7 +63,7 @@ public class TtsController {
         if(isPlaying()) {
             //TODO: 处理当语音正在播报时，打断语音播报
         }
-        switch (GnVoiceAssistApplication.TTS_MODE) {
+        switch (CoreServiceConfig.TTS_MODE) {
             case Constants.TTS_MODE_ONLINE:
                 SdkController.getInstance().getSdkInternalApi().speakRequest(ttsText);
                 break;

@@ -9,7 +9,7 @@ import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
-import com.gionee.voiceassist.sdk.SdkController;
+import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.util.ConnectivityUtils;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.LogUtil;

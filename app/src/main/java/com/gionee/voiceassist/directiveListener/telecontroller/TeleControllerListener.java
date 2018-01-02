@@ -3,7 +3,7 @@ package com.gionee.voiceassist.directiveListener.telecontroller;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
-import com.gionee.voiceassist.sdk.module.telecontroller.TeleControllerDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
 

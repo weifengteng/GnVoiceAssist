@@ -19,8 +19,7 @@ import android.widget.TextView;
 
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
-import com.gionee.voiceassist.sdk.module.screen.message.ListCardItem;
-import com.gionee.voiceassist.sdk.module.screen.message.RenderCardPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderCardPayload;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
 import com.squareup.picasso.Picasso;

@@ -15,7 +15,7 @@ import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.controller.recordcontrol.RecordController;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.voiceassist.directiveListener.sms.SmsDirectiveListener;
-import com.gionee.voiceassist.sdk.module.sms.message.SmsInfo;
+import com.gionee.voiceassist.coreservice.sdk.module.sms.message.SmsInfo;
 import com.gionee.voiceassist.util.T;
 import com.gionee.voiceassist.widget.ContactsListItem;
 import com.gionee.voiceassist.widget.SimCardListItem;

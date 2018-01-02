@@ -15,24 +15,21 @@ import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.voiceassist.customlink.CustomLinkSchema;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
-import com.gionee.voiceassist.sdk.module.phonecall.IPhoneCallImpl;
-import com.gionee.voiceassist.sdk.module.phonecall.PhoneCallDeviceModule;
-import com.gionee.voiceassist.sdk.module.phonecall.message.CandidateCallee;
-import com.gionee.voiceassist.sdk.module.phonecall.message.CandidateCalleeNumber;
-import com.gionee.voiceassist.sdk.module.phonecall.message.ContactInfo;
-import com.gionee.voiceassist.sdk.module.phonecall.message.PhonecallByNamePayload;
-import com.gionee.voiceassist.sdk.module.phonecall.message.PhonecallByNumberPayload;
-import com.gionee.voiceassist.sdk.module.phonecall.message.SelectCalleePayload;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.IPhoneCallImpl;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.CandidateCallee;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.CandidateCalleeNumber;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.ContactInfo;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.PhonecallByNamePayload;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.PhonecallByNumberPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.SelectCalleePayload;
 import com.gionee.voiceassist.util.CUInteractionUrlParser;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.SharedData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.gionee.voiceassist.util.Utils.doUserActivity;
 

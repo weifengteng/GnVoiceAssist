@@ -2,7 +2,7 @@ package com.gionee.voiceassist.directiveListener.customcmd;
 
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
-import com.gionee.voiceassist.sdk.module.customcmd.CustomCmdDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.customcmd.CustomCmdDeviceModule;
 import com.gionee.voiceassist.util.LogUtil;
 
 /**

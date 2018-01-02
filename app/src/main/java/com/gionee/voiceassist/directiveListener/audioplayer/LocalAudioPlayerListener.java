@@ -4,10 +4,10 @@ package com.gionee.voiceassist.directiveListener.audioplayer;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.music.GNMusicOperator;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
-import com.gionee.voiceassist.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
-import com.gionee.voiceassist.sdk.module.localaudioplayer.message.SearchAndPlayMusicPayload;
-import com.gionee.voiceassist.sdk.module.localaudioplayer.message.SearchAndPlayRadioPayload;
-import com.gionee.voiceassist.sdk.module.localaudioplayer.message.SearchAndPlayUnicastPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.message.SearchAndPlayMusicPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.message.SearchAndPlayRadioPayload;
+import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.message.SearchAndPlayUnicastPayload;
 import com.gionee.voiceassist.util.T;
 
 import java.util.List;
