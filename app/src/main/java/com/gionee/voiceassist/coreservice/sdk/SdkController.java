@@ -16,7 +16,7 @@ import com.baidu.duer.dcs.framework.InternalApi;
 import com.baidu.duer.dcs.framework.internalapi.IASROffLineConfigProvider;
 import com.baidu.duer.dcs.framework.internalapi.IWakeupAgent;
 import com.baidu.duer.dcs.framework.internalapi.IWakeupProvider;
-import com.baidu.duer.dcs.oauth.api.credentials.BaiduOauthClientCredentialsImpl;
+import com.baidu.duer.dcs.oauth.api.silent.SilentLoginImpl;
 import com.baidu.duer.dcs.offline.asr.bean.ASROffLineConfig;
 import com.baidu.duer.dcs.systeminterface.BaseAudioRecorder;
 import com.baidu.duer.dcs.systeminterface.BaseWakeup;
@@ -131,11 +131,12 @@ public class SdkController implements ISdkController {
         String appId = "10290022";
         String apiKey = "bw40xRdDGFclaSIGzgXgNFdG";
         String secretKey = "AkP1XOuGVlrrML7dTs4WqW6bqj8lvv6C";
+        //withPid是语音链路，是百度语音组针对不同产品线配置所开放的接口，
+        //每个产品立项都会拥有自己的pid编号，或者使用通用的，729是sdk sample的语音配置编号
         BaseAudioRecorder audioRecorder = new AudioRecordImpl();
-        IOauth oauth = new BaiduOauthClientCredentialsImpl(clientId, clientSecret);
         mDcsSdk = new DcsSdkBuilder()
                 .withClientId(clientId)
-                .withOauth(oauth)
+                .withOauth(getOauth(clientId))
                 .withAudioRecorder(audioRecorder)
                 .withPid(729)
                 .build();
@@ -149,6 +150,10 @@ public class SdkController implements ISdkController {
 
         // 第三步，将sdk跑起来
         runSdk();
+    }
+
+    private IOauth getOauth(String clientId) {
+        return new SilentLoginImpl(clientId);
     }
 
     private void setupDeviceModule(Context context) {
@@ -214,7 +219,7 @@ public class SdkController implements ISdkController {
 
         getSdkInternalApi().getDeviceModule(com.baidu.duer.dcs.devicemodule.custominteraction.ApiConstants.NAMESPACE);
 
-        LogUtil.d("liyh", "DeviceModule installed!");
+        LogUtil.d(TAG, "DeviceModule installed!");
     }
 
     private void setupOffline(String appId, String appKey, String secretKey) {
@@ -280,6 +285,11 @@ public class SdkController implements ISdkController {
 
                 @Override
                 public void onInitWakeUpSucceed() {
+
+                }
+
+                @Override
+                public void onInitWakeUpFailed(String s) {
 
                 }
 

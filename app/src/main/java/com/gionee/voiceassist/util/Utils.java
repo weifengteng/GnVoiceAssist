@@ -75,7 +75,7 @@ public class Utils {
         try{
             String contacts = ContactsChoiceUtil.getAllContacts(GnVoiceAssistApplication.getInstance());
             IUpload contactUploader = new UploadImpl();
-            contactUploader.uploadPhoneContacts(GnVoiceAssistApplication.getInstance(), contacts, new IUpload.IUploadListener() {
+            contactUploader.uploadPhoneContacts(GnVoiceAssistApplication.getInstance(), contacts, false,  new IUpload.IUploadListener() {
                 @Override
                 public void onSucceed(int i) {
                     LogUtil.d(getClass(),"上传联系人成功");

@@ -63,12 +63,14 @@ public class StateListenerController {
     }
 
     public void init() {
-        SdkController.getInstance().getSdkInternalApi().addVoiceListener(voiceListener);
+        // TODO:
+//        SdkController.getInstance().getSdkInternalApi().addVoiceListener(voiceListener);
         SdkController.getInstance().getSdkInternalApi().addErrorListener(errorListener);
     }
 
     public void release() {
-        SdkController.getInstance().getSdkInternalApi().removeVoiceListener(voiceListener);
+        // TODO:
+//        SdkController.getInstance().getSdkInternalApi().removeVoiceListener(voiceListener);
         SdkController.getInstance().getSdkInternalApi().removeErrorListener(errorListener);
     }
 

@@ -2,6 +2,7 @@ package com.gionee.voiceassist.directiveListener.voiceinput;
 
 import com.baidu.duer.dcs.api.IDialogStateListener;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
+import com.gionee.voiceassist.controller.recordcontrol.RecordController;
 import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.voiceassist.util.LogUtil;
 
@@ -71,11 +72,13 @@ public class AsrVoiceInputListener extends BaseDirectiveListener implements IDia
 
     @Override
     public void onDialogStateChanged(DialogState dialogState) {
-        LogUtil.i("liyh","onDialogStateChanged() " + dialogState);
+        LogUtil.i(TAG,"onDialogStateChanged: " + dialogState);
         if (dialogState != mPreviousState) {
             if (dialogState == DialogState.LISTENING) {
                 voiceInputEventListener.onVoiceInputStart();
+                RecordController.getInstance().setSDKRecording(true);
             } else if (mPreviousState == DialogState.LISTENING){
+                RecordController.getInstance().setSDKRecording(false);
                 voiceInputEventListener.onVoiceInputStop();
             }
             mPreviousState = dialogState;

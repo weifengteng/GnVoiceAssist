@@ -42,6 +42,7 @@ public class RecordController implements IRecordControl {
     public static final int ASR_MODE_OFFLINE_PRIORITY = 3;
 
     private static RecordController sINSTANCE;
+    private volatile boolean isRecording;
 
     private RecordController() {
 
@@ -131,7 +132,7 @@ public class RecordController implements IRecordControl {
                     //TODO 向SDK中注入动态离线语法
                 }
                 SdkController.getInstance().getSdkInternalApi().setAsrMode(mode);
-                if (SdkController.getInstance().getSdkInstance().getVoiceRequest().getDialogState() == IDialogStateListener.DialogState.LISTENING) {
+                if (isSDKRecording()) {
                     SdkController.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest(new IVoiceRequestListener() {
                         @Override
                         public void onSucceed() {
@@ -200,5 +201,13 @@ public class RecordController implements IRecordControl {
         if(null != soundPlayer) {
             soundPlayer.playMusicSound(resId);
         }
+    }
+
+    public boolean isSDKRecording() {
+        return isRecording;
+    }
+
+    public void setSDKRecording(boolean recording) {
+        isRecording = recording;
     }
 }
