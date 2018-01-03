@@ -146,8 +146,8 @@ public class DirectiveListenerManager {
 
         // 自定义指令中涉及不同垂类的指令，都添加到回调列表里
         ((CustomCmdDeviceModule)getDeviceModule(com.gionee.voiceassist.coreservice.sdk.module.customcmd.ApiConstants.NAMESPACE)).addDirectiveListener(customCmdDirectiveListener);
-        ((CustomCmdDeviceModule)getDeviceModule(com.gionee.voiceassist.coreservice.sdk.module.customcmd.ApiConstants.NAMESPACE)).addDirectiveListener(localAudioPlayerListener);
-        ((CustomCmdDeviceModule)getDeviceModule(com.gionee.voiceassist.coreservice.sdk.module.customcmd.ApiConstants.NAMESPACE)).addDirectiveListener(deviceControlListener);
+//        ((CustomCmdDeviceModule)getDeviceModule(com.gionee.voiceassist.coreservice.sdk.module.customcmd.ApiConstants.NAMESPACE)).addDirectiveListener(localAudioPlayerListener);
+//        ((CustomCmdDeviceModule)getDeviceModule(com.gionee.voiceassist.coreservice.sdk.module.customcmd.ApiConstants.NAMESPACE)).addDirectiveListener(deviceControlListener);
     }
 
     public void unRegisterDirectiveListener() {

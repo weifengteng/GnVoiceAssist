@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.annotation.VisibleForTesting;
 
 import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
@@ -11,7 +12,11 @@ import com.baidu.duer.dcs.framework.InternalApi;
 import com.gionee.voiceassist.controller.recordcontrol.RecordController;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.listener.directive.DirectiveListenerController;
 import com.gionee.voiceassist.coreservice.listener.state.StateListenerController;
@@ -135,6 +140,32 @@ public class CoreService extends Service {
                 for (SceneCallback callback:mExportSceneCallbacks) {
                     callback.onScreenPayload((ScreenDirectiveEntity) directivePayload);
                 }
+                break;
+            case CONTACTS:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onContactsPayload((ContactsDirectiveEntity) directivePayload);
+                }
+                break;
+            case PHONECALL:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onPhonecallPayload((PhonecallDirectiveEntity) directivePayload);
+                }
+                break;
+            case SMS:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+
+                }
+                break;
+            case APPLAUNCH:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onAppLaunchPayload((AppLaunchDirectiveEntity) directivePayload);
+                }
+                break;
+            case GIONEE_CUSTOM_COMMAND:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onGioneeCustomCommandPayload((GioneeCustomDirectiveEntity) directivePayload);
+                }
+                break;
         }
 
     }
@@ -180,5 +211,9 @@ public class CoreService extends Service {
     public interface SceneCallback {
         void onScreenPayload(ScreenDirectiveEntity payload);
         void onAlarmPayload(AlarmDirectiveEntity payload);
+        void onContactsPayload(ContactsDirectiveEntity payload);
+        void onPhonecallPayload(PhonecallDirectiveEntity payload);
+        void onAppLaunchPayload(AppLaunchDirectiveEntity payload);
+        void onGioneeCustomCommandPayload(GioneeCustomDirectiveEntity payload);
     }
 }

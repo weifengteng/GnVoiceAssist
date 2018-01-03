@@ -16,7 +16,11 @@ import android.widget.Toast;
 
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 
 public class CoreServiceTestActivity extends AppCompatActivity implements View.OnClickListener{
@@ -97,6 +101,47 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
         @Override
         public void onAlarmPayload(AlarmDirectiveEntity payload) {
             showText("设置" + payload.getHour() + "点" + payload.getMinute() + "的闹钟");
+        }
+
+        @Override
+        public void onContactsPayload(ContactsDirectiveEntity payload) {
+
+        }
+
+        @Override
+        public void onPhonecallPayload(PhonecallDirectiveEntity payload) {
+
+        }
+
+        @Override
+        public void onAppLaunchPayload(AppLaunchDirectiveEntity payload) {
+
+        }
+
+        @Override
+        public void onGioneeCustomCommandPayload(GioneeCustomDirectiveEntity payload) {
+            String displayText = "";
+            switch (payload.getAction()) {
+                case LAUNCH_ALIPAY_SCAN:
+                    displayText = "打开支付宝扫一扫";
+                    break;
+                case LAUNCH_ALIPAY_PAILITAO:
+                    displayText = "打开拍立淘";
+                    break;
+                case LAUNCH_ALIPAY_PAYMENT_CODE:
+                    displayText = "打开支付宝付款码";
+                    break;
+                case LAUNCH_HEARTRATE:
+                    displayText = "测试心率";
+                    break;
+                case SHOW_MOBILE_DEVICE_INFO:
+                    displayText = "显示设备信息";
+                    break;
+                case START_TIMER:
+                    displayText = "打开倒计时器";
+                    break;
+            }
+            showText(displayText);
         }
     };
 

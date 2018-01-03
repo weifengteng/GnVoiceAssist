@@ -3,7 +3,6 @@ package com.gionee.voiceassist.coreservice.listener.directive;
 import android.content.Context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.screen.ImagelistCardEntity;
 import com.gionee.voiceassist.coreservice.datamodel.screen.ListCardEntity;
@@ -75,14 +74,12 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
                 cardPayload = new TextCardEntity();
                 break;
             case StandardCard:
-                //TODO
                 cardPayload = new StandardCardEntity();
                 break;
             case ListCard:
                 cardPayload = new ListCardEntity();
                 break;
             case ImageListCard:
-                //TODO
                 cardPayload = new ImagelistCardEntity();
                 break;
             default:

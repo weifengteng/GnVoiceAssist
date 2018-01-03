@@ -29,7 +29,7 @@ import java.util.HashMap;
 
 public class CustomCmdDeviceModule extends BaseDeviceModule {
     private static String TAG = CustomCmdDeviceModule.class.getSimpleName();
-    private ArrayList<BaseDirectiveListener> directiveListeners;
+    private ArrayList<ICustomCmdDirectiveListener> directiveListeners;
 
     public CustomCmdDeviceModule(IMessageSender messageSender) {
         super(ApiConstants.NAMESPACE, messageSender);
@@ -109,11 +109,11 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
 
     }
 
-    public void addDirectiveListener(BaseDirectiveListener directiveListener) {
+    public void addDirectiveListener(ICustomCmdDirectiveListener directiveListener) {
         directiveListeners.add(directiveListener);
     }
 
-    public void removeDirectiveListener(BaseDirectiveListener directiveListener) {
+    public void removeDirectiveListener(ICustomCmdDirectiveListener directiveListener) {
         directiveListeners.remove(directiveListener);
     }
 
@@ -122,7 +122,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handleAliPaymentCodePayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 ((ICustomCmdDirectiveListener) listener).onLaunchAliPaymentCode();
                 break;
@@ -131,7 +131,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handleAliPayScanPayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 ((ICustomCmdDirectiveListener) listener).onLaunchAliPayScan();
                 break;
@@ -140,7 +140,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handleBarginOperPayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 // TODO: execute operate bargin query in LocalAudioMusicPlayer DirectiveListener
 //                ((ICustomCmdDirectiveListener) listener).onLaunchAliPaymentCode();
@@ -151,7 +151,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handleInstantHeartRatePayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 ((ICustomCmdDirectiveListener) listener).onInstantHeartRate();
                 break;
@@ -160,7 +160,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handleMobileDeviceInfoPayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 ((ICustomCmdDirectiveListener) listener).onShowMobileDeviceInfo();
                 break;
@@ -169,7 +169,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handleOperateFlashLightPayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 // TODO: execute operate flashflight in DeviceModule DirectiveListener
 //                ((ICustomCmdDirectiveListener) listener).onLaunchAliPaymentCode();
@@ -180,7 +180,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handlePaiLiTaoPayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 ((ICustomCmdDirectiveListener) listener).onLaunchPaiLiTao();
                 break;
@@ -189,7 +189,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handlePrintScreenPayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof DeviceControlDeviceModule.IDeviceControlDirectiveListener) {
                 // TODO: execute printscreen in DeviceModule DirectiveListener
 //                ((DeviceControlDeviceModule.IDeviceControlDirectiveListener) listener).onDirectiveReceived(null);
@@ -200,7 +200,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
     }
 
     public void handleStartTimerPayload() {
-        for(BaseDirectiveListener listener : directiveListeners) {
+        for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 ((ICustomCmdDirectiveListener) listener).onStartTimer();
                 break;

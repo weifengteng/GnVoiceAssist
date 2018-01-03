@@ -1,9 +1,14 @@
 package com.gionee.voiceassist.coreservice.listener.directive;
 
 import com.baidu.duer.dcs.framework.InternalApi;
+import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.coreservice.sdk.module.alarms.AlarmsDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.applauncher.AppLauncherDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.contacts.ContactsDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.customcmd.CustomCmdDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Preconditions;
@@ -24,6 +29,10 @@ public class DirectiveListenerController {
 
     private AlarmDirectiveListener alarmListener;
     private ScreenDirectiveListener screenListener;
+    private ContactsDirectiveListener contactsListener;
+    private PhoneCallDirectiveListener phonecallListener;
+    private CustomCmdDirectiveListener customCommandListener;
+    private AppLauncherListener applaunchListener;
 
     private List<DirectiveCallback> mSubscribers = new ArrayList<>();
 
@@ -60,9 +69,16 @@ public class DirectiveListenerController {
         }
     }
 
+    /**
+     * 初始化所有DirectiveListener
+     */
     private void initListener() {
         alarmListener = new AlarmDirectiveListener(mSubscribers);
         screenListener = new ScreenDirectiveListener(mSubscribers);
+        contactsListener = new ContactsDirectiveListener(mSubscribers);
+        phonecallListener = new PhoneCallDirectiveListener(mSubscribers);
+        customCommandListener = new CustomCmdDirectiveListener(mSubscribers);
+        applaunchListener = new AppLauncherListener(mSubscribers);
         listenerInited = true;
     }
 
@@ -73,6 +89,18 @@ public class DirectiveListenerController {
         ((ScreenDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.screen"))
                 .addScreenListener(screenListener);
 
+        ((CustomCmdDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.customcmd"))
+                .addDirectiveListener(customCommandListener);
+
+        ((ContactsDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.extensions.contacts"))
+                .addContactsListener(contactsListener);
+
+        ((PhoneCallDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.extensions.telephone"))
+                .addPhoneCallListener(phonecallListener);
+
+        ((AppLauncherDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.app_launcher"))
+                .addAppLauncherDirectiveListener(applaunchListener);
+
         listenerInstalled = true;
     }
 
@@ -81,6 +109,17 @@ public class DirectiveListenerController {
                 .removeDirectiveLIstener(alarmListener);
         ((ScreenDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.screen"))
                 .removeScreenListener(screenListener);
+        ((CustomCmdDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.customcmd"))
+                .removeDirectiveListener(customCommandListener);
+
+        ((ContactsDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.extensions.contacts"))
+                .removeContactsListener(contactsListener);
+
+        ((PhoneCallDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.extensions.telephone"))
+                .removePhoneCallListener(phonecallListener);
+
+        ((AppLauncherDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.app_launcher"))
+                .addAppLauncherDirectiveListener(null);
         listenerInstalled = false;
     }
 

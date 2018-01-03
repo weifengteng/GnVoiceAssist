@@ -3,7 +3,7 @@ package com.gionee.voiceassist.coreservice.datamodel;
 import java.io.Serializable;
 
 /**
- * Created by liyingheng on 12/29/17.
+ * 语音助手服务消息的基类
  */
 
 public class DirectiveEntity implements Serializable {
@@ -18,11 +18,14 @@ public class DirectiveEntity implements Serializable {
         this.type = type;
     }
 
-    public static enum Type {
+    public enum Type {
         ALARM,
         PHONECALL,
         SMS,
-        SCREEN
+        SCREEN,
+        APPLAUNCH,
+        CONTACTS,
+        GIONEE_CUSTOM_COMMAND
     }
 
 }
