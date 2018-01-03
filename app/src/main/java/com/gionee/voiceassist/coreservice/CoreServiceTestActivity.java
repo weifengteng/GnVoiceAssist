@@ -91,7 +91,7 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
     private CoreService.SceneCallback sceneCallback = new CoreService.SceneCallback() {
         @Override
         public void onScreenPayload(ScreenDirectiveEntity payload) {
-
+            showText(payload.getContent());
         }
 
         @Override
@@ -156,8 +156,10 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
                 mStateControl.playTts();
                 break;
             case R.id.btn_test_directive_parse:
+                mStateControl.directiveParse();
                 break;
             case R.id.btn_test_render_info:
+                mStateControl.renderInfo();
                 break;
         }
     }
@@ -206,12 +208,12 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
 
         @Override
         public void directiveParse() {
-
+            mService.sendTextQuery("设置今天6点30分的闹钟");
         }
 
         @Override
         public void renderInfo() {
-
+            mService.sendTextQuery("讲个笑话");
         }
     }
 

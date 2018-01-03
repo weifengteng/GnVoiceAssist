@@ -1,37 +1,22 @@
 package com.gionee.voiceassist.coreservice.listener.directive;
 
 import android.content.Context;
-import android.view.View;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gionee.voiceassist.GnVoiceAssistApplication;
-import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
+import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.screen.ImagelistCardEntity;
+import com.gionee.voiceassist.coreservice.datamodel.screen.ListCardEntity;
+import com.gionee.voiceassist.coreservice.datamodel.screen.StandardCardEntity;
+import com.gionee.voiceassist.coreservice.datamodel.screen.TextCardEntity;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.message.HtmlPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderCardPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderHintPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderVoiceInputTextPayload;
-import com.gionee.voiceassist.directiveListener.BaseDirectiveListener;
 import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.widget.SimpleImageListItem;
-import com.gionee.voiceassist.widget.SimpleListCardItem;
-import com.gionee.voiceassist.widget.SimpleStandardCardItem;
-import com.gionee.voiceassist.widget.SimpleTextCardItem;
 
 import java.util.List;
-
-//import com.baidu.duer.dcs.devicemodule.screen.ScreenDeviceModule;
-//import com.baidu.duer.dcs.devicemodule.screen.message.HtmlPayload;
-//import com.baidu.duer.dcs.devicemodule.screen.message.Image;
-//import com.baidu.duer.dcs.devicemodule.screen.message.ImageListCardPayload;
-//import com.baidu.duer.dcs.devicemodule.screen.message.Link;
-//import com.baidu.duer.dcs.devicemodule.screen.message.ListCardItem;
-//import com.baidu.duer.dcs.devicemodule.screen.message.ListCardPayload;
-//import com.baidu.duer.dcs.devicemodule.screen.message.RenderHintPayload;
-//import com.baidu.duer.dcs.devicemodule.screen.message.RenderVoiceInputTextPayload;
-//import com.baidu.duer.dcs.devicemodule.screen.message.StandardCardPayload;
-//import com.baidu.duer.dcs.devicemodule.screen.message.TextCardPayload;
 
 /**
  * Created by twf on 2017/8/14.
@@ -39,130 +24,12 @@ import java.util.List;
 
 public class ScreenDirectiveListener extends BaseDirectiveListener implements ScreenDeviceModule.IScreenListener {
     public static final String TAG = ScreenDirectiveListener.class.getSimpleName();
-    private ScreenRender screenRender;
-    private Context mAppCtx;
     private boolean isLastAsrRoundComplete = true;
 
-    public ScreenDirectiveListener(IBaseFunction baseFunction) {
-        super(baseFunction);
-        mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
-        screenRender = baseFunction.getScreenRender();
+    public ScreenDirectiveListener(List<DirectiveListenerController.DirectiveCallback> callbacks) {
+        super(callbacks);
     }
 
-//    @Override
-//    public void onRenderVoicePartial(Directive directive) {
-//        Payload payload = directive.getPayload();
-//        if(payload instanceof RenderVoiceInputTextPayload) {
-//            RenderVoiceInputTextPayload renderVoiceInputTextPayload = (RenderVoiceInputTextPayload) payload;
-//            String asrResult = renderVoiceInputTextPayload.text;
-//            RenderVoiceInputTextPayload.Type type = renderVoiceInputTextPayload.type;
-//            LogUtil.d(TAG, "asrResult= " + asrResult);
-//            if(type == RenderVoiceInputTextPayload.Type.FINAL) {
-//                screenRender.renderQueryInScreen(asrResult);
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void onRenderCard(Directive directive) {
-//
-//        String rawMessage = directive.rawMessage;
-//        Payload payload = directive.getPayload();
-//        String cardType = Utils.getValueByKey(rawMessage, Constants.TYPE);
-//        Map<String, Map<String, Object>> headerAndPayloadMap = Utils.getHeaderAndPayloadMap(rawMessage);
-//        Map<String, Object> payloadMap = headerAndPayloadMap.get(Constants.PAYLOAD);
-////        String cardType = String.valueOf(payloadMap.get(Constants.TYPE));
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        if(TextUtils.isEmpty(cardType)) {
-//            LogUtil.d(TAG, "cardType is null, return!");
-//            return;
-//        }
-//
-//        switch (cardType) {
-//            case Constants.TEXT_CARD:
-//                if(payload instanceof TextCardPayload) {
-//                    TextCardPayload textCardPayload = (TextCardPayload) payload;
-//                    Link link = textCardPayload.getLink();
-//                    if(link != null) {
-//                        SimpleTextCardItem stci = new SimpleTextCardItem(mAppCtx, textCardPayload){
-//                            @Override
-//                            public void onClick() {
-//                                super.onClick();
-//                            }
-//                        };
-//                        View textCardView = stci.getView();
-//                        screenRender.renderInfoPanel(textCardView);
-//                    } else {
-//                        screenRender.renderAnswerInScreen(textCardPayload.getContent());
-//                    }
-//                }
-//                break;
-//            case Constants.STANDARD_CARD:
-//                //TODO
-//                if(payload instanceof StandardCardPayload) {
-//                    StandardCardPayload standardCardPayload = (StandardCardPayload) payload;
-//                    SimpleStandardCardItem ssci = new SimpleStandardCardItem(mAppCtx, standardCardPayload){
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//
-//                    screenRender.renderInfoPanel(ssci.getView());
-//                }
-//                break;
-//            case Constants.LIST_CARD:
-//                //TODO
-//                if(payload instanceof ListCardPayload) {
-//                    ListCardPayload listCardPayload = (ListCardPayload) payload;
-//                    List<ListCardItem> listCardItems = listCardPayload.getList();
-//                    SimpleListCardItem sri =  new SimpleListCardItem(mAppCtx, listCardItems){
-//
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//                    View view = sri.getView();
-//                    screenRender.renderInfoPanel(view);
-//                }
-//                break;
-//            case Constants.IMAGELIST_CARD:
-//                //TODO
-//                if(payload instanceof ImageListCardPayload) {
-//                    ImageListCardPayload imageListCardPayload = (ImageListCardPayload) payload;
-//                    List<Image> images = imageListCardPayload.getImageList();
-//                    SimpleImageListItem sili = new SimpleImageListItem(mAppCtx, images) {
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//                    screenRender.renderInfoPanel(sili.getView());
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-//
-//    @Override
-//    public void onRenderHint(RenderHintPayload renderHintPayload) {
-//
-//    }
-//
-//    @Override
-//    public void onHtmlView(HtmlPayload htmlPayload) {
-//
-//    }
-
-    /**
-     * 释放资源
-     */
-    @Override
-    public void onDestroy() {
-    }
 
     @Override
     public void onRenderVoiceInputText(RenderVoiceInputTextPayload payload) {
@@ -173,13 +40,13 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
             LogUtil.d(TAG, "asrResult= " + asrResult);
             // 实时显示识别结果
             if(isLastAsrRoundComplete) {
-                screenRender.renderQueryInScreen(asrResult);
+//                screenRender.renderQueryInScreen(asrResult);
                 isLastAsrRoundComplete = false;
             } else {
-                screenRender.modifyLastTextInScreen(asrResult);
+//                screenRender.modifyLastTextInScreen(asrResult);
                 if(type == RenderVoiceInputTextPayload.Type.FINAL) {
                     isLastAsrRoundComplete = true;
-                    screenRender.setAsrResult(asrResult);
+//                    screenRender.setAsrResult(asrResult);
                 }
             }
 
@@ -198,120 +65,32 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
     @Override
     public void onRenderCard(RenderCardPayload payload, int id) {
         String rawMessage = payload.content;
-//        String cardType = Utils.getValueByKey(rawMessage, Constants.TYPE);
         RenderCardPayload.Type cardType = payload.type;
-//        Map<String, Map<String, Object>> headerAndPayloadMap = Utils.getHeaderAndPayloadMap(rawMessage);
-//        Map<String, Object> payloadMap = headerAndPayloadMap.get(Constants.PAYLOAD);
         ObjectMapper mapper = new ObjectMapper();
 
-//        if(TextUtils.isEmpty(cardType)) {
-//            LogUtil.d(TAG, "cardType is null, return!");
-//            return;
-//        }
 
+        ScreenDirectiveEntity cardPayload;
         switch (cardType) {
             case TextCard:
-//                if(payload instanceof TextCardPayload) {
-//                    TextCardPayload textCardPayload = (TextCardPayload) payload;
-//                    Link link = textCardPayload.getLink();
-//                    if(link != null) {
-//                        SimpleTextCardItem stci = new SimpleTextCardItem(mAppCtx, textCardPayload){
-//                            @Override
-//                            public void onClick() {
-//                                super.onClick();
-//                            }
-//                        };
-//                        View textCardView = stci.getView();
-//                        screenRender.renderInfoPanel(textCardView);
-//                    } else {
-//                        screenRender.renderAnswerInScreen(textCardPayload.getContent());
-//                    }
-//                }
-                RenderCardPayload.LinkStructure link = payload.link;
-                if (link != null) {
-                    SimpleTextCardItem cardItem = new SimpleTextCardItem(mAppCtx,payload) {
-                        @Override
-                        public void onClick() {
-                            super.onClick();
-                        }
-                    };
-                    View textCardView = cardItem.getView();
-                    screenRender.renderInfoPanel(textCardView);
-                } else {
-                    screenRender.renderAnswerInScreen(payload.content);
-                }
+                cardPayload = new TextCardEntity();
                 break;
             case StandardCard:
                 //TODO
-//                if(payload instanceof StandardCardPayload) {
-//                    StandardCardPayload standardCardPayload = (StandardCardPayload) payload;
-//                    SimpleStandardCardItem ssci = new SimpleStandardCardItem(mAppCtx, standardCardPayload){
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//
-//                    screenRender.renderInfoPanel(ssci.getView());
-//                }
-                SimpleStandardCardItem ssci = new SimpleStandardCardItem(mAppCtx,payload) {
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-                screenRender.renderInfoPanel(ssci.getView());
+                cardPayload = new StandardCardEntity();
                 break;
-
             case ListCard:
-//                if(payload instanceof ListCardPayload) {
-//                    ListCardPayload listCardPayload = (ListCardPayload) payload;
-//                    List<ListCardItem> listCardItems = listCardPayload.getList();
-//                    SimpleListCardItem sri =  new SimpleListCardItem(mAppCtx, listCardItems){
-//
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//                    View view = sri.getView();
-//                    screenRender.renderInfoPanel(view);
-//                }
-                List<RenderCardPayload.ListItem> listCardItems = payload.list;
-                SimpleListCardItem slci = new SimpleListCardItem(mAppCtx, listCardItems) {
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-                View slciView = slci.getView();
-                screenRender.renderInfoPanel(slciView);
+                cardPayload = new ListCardEntity();
                 break;
             case ImageListCard:
                 //TODO
-//                if(payload instanceof ImageListCardPayload) {
-//                    ImageListCardPayload imageListCardPayload = (ImageListCardPayload) payload;
-//                    List<Image> images = imageListCardPayload.getImageList();
-//                    SimpleImageListItem sili = new SimpleImageListItem(mAppCtx, images) {
-//                        @Override
-//                        public void onClick() {
-//                            super.onClick();
-//                        }
-//                    };
-//                    screenRender.renderInfoPanel(sili.getView());
-//                }
-                List<RenderCardPayload.ImageStructure> images = payload.imageList;
-                SimpleImageListItem sili = new SimpleImageListItem(mAppCtx, images) {
-                    @Override
-                    public void onClick() {
-                        super.onClick();
-                    }
-                };
-                screenRender.renderInfoPanel(sili.getView());
+                cardPayload = new ImagelistCardEntity();
                 break;
             default:
+                cardPayload = new TextCardEntity();
                 break;
         }
+        cardPayload.bind(payload);
+        sendDirective(cardPayload);
     }
 
     @Override

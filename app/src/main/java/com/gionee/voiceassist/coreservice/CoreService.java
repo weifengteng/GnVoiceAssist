@@ -114,6 +114,10 @@ public class CoreService extends Service {
         RecordController.getInstance().startRecord();
     }
 
+    public void sendTextQuery(String text) {
+        mSdkController.getSdkInternalApi().sendQuery(text);
+    }
+
     public void playTts(String ttsText) {
         TtsController.getInstance().playTTS(ttsText);
     }
@@ -127,6 +131,10 @@ public class CoreService extends Service {
                     callback.onAlarmPayload((AlarmDirectiveEntity) directivePayload);
                 }
                 break;
+            case SCREEN:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onScreenPayload((ScreenDirectiveEntity) directivePayload);
+                }
         }
 
     }

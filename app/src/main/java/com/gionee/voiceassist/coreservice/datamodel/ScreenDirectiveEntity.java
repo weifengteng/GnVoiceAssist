@@ -1,10 +1,12 @@
 package com.gionee.voiceassist.coreservice.datamodel;
 
+import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderCardPayload;
+
 /**
  * Created by liyingheng on 12/29/17.
  */
 
-public class ScreenDirectiveEntity extends DirectiveEntity {
+public abstract class ScreenDirectiveEntity extends DirectiveEntity {
 
     public ScreenDirectiveEntity() {
         setType(Type.SCREEN);
@@ -22,7 +24,7 @@ public class ScreenDirectiveEntity extends DirectiveEntity {
         return cardType;
     }
 
-    private void setCardType(CardType cardType) {
+    protected void setCardType(CardType cardType) {
         this.cardType = cardType;
     }
 
@@ -65,28 +67,6 @@ public class ScreenDirectiveEntity extends DirectiveEntity {
         }
     }
 
-    class TextCard extends ScreenDirectiveEntity {
-        public TextCard() {
-            setCardType(CardType.TEXT_CARD);
-        }
-    }
+    public abstract void bind(RenderCardPayload dcsPayload);
 
-    class StandardCard extends ScreenDirectiveEntity {
-        public StandardCard() {
-            setCardType(CardType.STANDARD_CARD);
-        }
-        private String imageSrc = "";
-    }
-
-    class ListCard extends ScreenDirectiveEntity {
-        public ListCard() {
-            setCardType(CardType.LIST_CARD);
-        }
-    }
-
-    class ImageListCard extends ScreenDirectiveEntity {
-        public ImageListCard() {
-            setCardType(CardType.IMAGE_LIST_CARD);
-        }
-    }
 }

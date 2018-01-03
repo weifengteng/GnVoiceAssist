@@ -4,6 +4,7 @@ import com.baidu.duer.dcs.framework.InternalApi;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.coreservice.sdk.module.alarms.AlarmsDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Preconditions;
 
@@ -22,6 +23,7 @@ public class DirectiveListenerController {
     private boolean listenerInstalled = false;
 
     private AlarmDirectiveListener alarmListener;
+    private ScreenDirectiveListener screenListener;
 
     private List<DirectiveCallback> mSubscribers = new ArrayList<>();
 
@@ -60,19 +62,25 @@ public class DirectiveListenerController {
 
     private void initListener() {
         alarmListener = new AlarmDirectiveListener(mSubscribers);
+        screenListener = new ScreenDirectiveListener(mSubscribers);
         listenerInited = true;
     }
 
     private void registerListener() {
-        AlarmsDeviceModule alarmsDeviceModule =
-                Preconditions.checkNotNull(((AlarmsDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.android.alerts")));
-        alarmsDeviceModule.addDirectiveListener(alarmListener);
+        ((AlarmsDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.android.alerts"))
+                .addDirectiveListener(alarmListener);
+
+        ((ScreenDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.screen"))
+                .addScreenListener(screenListener);
+
         listenerInstalled = true;
     }
 
     private void unregisterListener() {
         ((AlarmsDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.android.alerts"))
                 .removeDirectiveLIstener(alarmListener);
+        ((ScreenDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.screen"))
+                .removeScreenListener(screenListener);
         listenerInstalled = false;
     }
 
