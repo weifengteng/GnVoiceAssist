@@ -133,10 +133,10 @@ public class RecordController implements IRecordControl {
                 }
                 SdkController.getInstance().getSdkInternalApi().setAsrMode(mode);
                 if (isSDKRecording()) {
-                    SdkController.getInstance().getSdkInstance().getVoiceRequest().endVoiceRequest(new IVoiceRequestListener() {
+                    SdkController.getInstance().getSdkInstance().getVoiceRequest().cancelVoiceRequest(new IVoiceRequestListener() {
                         @Override
                         public void onSucceed() {
-
+                            LogUtil.d(TAG, "cancel Voice Request success");
                         }
                     });
                 } else {
