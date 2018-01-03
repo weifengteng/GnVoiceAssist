@@ -123,15 +123,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
             if(CommonUtil.isFastDoubleClick()) {
                 return;
             }
-
-            if(SharedData.getInstance().isVadReceiving()) {
-                iBaseFunction.getRecordController().stopRecord();
-                SharedData.getInstance().setVadReceiving(false);
-                return;
-            }
-
-            LogUtil.d(TAG, "DCSF ---------- onSpeakFinish startRecordOnline");
-            SharedData.getInstance().setVadReceiving(true);
+            LogUtil.d(TAG, "onSpeakFinish startRecordOnline");
             iBaseFunction.getRecordController().startRecordOnline();
             doUserActivity();
         }

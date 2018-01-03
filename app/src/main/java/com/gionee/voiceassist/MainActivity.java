@@ -246,12 +246,10 @@ public class MainActivity extends GNBaseActivity
         tip.setVisibility(View.GONE);
         help.setVisibility(View.VISIBLE);
         rl.stopRippleAnimation();
-        SharedData.getInstance().setVadReceiving(false);
         LogUtil.d(TAG, "setUIByClick stopRippleAnimation");
     }
 
     private void updateStartRecordingUI() {
-        SharedData.getInstance().setVadReceiving(true);
         rl.startRippleAnimation();
         help.setVisibility(View.GONE);
         LogUtil.i(TAG, "setUIByClick startRippleAnimation");

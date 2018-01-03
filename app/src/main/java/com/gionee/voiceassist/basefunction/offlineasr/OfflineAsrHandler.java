@@ -87,12 +87,6 @@ public class OfflineAsrHandler extends BasePresenter{
             case UTTER_ID_CHOOSE_CONTACT:
             case UTTER_ID_CUI_IRRELEVENT:
             {
-                if(SharedData.getInstance().isVadReceiving()) {
-                    iBaseFunction.getRecordController().stopRecord();
-                    SharedData.getInstance().setVadReceiving(false);
-                    return;
-                }
-                SharedData.getInstance().setVadReceiving(true);
                 iBaseFunction.getRecordController().startRecordOnline();
             }
         }

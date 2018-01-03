@@ -104,10 +104,6 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     private void startVoiceCommand() {
-        if(SharedData.getInstance().isVadReceiving()) {
-            RecordController.getInstance().stopRecord();
-            return;
-        }
         // 退出云端及本地多轮交互场景(权宜之计)
         RecordController.getInstance().stopCustomInteractContext();
         RecordController.getInstance().startRecord();

@@ -182,14 +182,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
                 return;
             }
 
-            if(SharedData.getInstance().isVadReceiving()) {
-                iBaseFunction.getRecordController().stopRecord();
-                SharedData.getInstance().setVadReceiving(false);
-                return;
-            }
-
-            LogUtil.d(TAG, "DCSF -------- onSpeechFinish startRecordOnline");
-            SharedData.getInstance().setVadReceiving(true);
+            LogUtil.d(TAG, "onSpeechFinish startRecordOnline");
             iBaseFunction.getRecordController().startRecordOnline();
             doUserActivity();
         }
