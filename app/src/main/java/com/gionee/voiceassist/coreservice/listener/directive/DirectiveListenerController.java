@@ -5,6 +5,7 @@ import com.baidu.duer.dcs.framework.InternalApi;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.coreservice.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.applauncher.AppLauncherDeviceModule;
@@ -12,6 +13,7 @@ import com.gionee.voiceassist.coreservice.sdk.module.contacts.ContactsDeviceModu
 import com.gionee.voiceassist.coreservice.sdk.module.customcmd.CustomCmdDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.reminder.ReminderDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.tvlive.TvLiveDeviceModule;
@@ -43,6 +45,7 @@ public class DirectiveListenerController {
     private GnRemoteTvDirectiveListener gnRemoteTvListener;
     private LocalAudioPlayerListener localAudioPlayerListener;
     private WebBrowserListener webBrowserListener;
+    private ReminderDirectiveListener reminderListener;
 
     private List<DirectiveCallback> mSubscribers = new ArrayList<>();
 
@@ -93,6 +96,7 @@ public class DirectiveListenerController {
         gnRemoteTvListener = new GnRemoteTvDirectiveListener(mSubscribers);
         localAudioPlayerListener = new LocalAudioPlayerListener(mSubscribers);
         webBrowserListener = new WebBrowserListener(mSubscribers);
+        reminderListener = new ReminderDirectiveListener(mSubscribers);
         listenerInited = true;
     }
 
@@ -127,6 +131,9 @@ public class DirectiveListenerController {
         ((WebBrowserDeviceModule) getDeviceModule("ai.dueros.device_interface.web_browser"))
                 .addDirectiveListener(webBrowserListener);
 
+        ((ReminderDeviceModule) getDeviceModule("ai.dueros.device_interface.extensions.alert_nlu"))
+                .addDirectiveListener(reminderListener);
+
         listenerInstalled = true;
     }
 
@@ -158,6 +165,9 @@ public class DirectiveListenerController {
 
         ((WebBrowserDeviceModule) getDeviceModule("ai.dueros.device_interface.web_browser"))
                 .addDirectiveListener(null);
+
+        ((ReminderDeviceModule) getDeviceModule("ai.dueros.device_interface.extensions.alert_nlu"))
+                .removeDirectiveListener(reminderListener);
 
         listenerInstalled = false;
     }

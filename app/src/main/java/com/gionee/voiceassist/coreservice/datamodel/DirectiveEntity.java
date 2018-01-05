@@ -29,7 +29,8 @@ public class DirectiveEntity implements Serializable {
         LOCAL_AUDIOPLAYER,
         GN_REMOTE,
         GN_REMOTE_TV,
-        WEBBROWSER
+        WEBBROWSER,
+        REMINDER,
     }
 
 }

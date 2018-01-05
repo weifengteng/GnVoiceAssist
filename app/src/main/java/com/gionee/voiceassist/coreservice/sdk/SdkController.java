@@ -35,6 +35,7 @@ import com.gionee.voiceassist.coreservice.sdk.module.devicecontrol.DeviceControl
 import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.offlineasr.OffLineDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.reminder.ReminderDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.ScreenDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.sms.SmsDeviceModule;
@@ -182,6 +183,10 @@ public class SdkController implements ISdkController {
         //初始化闹铃模块AlarmsDeviceModule
         AlarmsDeviceModule alarmsDeviceModule = new AlarmsDeviceModule(messageSender);
         mDcsSdk.putDeviceModule(alarmsDeviceModule);
+
+        //初始化提醒模块ReminderDeviceModule
+        ReminderDeviceModule reminderDeviceModule = new ReminderDeviceModule(messageSender);
+        mDcsSdk.putDeviceModule(reminderDeviceModule);
 
         //初始化手机控制模块DeviceControlDeviceModule
         DeviceControlDeviceModule deviceControlDeviceModule = new DeviceControlDeviceModule(messageSender);

@@ -20,6 +20,7 @@ import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 import com.gionee.voiceassist.coreservice.listener.directive.DirectiveListenerController;
@@ -189,6 +190,11 @@ public class CoreService extends Service {
                 for (SceneCallback callback:mExportSceneCallbacks) {
                     callback.onWebBrowserPayload((WebBrowserDirectiveEntity) directivePayload);
                 }
+                break;
+            case REMINDER:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onReminderPayload((ReminderDirectiveEntity) directivePayload);
+                }
         }
 
     }
@@ -242,5 +248,6 @@ public class CoreService extends Service {
         void onGnRemoteTvPayload(GnRemoteTvDirectiveEntity payload);
         void onLocalAudioPlayerPayload(LocalAudioPlayerDirectiveEntity payload);
         void onWebBrowserPayload(WebBrowserDirectiveEntity payload);
+        void onReminderPayload(ReminderDirectiveEntity payload);
     }
 }

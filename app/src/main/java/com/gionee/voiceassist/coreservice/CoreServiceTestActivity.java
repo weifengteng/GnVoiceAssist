@@ -24,6 +24,7 @@ import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 
@@ -166,6 +167,11 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
         @Override
         public void onWebBrowserPayload(WebBrowserDirectiveEntity payload) {
             showText("WebBrowserPayload received " + payload);
+        }
+
+        @Override
+        public void onReminderPayload(ReminderDirectiveEntity payload) {
+            showText("ReminderPayload received " + payload);
         }
     };
 
