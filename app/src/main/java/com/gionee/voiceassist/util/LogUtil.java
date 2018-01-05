@@ -10,7 +10,7 @@ import android.util.Log;
 public class LogUtil {
 
     public static boolean DEBUG = true;
-    private static final String APPNAME = "DCS-";
+    private static final String APPNAME = "GVA-";
     private static boolean LOGV_ON = DEBUG;
     private static boolean LOGD_ON = DEBUG;
     private static boolean LOGI_ON = DEBUG;
