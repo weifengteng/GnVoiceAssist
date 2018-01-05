@@ -1,7 +1,8 @@
 package com.gionee.voiceassist.coreservice.datamodel;
 
 /**
- * Created by liyingheng on 1/3/18.
+ * 打开应用场景payload。
+ * 通过取得应用名称、包名或隐式uri（deeplink），打开相应的应用
  */
 
 public class AppLaunchDirectiveEntity extends DirectiveEntity {
@@ -21,6 +22,10 @@ public class AppLaunchDirectiveEntity extends DirectiveEntity {
         BY_DEEPLINK
     }
 
+    /**
+     * 获得打开应用的名字
+     * @return 应用名称
+     */
     public String getAppName() {
         return appName;
     }
@@ -29,6 +34,10 @@ public class AppLaunchDirectiveEntity extends DirectiveEntity {
         this.appName = appName;
     }
 
+    /**
+     * 获得打开应用的包名
+     * @return 应用软件包全名
+     */
     public String getPackageName() {
         return packageName;
     }
@@ -37,6 +46,10 @@ public class AppLaunchDirectiveEntity extends DirectiveEntity {
         this.packageName = packageName;
     }
 
+    /**
+     * 获得deeplink（即隐式intent的uri）
+     * @return
+     */
     public String getDeeplink() {
         return deeplink;
     }

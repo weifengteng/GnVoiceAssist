@@ -1,7 +1,7 @@
 package com.gionee.voiceassist.coreservice.datamodel;
 
 /**
- * Created by liyingheng on 1/5/18.
+ * 金立遥控场景Payload
  */
 
 public class GnRemoteDirectiveEntity extends DirectiveEntity {
@@ -12,6 +12,10 @@ public class GnRemoteDirectiveEntity extends DirectiveEntity {
         setType(Type.GN_REMOTE);
     }
 
+    /**
+     * 取得遥控命令
+     * @return 遥控命令
+     */
     public String getCommand() {
         return command;
     }

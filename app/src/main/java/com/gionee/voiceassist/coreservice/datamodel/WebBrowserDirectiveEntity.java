@@ -1,7 +1,7 @@
 package com.gionee.voiceassist.coreservice.datamodel;
 
 /**
- * Created by liyingheng on 1/5/18.
+ * 打开网页场景的payload
  */
 
 public class WebBrowserDirectiveEntity extends DirectiveEntity {
@@ -12,6 +12,10 @@ public class WebBrowserDirectiveEntity extends DirectiveEntity {
         setType(Type.WEBBROWSER);
     }
 
+    /**
+     * 取得网页URL
+     * @return 网页URL
+     */
     public String getUrl() {
         return url;
     }

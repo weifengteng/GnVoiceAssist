@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by liyingheng on 12/29/17.
+ * 闹钟场景Payload
  */
 
 public class AlarmDirectiveEntity extends DirectiveEntity {
@@ -20,10 +20,18 @@ public class AlarmDirectiveEntity extends DirectiveEntity {
 
     private ArrayList<Integer> repeatDays;
 
+    /**
+     * 取得小时数
+     * @return 小时
+     */
     public int getHour() {
         return hour;
     }
 
+    /**
+     * 设置小时数
+     * @param hour 小时
+     */
     public void setHour(int hour) {
         if (hour >= 0 && hour < 24) {
             this.hour = hour;
@@ -32,10 +40,18 @@ public class AlarmDirectiveEntity extends DirectiveEntity {
         }
     }
 
+    /**
+     * 取得分钟数
+     * @return 分钟
+     */
     public int getMinute() {
         return minute;
     }
 
+    /**
+     * 设置分钟数
+     * @param minute 分钟
+     */
     public void setMinute(int minute) {
         if (minute >= 0 && minute < 60) {
             this.minute = minute;
@@ -44,6 +60,12 @@ public class AlarmDirectiveEntity extends DirectiveEntity {
         }
     }
 
+    /**
+     * 一次性地设置时间
+     * @param hour 小时
+     * @param minute 分钟
+     * @param repeatDays 重复日期。传入Calendar类日常量
+     */
     public void setTime(int hour, int minute, ArrayList<Integer> repeatDays) {
         setHour(hour);
         setMinute(minute);
@@ -54,6 +76,10 @@ public class AlarmDirectiveEntity extends DirectiveEntity {
         return repeatDays;
     }
 
+    /**
+     * 设置重复日期
+     * @param repeatDays 重复日期。传入Calendar类日常量
+     */
     public void setRepeatDays(ArrayList<Integer> repeatDays) {
         this.repeatDays = repeatDays;
     }

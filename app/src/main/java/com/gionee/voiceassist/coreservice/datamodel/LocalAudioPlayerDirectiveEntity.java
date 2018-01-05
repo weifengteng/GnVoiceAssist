@@ -57,6 +57,9 @@ public class LocalAudioPlayerDirectiveEntity extends DirectiveEntity {
         setSong(song);
     }
 
+    /**
+     * 随机播放音乐（歌手名、歌曲名都为空）
+     */
     public void setPlayRandom() {
         setAction(SearchMusicAction.PLAY_RANDOM);
     }

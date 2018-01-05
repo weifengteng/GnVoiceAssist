@@ -1,7 +1,7 @@
 package com.gionee.voiceassist.coreservice.datamodel;
 
 /**
- * Created by liyingheng on 1/3/18.
+ * 金立自定义命令（如拍立淘、支付宝扫一扫）场景Payload
  */
 
 public class GioneeCustomDirectiveEntity extends DirectiveEntity {
@@ -22,6 +22,10 @@ public class GioneeCustomDirectiveEntity extends DirectiveEntity {
         START_TIMER
     }
 
+    /**
+     * 取得自定义命令的相应动作
+     * @return 自定义命令动作
+     */
     public GioneeCustomAction getAction() {
         return action;
     }
@@ -30,6 +34,10 @@ public class GioneeCustomDirectiveEntity extends DirectiveEntity {
         this.action = action;
     }
 
+    /**
+     * 取得自定义命令的附加信息
+     * @return 自定义命令附加信息
+     */
     public String getMsg() {
         return msg;
     }

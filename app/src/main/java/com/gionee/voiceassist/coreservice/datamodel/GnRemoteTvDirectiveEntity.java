@@ -1,7 +1,7 @@
 package com.gionee.voiceassist.coreservice.datamodel;
 
 /**
- * Created by liyingheng on 1/5/18.
+ * 金立遥控电视场景Payload
  */
 
 public class GnRemoteTvDirectiveEntity extends DirectiveEntity {
@@ -12,6 +12,10 @@ public class GnRemoteTvDirectiveEntity extends DirectiveEntity {
         setType(Type.GN_REMOTE_TV);
     }
 
+    /**
+     * 取得遥控命令
+     * @return
+     */
     public String getTvCommand() {
         return tvCommand;
     }
