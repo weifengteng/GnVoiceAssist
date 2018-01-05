@@ -86,4 +86,14 @@ public class PhonecallDirectiveEntity extends DirectiveEntity {
             return -1;
         }
     }
+
+    @Override
+    public String toString() {
+        return "PhonecallDirectiveEntity{" +
+                "candidateNames=" + candidateNames +
+                ", number='" + number + '\'' +
+                ", simslot=" + simslot +
+                ", action=" + action +
+                '}';
+    }
 }

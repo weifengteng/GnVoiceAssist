@@ -33,7 +33,7 @@ public class TeleControllerListener extends BaseDirectiveListener implements Tel
         String msg = directive.rawMessage;
         customCmd = Utils.getCustomDirectiveCmdFromJson(msg);
         customCmd = customCmd.replace("null", "");
-        LogUtil.d(TAG, "TeleControllerListener customCmd: " + customCmd);
+        LogUtil.d(TAG, "GnRemoteListener customCmd: " + customCmd);
 
         if(iBaseFunction != null) {
             iBaseFunction.getKookongOperator().executeVoiceCmd(customCmd);

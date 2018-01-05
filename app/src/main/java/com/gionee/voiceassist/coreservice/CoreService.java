@@ -16,8 +16,12 @@ import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 import com.gionee.voiceassist.coreservice.listener.directive.DirectiveListenerController;
 import com.gionee.voiceassist.coreservice.listener.state.StateListenerController;
 import com.gionee.voiceassist.coreservice.sdk.ISdkController;
@@ -166,6 +170,25 @@ public class CoreService extends Service {
                     callback.onGioneeCustomCommandPayload((GioneeCustomDirectiveEntity) directivePayload);
                 }
                 break;
+            case GN_REMOTE:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onGnRemotePayload((GnRemoteDirectiveEntity) directivePayload);
+                }
+                break;
+            case GN_REMOTE_TV:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onGnRemoteTvPayload((GnRemoteTvDirectiveEntity) directivePayload);
+                }
+                break;
+            case LOCAL_AUDIOPLAYER:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onLocalAudioPlayerPayload((LocalAudioPlayerDirectiveEntity) directivePayload);
+                }
+                break;
+            case WEBBROWSER:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onWebBrowserPayload((WebBrowserDirectiveEntity) directivePayload);
+                }
         }
 
     }
@@ -215,5 +238,9 @@ public class CoreService extends Service {
         void onPhonecallPayload(PhonecallDirectiveEntity payload);
         void onAppLaunchPayload(AppLaunchDirectiveEntity payload);
         void onGioneeCustomCommandPayload(GioneeCustomDirectiveEntity payload);
+        void onGnRemotePayload(GnRemoteDirectiveEntity payload);
+        void onGnRemoteTvPayload(GnRemoteTvDirectiveEntity payload);
+        void onLocalAudioPlayerPayload(LocalAudioPlayerDirectiveEntity payload);
+        void onWebBrowserPayload(WebBrowserDirectiveEntity payload);
     }
 }

@@ -57,4 +57,13 @@ public class AlarmDirectiveEntity extends DirectiveEntity {
     public void setRepeatDays(ArrayList<Integer> repeatDays) {
         this.repeatDays = repeatDays;
     }
+
+    @Override
+    public String toString() {
+        return "AlarmDirectiveEntity{" +
+                "hour=" + hour +
+                ", minute=" + minute +
+                ", repeatDays=" + repeatDays +
+                '}';
+    }
 }

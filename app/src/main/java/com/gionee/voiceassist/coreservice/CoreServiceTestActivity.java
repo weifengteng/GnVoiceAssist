@@ -20,8 +20,12 @@ import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 
 public class CoreServiceTestActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -105,17 +109,17 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
 
         @Override
         public void onContactsPayload(ContactsDirectiveEntity payload) {
-
+            showText("ContactsPayload received. " + payload);
         }
 
         @Override
         public void onPhonecallPayload(PhonecallDirectiveEntity payload) {
-
+            showText("PhonecallPayload received" + payload);
         }
 
         @Override
         public void onAppLaunchPayload(AppLaunchDirectiveEntity payload) {
-
+            showText("AppLaunchPayload received" + payload);
         }
 
         @Override
@@ -142,6 +146,26 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
                     break;
             }
             showText(displayText);
+        }
+
+        @Override
+        public void onGnRemotePayload(GnRemoteDirectiveEntity payload) {
+            showText("GnRemotePayload received " + payload);
+        }
+
+        @Override
+        public void onGnRemoteTvPayload(GnRemoteTvDirectiveEntity payload) {
+            showText("GnRemoteTvPayload received " + payload);
+        }
+
+        @Override
+        public void onLocalAudioPlayerPayload(LocalAudioPlayerDirectiveEntity payload) {
+            showText("LocalAudioPlayerPayload received " + payload);
+        }
+
+        @Override
+        public void onWebBrowserPayload(WebBrowserDirectiveEntity payload) {
+            showText("WebBrowserPayload received " + payload);
         }
     };
 

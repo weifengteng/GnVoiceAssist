@@ -63,4 +63,14 @@ public class AppLaunchDirectiveEntity extends DirectiveEntity {
         setLaunchType(LaunchType.BY_DEEPLINK);
         setDeeplink(deeplink);
     }
+
+    @Override
+    public String toString() {
+        return "AppLaunchDirectiveEntity{" +
+                "appName='" + appName + '\'' +
+                ", packageName='" + packageName + '\'' +
+                ", deeplink='" + deeplink + '\'' +
+                ", launchType=" + launchType +
+                '}';
+    }
 }

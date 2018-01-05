@@ -25,7 +25,11 @@ public class DirectiveEntity implements Serializable {
         SCREEN,
         APPLAUNCH,
         CONTACTS,
-        GIONEE_CUSTOM_COMMAND
+        GIONEE_CUSTOM_COMMAND,
+        LOCAL_AUDIOPLAYER,
+        GN_REMOTE,
+        GN_REMOTE_TV,
+        WEBBROWSER
     }
 
 }

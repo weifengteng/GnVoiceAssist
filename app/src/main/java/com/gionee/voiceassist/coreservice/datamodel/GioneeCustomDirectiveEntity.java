@@ -37,4 +37,12 @@ public class GioneeCustomDirectiveEntity extends DirectiveEntity {
     public void setMsg(String msg) {
         this.msg = msg;
     }
+
+    @Override
+    public String toString() {
+        return "GioneeCustomDirectiveEntity{" +
+                "action=" + action +
+                ", msg='" + msg + '\'' +
+                '}';
+    }
 }

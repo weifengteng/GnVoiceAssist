@@ -69,4 +69,13 @@ public abstract class ScreenDirectiveEntity extends DirectiveEntity {
 
     public abstract void bind(RenderCardPayload dcsPayload);
 
+    @Override
+    public String toString() {
+        return "ScreenDirectiveEntity{" +
+                "cardType=" + cardType +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", link=" + link +
+                '}';
+    }
 }

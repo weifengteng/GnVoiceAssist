@@ -64,4 +64,14 @@ public class ContactsDirectiveEntity extends DirectiveEntity {
         setAction(ContactsAction.SEARCH);
         setCandidateName(candidateName);
     }
+
+    @Override
+    public String toString() {
+        return "ContactsDirectiveEntity{" +
+                "contactsName='" + contactsName + '\'' +
+                ", candidateName=" + candidateName +
+                ", number='" + number + '\'' +
+                ", action=" + action +
+                '}';
+    }
 }

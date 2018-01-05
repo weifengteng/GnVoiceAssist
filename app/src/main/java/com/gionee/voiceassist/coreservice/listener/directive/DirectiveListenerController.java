@@ -1,15 +1,21 @@
 package com.gionee.voiceassist.coreservice.listener.directive;
 
+import com.baidu.duer.dcs.framework.BaseDeviceModule;
 import com.baidu.duer.dcs.framework.InternalApi;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.coreservice.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.contacts.ContactsDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.customcmd.CustomCmdDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.ScreenDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.telecontroller.TeleControllerDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.tvlive.TvLiveDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.webbrowser.WebBrowserDeviceModule;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Preconditions;
 
@@ -33,6 +39,10 @@ public class DirectiveListenerController {
     private PhoneCallDirectiveListener phonecallListener;
     private CustomCmdDirectiveListener customCommandListener;
     private AppLauncherListener applaunchListener;
+    private GnRemoteListener gnRemoteListener;
+    private GnRemoteTvDirectiveListener gnRemoteTvListener;
+    private LocalAudioPlayerListener localAudioPlayerListener;
+    private WebBrowserListener webBrowserListener;
 
     private List<DirectiveCallback> mSubscribers = new ArrayList<>();
 
@@ -79,6 +89,10 @@ public class DirectiveListenerController {
         phonecallListener = new PhoneCallDirectiveListener(mSubscribers);
         customCommandListener = new CustomCmdDirectiveListener(mSubscribers);
         applaunchListener = new AppLauncherListener(mSubscribers);
+        gnRemoteListener = new GnRemoteListener(mSubscribers);
+        gnRemoteTvListener = new GnRemoteTvDirectiveListener(mSubscribers);
+        localAudioPlayerListener = new LocalAudioPlayerListener(mSubscribers);
+        webBrowserListener = new WebBrowserListener(mSubscribers);
         listenerInited = true;
     }
 
@@ -101,6 +115,18 @@ public class DirectiveListenerController {
         ((AppLauncherDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.app_launcher"))
                 .addAppLauncherDirectiveListener(applaunchListener);
 
+        ((TeleControllerDeviceModule) getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.kookong"))
+                .addDirectivieListener(gnRemoteListener);
+
+        ((TvLiveDeviceModule) getDeviceModule("ai.dueros.device_interface.tv_live"))
+                .addDirectiveListener(gnRemoteTvListener);
+
+        ((LocalAudioPlayerDeviceModule) getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player"))
+                .addLocalAudioPlayerListener(localAudioPlayerListener);
+
+        ((WebBrowserDeviceModule) getDeviceModule("ai.dueros.device_interface.web_browser"))
+                .addDirectiveListener(webBrowserListener);
+
         listenerInstalled = true;
     }
 
@@ -120,6 +146,19 @@ public class DirectiveListenerController {
 
         ((AppLauncherDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.app_launcher"))
                 .addAppLauncherDirectiveListener(null);
+
+        ((TeleControllerDeviceModule) getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.kookong"))
+                .addDirectivieListener(null);
+
+        ((TvLiveDeviceModule) getDeviceModule("ai.dueros.device_interface.tv_live"))
+                .addDirectiveListener(null);
+
+        ((LocalAudioPlayerDeviceModule) getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player"))
+                .addLocalAudioPlayerListener(null);
+
+        ((WebBrowserDeviceModule) getDeviceModule("ai.dueros.device_interface.web_browser"))
+                .addDirectiveListener(null);
+
         listenerInstalled = false;
     }
 
@@ -129,5 +168,9 @@ public class DirectiveListenerController {
 
     private InternalApi getSdkInternalApi() {
         return Preconditions.checkNotNull(SdkController.getInstance().getSdkInternalApi());
+    }
+
+    private BaseDeviceModule getDeviceModule(String namespace) {
+        return getSdkInternalApi().getDeviceModule(namespace);
     }
 }
