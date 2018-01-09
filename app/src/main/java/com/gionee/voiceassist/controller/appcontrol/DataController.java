@@ -14,6 +14,7 @@ public class DataController {
     private static DataController sInstance;
     private ServiceController mServiceController;
     private ScreenController mScreenController;
+    private UsecaseDispatcher mUsecaseDispatcher;
     private boolean mAppInForeground = false;
 
     private List<IRecognizerStateListener> mRecognizerListeners;
@@ -25,6 +26,7 @@ public class DataController {
     private DataController() {
         mServiceController = new ServiceController();
         mScreenController = new ScreenController();
+        mUsecaseDispatcher = new UsecaseDispatcher();
         mRecognizerListeners = new ArrayList<>();
         mRenderListeners = new ArrayList<>();
         mServiceController.setCallback(mRecognizerListeners);
@@ -82,6 +84,10 @@ public class DataController {
 
     public ScreenController getScreenController() {
         return mScreenController;
+    }
+
+    UsecaseDispatcher getUsecaseDispatcher() {
+        return mUsecaseDispatcher;
     }
 
     /**

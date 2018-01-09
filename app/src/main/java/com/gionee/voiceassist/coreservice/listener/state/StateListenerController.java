@@ -1,9 +1,12 @@
 package com.gionee.voiceassist.coreservice.listener.state;
 
 import com.baidu.duer.dcs.api.IDialogStateListener;
+import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
 import com.baidu.duer.dcs.framework.IVoiceListener;
 import com.baidu.duer.dcs.framework.internalapi.IErrorListener;
 import com.gionee.voiceassist.controller.recordcontrol.RecordController;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.coreservice.CoreService;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.util.ErrorHelper;
@@ -19,71 +22,13 @@ import java.util.List;
 public class StateListenerController {
 
     private static final String TAG = StateListenerController.class.getSimpleName();
-
+    private boolean listenerInited = false;
+    private boolean listenerInstalled = false;
     private List<CoreService.StateCallback> mStateCallbacks;
-    private IDialogStateListener.DialogState mPreviousDialogState;
 
-    private IDialogStateListener dialogStateListener = new IDialogStateListener() {
-        @Override
-        public void onDialogStateChanged(DialogState dialogState) {
-            LogUtil.d(TAG, "DialogStateListener onDialogStateChanged: " + dialogState);
-            RecognizerState state = RecognizerState.IDLE;
-            switch (dialogState) {
-                case IDLE:
-                    state = RecognizerState.IDLE;
-                    break;
-                case LISTENING:
-                    state = RecognizerState.RECORDING;
-                    break;
-                case THINKING:
-                    state = RecognizerState.THINKING;
-                    break;
-                case SPEAKING:
-                    state = RecognizerState.SPEAKING;
-                    break;
-            }
-            for (CoreService.StateCallback callback:mStateCallbacks) {
-                callback.onRecognizeStateChanged(state);
-            }
-            if (dialogState != mPreviousDialogState) {
-                if (dialogState == DialogState.LISTENING) {
-                    RecordController.getInstance().setSDKRecording(true);
-                    for (CoreService.StateCallback callback:mStateCallbacks) {
-                        callback.onRecordStart();
-                    }
-                } else if (mPreviousDialogState == DialogState.LISTENING){
-                    RecordController.getInstance().setSDKRecording(false);
-                    for (CoreService.StateCallback callback:mStateCallbacks) {
-                        callback.onRecordStop();
-                    }
-                }
-                mPreviousDialogState = dialogState;
-            }
-        }
-    };
-    private IVoiceListener voiceListener = new IVoiceListener() {
-        @Override
-        public void onBegin() {
-            for (CoreService.StateCallback callback:mStateCallbacks) {
-                callback.onRecordStart();
-            }
-        }
-
-        @Override
-        public void onEnd() {
-            for (CoreService.StateCallback callback:mStateCallbacks) {
-                callback.onRecordStop();
-            }
-        }
-    };
-    private IErrorListener errorListener = new IErrorListener() {
-        @Override
-        public void onErrorCode(ErrorCode errorCode) {
-            LogUtil.e(TAG, "ErrorListener onErrorCode = " + errorCode);
-            ErrorHelper.sendError
-                    (com.gionee.voiceassist.util.ErrorCode.SDK_UNKNOWN_ERROR, "SDK未知错误：" + errorCode);
-        }
-    };
+    private IDialogStateListener dialogStateListener;
+    private IErrorListener errorListener;
+    private VoiceOutputDeviceModule.IVoiceOutputListener ttsListener;
 
     public StateListenerController() {
 
@@ -94,15 +39,38 @@ public class StateListenerController {
     }
 
     public void init() {
-        // TODO:
+        if (!listenerInited) {
+            initListener();
+        }
+        registerListener();
+    }
+
+    private void initListener() {
+        dialogStateListener = new DialogStateEventListener(mStateCallbacks);
+        errorListener = new ErrorEventListener(mStateCallbacks);
+        ttsListener = new TtsEventListener(mStateCallbacks);
+        listenerInited = true;
+    }
+
+    private void registerListener() {
         SdkController.getInstance().getSdkInstance().getVoiceRequest().addDialogStateListener(dialogStateListener);
         SdkController.getInstance().getSdkInternalApi().addErrorListener(errorListener);
+        ((VoiceOutputDeviceModule)SdkController.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.voice_output"))
+                .addVoiceOutputListener(ttsListener);
+        listenerInstalled = true;
+    }
+
+    private void unregisterListener() {
+        // TODO: 因为这个要调用DeviceModule，因此需要先释放这个，再释放DeviceModule
+        ((VoiceOutputDeviceModule)SdkController.getInstance().getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.voice_output"))
+                .removeVoiceOutputListener(ttsListener);
+        SdkController.getInstance().getSdkInternalApi().removeErrorListener(errorListener);
+        SdkController.getInstance().getSdkInstance().getVoiceRequest().removeDialogStateListener(dialogStateListener);
+        listenerInstalled = false;
     }
 
     public void release() {
-        // TODO:
-        SdkController.getInstance().getSdkInternalApi().removeErrorListener(errorListener);
-        SdkController.getInstance().getSdkInstance().getVoiceRequest().removeDialogStateListener(dialogStateListener);
+        unregisterListener();
     }
 
 }

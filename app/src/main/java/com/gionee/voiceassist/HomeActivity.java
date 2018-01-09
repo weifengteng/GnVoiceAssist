@@ -30,7 +30,6 @@ import com.gionee.voiceassist.util.PermissionsChecker;
 import com.gionee.voiceassist.util.RecognizerState;
 import com.gionee.voiceassist.widget.HomeRecyclerView;
 import com.gionee.voiceassist.widget.HomeRecyclerViewAdapter;
-import com.gionee.voiceassist.widget.HomeScrollView;
 import com.gionee.voiceassist.widget.RippleLayout;
 
 import java.lang.ref.WeakReference;
@@ -55,22 +54,20 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
 
-    private LinearLayout help_command;
-    private LinearLayout sv_ll;
-    private ImageView anim_outside;
-    private ObjectAnimator mRotationor;
-    private HomeScrollView sv;
+    private TextView tvTip;
+    private RippleLayout btnRecord;
+    private ImageButton btnHelp;
     private HomeRecyclerView rv;
     private HomeRecyclerViewAdapter rvAdapter;
     private LinearLayoutManager rvLayoutManager;
-    private ExpandableListView home_listview;
-    private RippleLayout rl;
-    private TextView tip;
-    private ImageButton help;
+    private ObjectAnimator mRotationor;
+    private ImageView anim_outside;
+    private LinearLayout llHelpCommand;
+    private ExpandableListView lvHelpCommand;
+
 
     private static Handler mMainHandler;
     private ErrorHelper mErrorHelper;
-
     private PermissionsChecker mPermissionsChecker; // 权限检测器
     private boolean needInitFramework = true;
 
@@ -84,12 +81,12 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     private static final int MSG_RECOSTATE_STATE_CHANGED = 0x1104;
 
     public void showHelpPage() {
-        //                LogUtil.i(TAG,"onClick help visibility" + help_command.getVisibility());
-        //TODO Implement click help operate
-//                if(help_command.getVisibility() == View.GONE){
+        //                LogUtil.i(TAG,"onClick btnHelp visibility" + llHelpCommand.getVisibility());
+        //TODO Implement click btnHelp operate
+//                if(llHelpCommand.getVisibility() == View.GONE){
 //                    visibleListView();
 //                }else{
-//                    help_command.setVisibility(View.GONE);
+//                    llHelpCommand.setVisibility(View.GONE);
 //                    sv.setVisibility(View.VISIBLE);
 //                }
     }
@@ -127,8 +124,8 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     protected void onPause() {
         super.onPause();
         DataController.getDataController().onPause();
-        if(rl.isRippleAnimationRunning()){
-            rl.stopRippleAnimation();
+        if(btnRecord.isRippleAnimationRunning()){
+            btnRecord.stopRippleAnimation();
         }
     }
 
@@ -189,18 +186,18 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
         @Override
         public void onInitStart() {
-            rl.setEnabled(false);
+            btnRecord.setEnabled(false);
         }
 
         @Override
         public void onInitFinished() {
-            rl.setEnabled(true);
+            btnRecord.setEnabled(true);
             DataController.getDataController().getServiceController().playTts("你好");
         }
 
         @Override
         public void onInitFailed() {
-            rl.setEnabled(false);
+            btnRecord.setEnabled(false);
         }
 
         @Override
@@ -214,14 +211,12 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     };
 
     private void initView() {
-        tip = (TextView)findViewById(R.id.tip);
-        tip.setVisibility(View.VISIBLE);
-        help = (ImageButton)findViewById(R.id.help);
-        home_listview = (ExpandableListView)findViewById(R.id.home_listview);
-        sv_ll = (LinearLayout)findViewById(R.id.sv_ll);
-        sv = (HomeScrollView) findViewById(R.id.sv);
-        rl = (RippleLayout)findViewById(R.id.ripple_layout);
-        rl.setEnabled(false);
+        tvTip = (TextView)findViewById(R.id.tip);
+        tvTip.setVisibility(View.VISIBLE);
+        btnHelp = (ImageButton)findViewById(R.id.help);
+        lvHelpCommand = (ExpandableListView)findViewById(R.id.home_listview);
+        btnRecord = (RippleLayout)findViewById(R.id.ripple_layout);
+        btnRecord.setEnabled(false);
 //        rv = (HomeRecyclerView) findViewById(R.id.rv);
 //        rvAdapter = new HomeRecyclerViewAdapter(this);
 //        rvLayoutManager = new LinearLayoutManager(this);
@@ -230,9 +225,9 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         anim_outside = (ImageView)findViewById(R.id.anim_outside);
         mRotationor = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.rotation_animator);
         mRotationor.setTarget(anim_outside);
-        help_command = (LinearLayout)findViewById(R.id.help_command);
-        help.setOnClickListener(this);
-        rl.setOnClickListener(this);
+        llHelpCommand = (LinearLayout)findViewById(R.id.help_command);
+        btnHelp.setOnClickListener(this);
+        btnRecord.setOnClickListener(this);
     }
 
     private void initData() {
@@ -253,15 +248,15 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void updateStopRecordingUI() {
-        tip.setVisibility(View.GONE);
-        help.setVisibility(View.VISIBLE);
-        rl.stopRippleAnimation();
+        tvTip.setVisibility(View.GONE);
+        btnHelp.setVisibility(View.VISIBLE);
+        btnRecord.stopRippleAnimation();
         LogUtil.d(TAG, "setUIByClick stopRippleAnimation");
     }
 
     private void updateStartRecordingUI() {
-        rl.startRippleAnimation();
-        help.setVisibility(View.GONE);
+        btnRecord.startRippleAnimation();
+        btnHelp.setVisibility(View.GONE);
         LogUtil.i(TAG, "setUIByClick startRippleAnimation");
     }
 
@@ -283,7 +278,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 //            mLastTextView = info;
 //        }
 //
-//        help_command.setVisibility(View.GONE);
+//        llHelpCommand.setVisibility(View.GONE);
 //        sv.setVisibility(View.VISIBLE);
 //        sv_ll.addView(showView);
 //        final int measuredHeight = sv_ll.getMeasuredHeight();
@@ -316,10 +311,10 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     public void onSpeakFinish(String utterId) {
         LogUtil.d(TAG, "onSpeakFinish");
         if(TextUtils.equals(utterId, UTTER_ID_WELCOME)) {
-            rl.postDelayed(new Runnable() {
+            btnRecord.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    rl.callOnClick();
+                    btnRecord.callOnClick();
                 }
             },100);
         }

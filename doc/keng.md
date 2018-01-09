@@ -14,6 +14,7 @@
 + CoreService中调了Controller、App外部也调了Controller。应该想办法将两个Controller分离开。    (liyingheng at 2018.01.09)
 + IRecognizerStateListener中的回调方法大部分与CoreService.SceneCallback都是一样的。 (liyingheng at 2018.01.09)
 + DataController中回调给MainActivity的方法，没有转换到主线程。   (liyingheng at 2018.01.09)
++ UsecaseDispatcher中，太多toXXXUsecase()了。 (liyingheng at 2018.01.09)
 
 
 ## 没有考虑好的

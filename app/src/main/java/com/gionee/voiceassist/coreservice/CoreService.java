@@ -10,6 +10,7 @@ import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.InternalApi;
 import com.gionee.voiceassist.controller.recordcontrol.RecordController;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
@@ -132,6 +133,10 @@ public class CoreService extends Service {
 
     public void playTts(String ttsText) {
         TtsController.getInstance().playTTS(ttsText);
+    }
+
+    public void playTts(String ttsText, String utterId, TtsCallback callback) {
+        TtsController.getInstance().playTTS(ttsText, utterId, callback);
     }
 
     public SdkController.InitStatus getInitStatus() {
