@@ -70,6 +70,8 @@ public class SdkController implements ISdkController {
     private static final String TAG = SdkController.class.getSimpleName();
     private static SdkController sInstance;
 
+    private InitStatus mInitStatus = InitStatus.UNINIT;
+
     private List<SdkInitCallback> exportInitCallbacks;
 
     private IDcsSdk mDcsSdk;
@@ -96,6 +98,7 @@ public class SdkController implements ISdkController {
     @Override
     public void destroy() {
         mDcsSdk.release();
+        updateInitStatus(InitStatus.UNINIT);
     }
 
     @Override
@@ -126,6 +129,7 @@ public class SdkController implements ISdkController {
     }
 
     private void initSdk(final Context context) {
+        updateInitStatus(InitStatus.INITING);
         // 第一步，初始化sdk实例
         String clientId = "83kW99iEz0jpGp9hrX981ezGcTaxNzk0";
         String clientSecret = "UTjgedIE5CRZM3CWj2cApLKajeZWotvf";
@@ -322,6 +326,7 @@ public class SdkController implements ISdkController {
         getSdkInternalApi().login(new ILoginListener() {
             @Override
             public void onSucceed(String s) {
+                updateInitStatus(InitStatus.INITED);
                 fireSdkInitSuccess();
                 mDcsSdk.run();
 
@@ -330,6 +335,7 @@ public class SdkController implements ISdkController {
             @Override
             public void onFailed(String s) {
                 LogUtil.e(TAG,"SDK Login failed! Message = " + s);
+                updateInitStatus(InitStatus.UNINIT);
                 fireSdkInitFailed("Login Failed. Message : " + s);
                 ErrorHelper.sendError(ErrorCode.SDK_LOGIN_FAILED, "登录失败。原因：" + s);
             }
@@ -391,6 +397,14 @@ public class SdkController implements ISdkController {
         }
     }
 
+    private void updateInitStatus(InitStatus status) {
+        mInitStatus = status;
+    }
+
+    public InitStatus getInitStatus() {
+        return mInitStatus;
+    }
+
     private void fireSdkInitSuccess() {
         Iterator<SdkInitCallback> iterator = exportInitCallbacks.iterator();
         while (iterator.hasNext()) {
@@ -405,5 +419,10 @@ public class SdkController implements ISdkController {
         }
     }
 
+    public enum InitStatus {
+        UNINIT,
+        INITING,
+        INITED
+    }
 
 }

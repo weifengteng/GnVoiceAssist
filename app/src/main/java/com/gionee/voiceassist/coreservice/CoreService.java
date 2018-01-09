@@ -28,6 +28,7 @@ import com.gionee.voiceassist.coreservice.listener.state.StateListenerController
 import com.gionee.voiceassist.coreservice.sdk.ISdkController;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.util.RecognizerState;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -98,6 +99,7 @@ public class CoreService extends Service {
         mDirectiveController.subscribe(mDirectiveCallback);
         mSdkController.addSdkInitCallback(mSdkInitCallback);
         init();
+
     }
 
     @Override
@@ -130,6 +132,10 @@ public class CoreService extends Service {
 
     public void playTts(String ttsText) {
         TtsController.getInstance().playTTS(ttsText);
+    }
+
+    public SdkController.InitStatus getInitStatus() {
+        return SdkController.getInstance().getInitStatus();
     }
 
     private void dispatchDirectiveMsg(DirectiveEntity directivePayload) {
@@ -229,12 +235,12 @@ public class CoreService extends Service {
     }
 
     public interface StateCallback {
-        void onDirectivePayload(DirectiveEntity payload);
         void onSdkInit();
         void onRecordStart();
         void onRecordStop();
         void onTtsStart();
         void onTtsStop();
+        void onRecognizeStateChanged(RecognizerState state);
     }
 
     public interface SceneCallback {

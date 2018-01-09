@@ -27,6 +27,7 @@ import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
+import com.gionee.voiceassist.util.RecognizerState;
 
 public class CoreServiceTestActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -65,10 +66,6 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
     };
 
     private CoreService.StateCallback stateCallback = new CoreService.StateCallback() {
-        @Override
-        public void onDirectivePayload(DirectiveEntity payload) {
-
-        }
 
         @Override
         public void onSdkInit() {
@@ -94,6 +91,11 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
         @Override
         public void onTtsStop() {
             showText("停止TTS播报");
+        }
+
+        @Override
+        public void onRecognizeStateChanged(RecognizerState state) {
+
         }
     };
 

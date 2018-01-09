@@ -1,16 +1,14 @@
 package com.gionee.voiceassist.coreservice.listener.state;
 
-import com.baidu.dcs.acl.AsrEventStatus;
 import com.baidu.duer.dcs.api.IDialogStateListener;
-import com.baidu.duer.dcs.devicemodule.voiceinput.VoiceInputDeviceModule;
-import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.IVoiceListener;
 import com.baidu.duer.dcs.framework.internalapi.IErrorListener;
+import com.gionee.voiceassist.controller.recordcontrol.RecordController;
 import com.gionee.voiceassist.coreservice.CoreService;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
-import com.gionee.voiceassist.util.ErrorCode;
 import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.util.RecognizerState;
 
 import java.util.List;
 
@@ -23,11 +21,44 @@ public class StateListenerController {
     private static final String TAG = StateListenerController.class.getSimpleName();
 
     private List<CoreService.StateCallback> mStateCallbacks;
+    private IDialogStateListener.DialogState mPreviousDialogState;
 
     private IDialogStateListener dialogStateListener = new IDialogStateListener() {
         @Override
         public void onDialogStateChanged(DialogState dialogState) {
             LogUtil.d(TAG, "DialogStateListener onDialogStateChanged: " + dialogState);
+            RecognizerState state = RecognizerState.IDLE;
+            switch (dialogState) {
+                case IDLE:
+                    state = RecognizerState.IDLE;
+                    break;
+                case LISTENING:
+                    state = RecognizerState.RECORDING;
+                    break;
+                case THINKING:
+                    state = RecognizerState.THINKING;
+                    break;
+                case SPEAKING:
+                    state = RecognizerState.SPEAKING;
+                    break;
+            }
+            for (CoreService.StateCallback callback:mStateCallbacks) {
+                callback.onRecognizeStateChanged(state);
+            }
+            if (dialogState != mPreviousDialogState) {
+                if (dialogState == DialogState.LISTENING) {
+                    RecordController.getInstance().setSDKRecording(true);
+                    for (CoreService.StateCallback callback:mStateCallbacks) {
+                        callback.onRecordStart();
+                    }
+                } else if (mPreviousDialogState == DialogState.LISTENING){
+                    RecordController.getInstance().setSDKRecording(false);
+                    for (CoreService.StateCallback callback:mStateCallbacks) {
+                        callback.onRecordStop();
+                    }
+                }
+                mPreviousDialogState = dialogState;
+            }
         }
     };
     private IVoiceListener voiceListener = new IVoiceListener() {
@@ -64,14 +95,14 @@ public class StateListenerController {
 
     public void init() {
         // TODO:
-//        SdkController.getInstance().getSdkInternalApi().addVoiceListener(voiceListener);
+        SdkController.getInstance().getSdkInstance().getVoiceRequest().addDialogStateListener(dialogStateListener);
         SdkController.getInstance().getSdkInternalApi().addErrorListener(errorListener);
     }
 
     public void release() {
         // TODO:
-//        SdkController.getInstance().getSdkInternalApi().removeVoiceListener(voiceListener);
         SdkController.getInstance().getSdkInternalApi().removeErrorListener(errorListener);
+        SdkController.getInstance().getSdkInstance().getVoiceRequest().removeDialogStateListener(dialogStateListener);
     }
 
 }
