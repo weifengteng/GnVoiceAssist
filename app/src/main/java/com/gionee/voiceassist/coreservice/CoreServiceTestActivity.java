@@ -3,22 +3,29 @@ package com.gionee.voiceassist.coreservice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
+import com.baidu.duer.dcs.framework.message.Payload;
 import com.gionee.voiceassist.R;
+import com.gionee.voiceassist.controller.customuserinteraction.ICuiResult;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
-import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
@@ -27,7 +34,12 @@ import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
+import com.gionee.voiceassist.customlink.CustomLinkSchema;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.RecognizerState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoreServiceTestActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -123,6 +135,109 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
         @Override
         public void onAppLaunchPayload(AppLaunchDirectiveEntity payload) {
             showText("AppLaunchPayload received" + payload);
+            // TODO: 测试内容，待删除
+            String appName = payload.getAppName();
+            mService.getCUIController().startCustomUserInteraction(getPayloadGenerator(), getCUICallbackResult());
+
+            mService.playTts("没有安装" + appName + ", 确定要下载吗？", "onAppLaunchPayload", new TtsCallback() {
+                @Override
+                public void onSpeakStart() {
+
+                }
+
+                @Override
+                public void onSpeakFinish(String utterId) {
+                    if(mService.getCUIController().isCustomUserInteractionProcessing()) {
+                        mService.record();
+                    }
+                }
+
+                @Override
+                public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
+
+                }
+            });
+
+        }
+
+        public static final String DOWNLOAD_CONFIRM = "download_confirm";
+        public static final String DOWNLOAD_CANCEL = "download_cancel";
+        private CustomUserInteractionDeviceModule.PayLoadGenerator getPayloadGenerator() {
+            CustomUserInteractionDeviceModule.PayLoadGenerator generator = new CustomUserInteractionDeviceModule.PayLoadGenerator() {
+                @Override
+                public Payload generateContextPayloadByInteractionState(CustomClicentContextMachineState customClicentContextMachineState) {
+                    LogUtil.d(TAG, "generateContextPayloadByInteractionState");
+                    if (mService.getCUIController().isCUIShouldStop()) {
+                        // 达到最大多轮交互次数，跳出自定义多轮交互状态
+                        LogUtil.d(TAG, "confirmDownloadOrNot ******************************ShouldStopCurrentInteraction");
+                        return new CustomClientContextPayload(null);
+                    }
+                    Payload payload;
+                    ArrayList<CustomClientContextHyperUtterace> hyperUtterances = new ArrayList<>();
+
+                    // Yes
+                    List<String> confrimUtterances = new ArrayList<>();
+                    confrimUtterances.add("确定");
+                    confrimUtterances.add("下载");
+                    confrimUtterances.add("好的");
+                    String confirmUrl = CustomLinkSchema.LINK_APP_DOWNLOAD + DOWNLOAD_CONFIRM;
+                    CustomClientContextHyperUtterace confirmHyperUtterace = new CustomClientContextHyperUtterace(confrimUtterances, confirmUrl);
+                    // No
+                    List<String> cancelUtterances = new ArrayList<>();
+                    cancelUtterances.add("取消");
+                    cancelUtterances.add("取消下载");
+                    cancelUtterances.add("不下载");
+                    String cancelUrl = CustomLinkSchema.LINK_APP_DOWNLOAD + DOWNLOAD_CANCEL;
+                    CustomClientContextHyperUtterace cancelHyperUtterance = new CustomClientContextHyperUtterace(cancelUtterances, cancelUrl);
+
+                    hyperUtterances.add(confirmHyperUtterace);
+                    hyperUtterances.add(cancelHyperUtterance);
+                    payload = new CustomClientContextPayload(false, hyperUtterances);
+                    return payload;
+                }
+            };
+
+            return generator;
+        }
+
+        private ICuiResult getCUICallbackResult() {
+            ICuiResult cuiCallbackImpl = new ICuiResult() {
+                @Override
+                public void handleCUInteractionUnknownUtterance() {
+                    String alert = "您要下载还是取消？";
+                    if(mService.getCUIController().isCUIShouldStop()) {
+                        alert = "太累了,我先休息一下";
+                        mService.getCUIController().stopCurrentCustomUserInteraction();
+                        mService.playTts(alert);
+                    }
+                    mService.playTts(alert, "APPDownloadConfirmCUI", new TtsCallback() {
+                        @Override
+                        public void onSpeakStart() {
+
+                        }
+
+                        @Override
+                        public void onSpeakFinish(String utterId) {
+                            if(mService.getCUIController().isCustomUserInteractionProcessing()) {
+                                mService.record();
+                            }
+                        }
+
+                        @Override
+                        public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
+
+                        }
+                    });
+
+                }
+
+                @Override
+                public void handleCUInteractionTargetUrl(String url) {
+                    showText("handleCUInteractionTargetUrl: " + url);
+                }
+            };
+
+            return cuiCallbackImpl;
         }
 
         @Override
@@ -146,6 +261,8 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
                     break;
                 case START_TIMER:
                     displayText = "打开倒计时器";
+                    break;
+                default:
                     break;
             }
             showText(displayText);
@@ -238,6 +355,8 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
             case R.id.btn_test_render_info:
                 mStateControl.renderInfo();
                 break;
+            default:
+                break;
         }
     }
 
@@ -301,6 +420,8 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
             switch (msg.what) {
                 case MSG_SHOW_TEXT:
                     tvResult.setText((String)msg.obj);
+                    break;
+                default:
                     break;
             }
         }
