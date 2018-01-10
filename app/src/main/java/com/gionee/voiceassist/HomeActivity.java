@@ -192,7 +192,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         @Override
         public void onInitFinished() {
             btnRecord.setEnabled(true);
-            DataController.getDataController().getServiceController().playTts("你好");
+            playWelcomeWord();
         }
 
         @Override
@@ -258,6 +258,10 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         btnRecord.startRippleAnimation();
         btnHelp.setVisibility(View.GONE);
         LogUtil.i(TAG, "setUIByClick startRippleAnimation");
+    }
+
+    private void playWelcomeWord() {
+        DataController.getDataController().getServiceController().playTts("你好", UTTER_ID_WELCOME, this);
     }
 
 //    private View addView(String recordResult,String backResult,View view) {

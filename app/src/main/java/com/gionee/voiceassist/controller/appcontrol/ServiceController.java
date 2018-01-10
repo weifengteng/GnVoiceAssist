@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.text.TextUtils;
 
 import com.gionee.voiceassist.GnVoiceAssistApplication;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.coreservice.CoreService;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
@@ -196,6 +198,16 @@ public class ServiceController {
     public void playTts(String text) {
         if (mService != null) {
             mService.playTts(text);
+        }
+    }
+
+    public void playTts(String text, String utterId, TtsCallback callback) {
+        if (mService != null) {
+            if (!TextUtils.isEmpty(utterId) && callback != null) {
+                mService.playTts(text, utterId, callback);
+            } else {
+                mService.playTts(text);
+            }
         }
     }
 
