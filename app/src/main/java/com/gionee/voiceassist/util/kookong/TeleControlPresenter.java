@@ -6,6 +6,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 
 import com.gionee.voiceassist.basefunction.IBaseFunction;
+import com.gionee.voiceassist.controller.appcontrol.DataController;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.LogUtil;
@@ -17,11 +18,9 @@ import com.kookong.app.aidl.ManagerCallback;
  */
 
 public class TeleControlPresenter extends KookongBaseService.SimpleKookongService {
-    private static IBaseFunction mBaseFunction;
     String voiceCmd;
 
-    public TeleControlPresenter(IBaseFunction baseFunction, String voiceCmd){
-        this.mBaseFunction = baseFunction;
+    public TeleControlPresenter(String voiceCmd){
         this.voiceCmd = voiceCmd;
     }
 
@@ -83,12 +82,9 @@ public class TeleControlPresenter extends KookongBaseService.SimpleKookongServic
                     cmdResult = Utils.parseJson(result, "msg");
                 }
             }
-            mBaseFunction.getScreenRender().renderAnswerInScreen(cmdResult);
+//          mBaseFunction.getScreenRender().renderAnswerInScreen(cmdResult);
             LogUtil.d("DCSF-Kookong", "kookong result: " + cmdResult);
-//            DcsSDK.getInstance().getSpeak().speakTxt(cmdResult,
-//                    SpeakInterface.SpeakTxtMixMode.MIX_MODE_MIXTURE_NETWORK);
-            //TODO: 将处理结果用tts播报
-            TtsController.getInstance().playTTS(cmdResult);
+            DataController.getDataController().getServiceController().playTts(cmdResult);
         }
     };
 }

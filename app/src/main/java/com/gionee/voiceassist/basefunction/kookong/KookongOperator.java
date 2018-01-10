@@ -20,7 +20,7 @@ public class KookongOperator extends BasePresenter {
     }
 
     public void executeVoiceCmd(String cmd) {
-        TeleControlPresenter executeVoiceCmdService = new TeleControlPresenter(baseFunction, cmd);
+        TeleControlPresenter executeVoiceCmdService = new TeleControlPresenter(cmd);
         executeVoiceCmdService.execute();
     }
 }

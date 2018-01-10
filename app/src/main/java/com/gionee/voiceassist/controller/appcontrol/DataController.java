@@ -54,12 +54,14 @@ public class DataController {
 
     public void onResume() {
         setAppInForeground(true);
+        mUsecaseDispatcher.initUsecase();
         mServiceController.attachService();
     }
 
     public void onPause() {
         setAppInForeground(false);
         mServiceController.detachService();
+        mUsecaseDispatcher.destroyUsecase();
     }
 
     private void setAppInForeground(boolean inForeground) {

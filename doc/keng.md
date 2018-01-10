@@ -15,6 +15,7 @@
 + IRecognizerStateListener中的回调方法大部分与CoreService.SceneCallback都是一样的。 (liyingheng at 2018.01.09)
 + DataController中回调给MainActivity的方法，没有转换到主线程。   (liyingheng at 2018.01.09)
 + UsecaseDispatcher中，太多toXXXUsecase()了。 (liyingheng at 2018.01.09)
++ GnRemoteUsecase依然依赖TeleControlPresenter   (liyingheng at 2018.01.10)
 
 
 ## 没有考虑好的

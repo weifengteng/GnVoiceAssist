@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.basefunction.music;
+package com.gionee.voiceassist.usecase.music;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +10,15 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
-import com.gionee.voiceassist.BuildConfig;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.basefunction.BasePresenter;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
+import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
+import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEntity;
+import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Utils;
 
@@ -30,8 +34,8 @@ import java.util.Random;
  *
  */
 
-public class GNMusicOperator extends BasePresenter {
-    public static final String TAG = GNMusicOperator.class.getSimpleName();
+public class GNMusicUsecase extends BaseUsecase{
+    public static final String TAG = GNMusicUsecase.class.getSimpleName();
     private static final String GN_BROWSABLE_PACKAGE_NAME = "com.android.browser";
     private static final String GN_MUSIC_PACKAGE_NAME = "com.android.music";
     private static final String UTTER_ID_FIRE_FOCUS = "music_focus";
@@ -49,8 +53,7 @@ public class GNMusicOperator extends BasePresenter {
     private int mIntentType = 0;
     private Context mAppCtx;
 
-    public GNMusicOperator(IBaseFunction baseFunction) {
-        super(baseFunction);
+    public GNMusicUsecase() {
         mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
     }
 
@@ -61,7 +64,44 @@ public class GNMusicOperator extends BasePresenter {
 
         String tip = getTip(singer, song);
         LogUtil.d(TAG, "GNMusicUsecase singer = " + singer + ", song = " + song + ", tip = " + tip);
-        playTextAndModifyLast(tip, UTTER_ID_FIRE_FOCUS, this);
+        playAndRenderText(tip, UTTER_ID_FIRE_FOCUS, new TtsCallback() {
+            @Override
+            public void onSpeakStart() {
+
+            }
+
+            @Override
+            public void onSpeakFinish(String utterId) {
+                if(mIntent == null) {
+                    LogUtil.d(TAG, "GNMusicUsecase ttsCompleted mIntent = " + mIntent);
+                    return;
+                }
+                if(TextUtils.equals(utterId, UTTER_ID_FIRE_FOCUS)) {
+                    if(0 == getRestoreMusicApp()){
+                        mIntentType = 0;
+                        mIntent = null;
+                        return;
+                    }
+
+                    if (mIntentType != 0) {
+                        Utils.startActivity(mAppCtx, mIntent);
+                    } else {
+                        try {
+                            mAppCtx.startService(mIntent);
+                        } catch (Exception e) {
+                            LogUtil.d(TAG, "GNMusicUsecase ttsCompleted Exception = " + e);
+                        }
+                    }
+                    mIntentType = 0;
+                    mIntent = null;
+                }
+            }
+
+            @Override
+            public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
+
+            }
+        });
 
     }
 
@@ -77,40 +117,6 @@ public class GNMusicOperator extends BasePresenter {
         }
         mIntent.setDataAndType(Uri.fromFile(new File(data)), type);
         mIntentType = 0;
-    }
-
-    @Override
-    public void onSpeakFinish(String utterId) {
-        super.onSpeakFinish(utterId);
-        if(mIntent == null) {
-            LogUtil.d(TAG, "GNMusicUsecase ttsCompleted mIntent = " + mIntent);
-            return;
-        }
-        if(TextUtils.equals(utterId, UTTER_ID_FIRE_FOCUS)) {
-            if(0 == getRestoreMusicApp()){
-                mIntentType = 0;
-                mIntent = null;
-                return;
-            }
-
-            if (mIntentType != 0) {
-                Utils.startActivity(mAppCtx, mIntent);
-            } else {
-                try {
-                    mAppCtx.startService(mIntent);
-                } catch (Exception e) {
-                    LogUtil.d(TAG, "GNMusicUsecase ttsCompleted Exception = " + e);
-                }
-            }
-            mIntentType = 0;
-            mIntent = null;
-        }
-
-    }
-
-    @Override
-    public void onDestroy() {
-        mAppCtx = null;
     }
 
     private int getRestoreMusicApp(){
@@ -362,4 +368,17 @@ public class GNMusicOperator extends BasePresenter {
         }
         return 0;
     }
+
+    @Override
+    public void handleDirective(DirectiveEntity payload) {
+        LocalAudioPlayerDirectiveEntity gnmusicPayload = (LocalAudioPlayerDirectiveEntity) payload;
+        LocalAudioPlayerDirectiveEntity.SearchMusicAction action = gnmusicPayload.getAction();
+        procMusicAction(gnmusicPayload.getSinger(), gnmusicPayload.getSong());
+    }
+
+    @Override
+    public String getAlias() {
+        return "localplayer";
+    }
+
 }

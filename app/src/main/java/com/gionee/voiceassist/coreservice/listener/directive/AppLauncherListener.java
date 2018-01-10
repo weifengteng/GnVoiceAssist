@@ -39,7 +39,7 @@ public class AppLauncherListener extends BaseDirectiveListener implements AppLau
     public static final String CUI_QUERY_DOWNLOAD_APP = "cui_query_download_app";
 
 
-//    private AppLaunchPresenter mAppLaunchPresenter;
+//    private AppLaunchUsecase mAppLaunchPresenter;
 
     public AppLauncherListener(List<DirectiveListenerController.DirectiveCallback> callbacks) {
         super(callbacks);

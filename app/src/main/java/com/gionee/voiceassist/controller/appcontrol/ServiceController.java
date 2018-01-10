@@ -4,7 +4,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.gionee.voiceassist.GnVoiceAssistApplication;
@@ -13,6 +15,7 @@ import com.gionee.voiceassist.coreservice.CoreService;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
@@ -22,7 +25,6 @@ import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
-import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.RecognizerState;
 
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.List;
 
 public class ServiceController {
 
+    private Handler mMainThreadHandler;
     private List<IRecognizerStateListener> mCallbacks;
     private CoreService mService;
     private CoreService.CoreServiceBinder mServiceBinder;
@@ -81,57 +84,57 @@ public class ServiceController {
     private CoreService.SceneCallback servSceneCallback = new CoreService.SceneCallback() {
         @Override
         public void onScreenPayload(ScreenDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "screen");
         }
 
         @Override
         public void onAlarmPayload(AlarmDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "alarm");
         }
 
         @Override
         public void onContactsPayload(ContactsDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "contacts");
         }
 
         @Override
         public void onPhonecallPayload(PhonecallDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "phonecall");
         }
 
         @Override
         public void onAppLaunchPayload(AppLaunchDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "applaunch");
         }
 
         @Override
         public void onGioneeCustomCommandPayload(GioneeCustomDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "gionee_custom_command");
         }
 
         @Override
         public void onGnRemotePayload(GnRemoteDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "gnremote");
         }
 
         @Override
         public void onGnRemoteTvPayload(GnRemoteTvDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "gnremote");
         }
 
         @Override
         public void onLocalAudioPlayerPayload(LocalAudioPlayerDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "localplayer");
         }
 
         @Override
         public void onWebBrowserPayload(WebBrowserDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "webbrowser");
         }
 
         @Override
         public void onReminderPayload(ReminderDirectiveEntity payload) {
-
+            fireDirectiveDispatch(payload, "reminder");
         }
     };
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -143,7 +146,6 @@ public class ServiceController {
                 mServiceBinder.setSceneCallback(servSceneCallback);
                 mService = mServiceBinder.getService();
                 SdkController.InitStatus initStatus = mService.getInitStatus();
-                LogUtil.d("liyh", "SDK Init Status = " + initStatus);
                 if (initStatus == SdkController.InitStatus.INITED) {
                     for (IRecognizerStateListener callback:mCallbacks) {
                         callback.onInitFinished();
@@ -164,7 +166,7 @@ public class ServiceController {
     };
 
     ServiceController() {
-
+        mMainThreadHandler = new Handler(Looper.getMainLooper());
     }
 
     /**
@@ -224,5 +226,14 @@ public class ServiceController {
     private Intent getServiceIntent() {
         Intent intent = new Intent(GnVoiceAssistApplication.getInstance().getApplicationContext(), CoreService.class);
         return intent;
+    }
+
+    private void fireDirectiveDispatch(final DirectiveEntity payload, final String usecaseAlias) {
+        mMainThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                DataController.getDataController().getUsecaseDispatcher().sendToUsecase(payload, usecaseAlias);
+            }
+        });
     }
 }
