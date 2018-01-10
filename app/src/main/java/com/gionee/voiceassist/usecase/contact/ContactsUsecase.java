@@ -40,36 +40,21 @@ public class ContactsUsecase extends BaseUsecase {
         this.mAppCtx = GnVoiceAssistApplication.getInstance().getApplicationContext();
     }
 
-//    @Override
-//    public void onSpeakFinish(String utterId) {
-//        super.onSpeakFinish(utterId);
-//    }
-//
-//    @Override
-//    public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
-//
-//    }
-
-//    @Override
-//    public void onDestroy() {
-//        mAppCtx = null;
-//    }
-
     public void searchContact(List<String> nameList) {
         T.showShort("SearchContact : " + nameList.toString());
-        // TODO 编写针对搜索联系人的单元测试：搜索单个联系人，搜索多个联系人
         for(String name : nameList) {
             ArrayList<String> numberList = getPhoneNumberByName(name);
-            LogUtil.d(TAG, "SearchContact :" + numberList.toString());
+            LogUtil.d(TAG, "**Action Perform** SearchContact :" + numberList.toString());
         }
         showContactInfo(nameList);
     }
 
     public void createContact(String name, String phoneNumber) {
         T.showShort("创建联系人： name = " + name + " phoneNumber= " + phoneNumber);
-        // TODO: 编写针对创建联系人的单元测试
         try {
             addContact(name, phoneNumber);
+            playAndRenderText("正在创建联系人" + name + ";电话" + phoneNumber);
+            LogUtil.d(TAG, "**Action Perform** CreateContact:" + " name = " + name + "; phonenumber = " + phoneNumber);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,22 +156,19 @@ public class ContactsUsecase extends BaseUsecase {
         List<SimpleContactInfoItem> resultList = new ArrayList<>();
         putResultListContent(resultList, names);
 
-        if(resultList.size() < 1) {
+        if(resultList.isEmpty()) {
             LogUtil.e(TAG, "FocusContacts showContactInfo resultList.size() < 1");
             // no contact found in list
-            showSimpleItemAndPlayTts(mAppCtx.getString(R.string.rsp_no_contact_with_request));
+            playAndRenderText(mAppCtx.getString(R.string.rsp_no_contact_with_request));
             return;
         }
 
         // has contact in list
         String hostTip = names.size() > 1 ? mAppCtx.getString(R.string.rsp_multiple_same_name_found) : mAppCtx.getString(R.string.rsp_contact_detail, names.get(0));
+        //TODO 显示找到的联系人
 //        screenRender.renderAnswerInScreen(hostTip);
 
         LogUtil.d(TAG, "FocusContacts showContactInfo names = " + names.get(0) + ", hostTip = " + hostTip);
-        for (SimpleContactInfoItem scii : resultList) {
-            View view = scii.getView();
-//            screenRender.renderInfoPanel(view);
-        }
     }
 
     @Override

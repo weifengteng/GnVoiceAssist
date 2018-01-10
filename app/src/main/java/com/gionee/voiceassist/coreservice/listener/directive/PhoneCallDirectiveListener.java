@@ -47,7 +47,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     public static final String CUI_SELECT_PHONE_SIM = "cui_select_phone_sim";
 //    private List<ContactInfo> mContactInfos;
 //    private PhoneCallPresenter mPhoneCallPresenter;
-//    private ScreenRender mScreenRender;
+//    private ScreenUsecase mScreenRender;
 //    private PhoneCardSelectCallback mCardSelectCallback;
 //    private IPhoneCallImpl mPhonecallImpl;
 
