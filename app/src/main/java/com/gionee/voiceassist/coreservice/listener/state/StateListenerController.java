@@ -2,16 +2,10 @@ package com.gionee.voiceassist.coreservice.listener.state;
 
 import com.baidu.duer.dcs.api.IDialogStateListener;
 import com.baidu.duer.dcs.devicemodule.voiceoutput.VoiceOutputDeviceModule;
-import com.baidu.duer.dcs.framework.IVoiceListener;
 import com.baidu.duer.dcs.framework.internalapi.IErrorListener;
-import com.gionee.voiceassist.controller.recordcontrol.RecordController;
-import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.coreservice.CoreService;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
-import com.gionee.voiceassist.util.ErrorHelper;
-import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.util.RecognizerState;
 
 import java.util.List;
 
@@ -29,10 +23,6 @@ public class StateListenerController {
     private IDialogStateListener dialogStateListener;
     private IErrorListener errorListener;
     private VoiceOutputDeviceModule.IVoiceOutputListener ttsListener;
-
-    public StateListenerController() {
-
-    }
 
     public void setStateCallbacks(List<CoreService.StateCallback> callbacks) {
         mStateCallbacks = callbacks;

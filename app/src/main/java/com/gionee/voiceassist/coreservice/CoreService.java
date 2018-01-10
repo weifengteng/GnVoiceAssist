@@ -4,11 +4,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.VisibleForTesting;
 
 import com.baidu.duer.dcs.api.IDcsSdk;
 import com.baidu.duer.dcs.framework.DcsSdkImpl;
 import com.baidu.duer.dcs.framework.InternalApi;
+import com.gionee.voiceassist.controller.customuserinteraction.CuiController;
 import com.gionee.voiceassist.controller.recordcontrol.RecordController;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
@@ -49,6 +49,7 @@ public class CoreService extends Service {
     private SdkController mSdkController;
     private StateListenerController mStateController;
     private DirectiveListenerController mDirectiveController;
+    private CuiController mCuiController;
     private List<StateCallback> mExportStateCallbacks;
     private List<SceneCallback> mExportSceneCallbacks;
     private DirectiveListenerController.DirectiveCallback mDirectiveCallback = new DirectiveListenerController.DirectiveCallback() {
@@ -143,6 +144,13 @@ public class CoreService extends Service {
         return SdkController.getInstance().getInitStatus();
     }
 
+    public CuiController getCUIController() {
+        if(mCuiController == null) {
+            mCuiController = new CuiController();
+        }
+        return mCuiController;
+    }
+
     private void dispatchDirectiveMsg(DirectiveEntity directivePayload) {
         DirectiveEntity.Type payloadType = directivePayload.getType();
         switch (payloadType) {
@@ -206,6 +214,8 @@ public class CoreService extends Service {
                 for (SceneCallback callback:mExportSceneCallbacks) {
                     callback.onReminderPayload((ReminderDirectiveEntity) directivePayload);
                 }
+            default:
+                break;
         }
 
     }
