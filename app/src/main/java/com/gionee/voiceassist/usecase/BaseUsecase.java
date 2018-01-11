@@ -1,8 +1,11 @@
 package com.gionee.voiceassist.usecase;
 
+import android.content.Context;
+
 import com.gionee.voiceassist.controller.appcontrol.DataController;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.util.ContextUtil;
 
 /**
  * Created by liyingheng on 1/10/18.
@@ -33,6 +36,10 @@ public abstract class BaseUsecase {
 
     public void playAndRenderText(String text, String utterId, TtsCallback utteranceCallback) {
         DataController.getDataController().getServiceController().playTts(text, utterId, utteranceCallback);
+    }
+
+    public Context getAppContext() {
+        return ContextUtil.getAppContext();
     }
 
 }
