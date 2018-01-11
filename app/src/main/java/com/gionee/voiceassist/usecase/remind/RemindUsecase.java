@@ -3,7 +3,6 @@ package com.gionee.voiceassist.usecase.remind;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
-import android.support.annotation.VisibleForTesting;
 
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
@@ -11,7 +10,6 @@ import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.DateUtil;
 import com.gionee.voiceassist.util.LogUtil;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by liyingheng on 1/10/18.
+ * 提醒场景Usecase
  */
 
 public class RemindUsecase extends BaseUsecase {
