@@ -16,8 +16,9 @@
 + DataController中回调给MainActivity的方法，没有转换到主线程。   (liyingheng at 2018.01.09)
 + UsecaseDispatcher中，太多toXXXUsecase()了。 (liyingheng at 2018.01.09)
 + GnRemoteUsecase依然依赖TeleControlPresenter   (liyingheng at 2018.01.10)
++ createAlarm创建了好多Date对象。如何优化？  (liyingheng at 2018.01.11)
 
 
 ## 没有考虑好的
 + DataController中调用ServiceController的attach()和detach()在onCreate()时调用还是onResume()时调用？    (liyingheng at 2018.01.09)
-+ TtsController是Service内部调用的。但是其有个utter的回调，外部有需要的时候要调用。如何将其utter回调传进去？  (liyingheng at 2018.01.09)
++ TtsController是Service内部调用的。但是其有个utter的回调，外部有需要的时候要调用。如何将其utter回调传进去？  (已解决) (liyingheng at 2018.01.09)

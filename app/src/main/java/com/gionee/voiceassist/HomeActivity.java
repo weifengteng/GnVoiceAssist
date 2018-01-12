@@ -245,9 +245,6 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
     private void initHandler() {
         mMainHandler = new MainHandler(this);
-        //TODO 架构调整过程中临时方法。演进过程中会逐步失效。
-//        ((MainPresenter)mPresenter).setHandler(mMainHandler);
-//        ((MainPresenter)mPresenter).setMainActivity(this);
     }
 
     private void updateStopRecordingUI() {
@@ -266,44 +263,6 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     private void playWelcomeWord() {
         DataController.getDataController().getServiceController().playTts("你好", UTTER_ID_WELCOME, this);
     }
-
-//    private View addView(String recordResult,String backResult,View view) {
-//
-//        View showView = view;
-//        mLastTextView = null;
-//        if(!TextUtils.isEmpty(recordResult)){
-//            showView = View.inflate(this, R.layout.reco_result, null);
-//            TextView reco_result = (TextView)showView.findViewById(R.id.reco_result);
-//            reco_result.setText(recordResult);
-//            mLastTextView = reco_result;
-//        }
-//
-//        if(!TextUtils.isEmpty(backResult)){
-//            showView = View.inflate(this,R.layout.simple_host_info, null);
-//            TextView info = (TextView)showView.findViewById(R.id.info);
-//            info.setText(backResult);
-//            mLastTextView = info;
-//        }
-//
-//        llHelpCommand.setVisibility(View.GONE);
-//        sv.setVisibility(View.VISIBLE);
-//        sv_ll.addView(showView);
-//        final int measuredHeight = sv_ll.getMeasuredHeight();
-//        LogUtil.d(TAG, "VoiceHomeActivity measuredHeight  = " + measuredHeight);
-//        sv.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                sv.scrollTo(0,measuredHeight);
-//            }
-//        });
-//        return showView;
-//    }
-
-//    private void modifyView(String text) {
-//        if(mLastTextView != null && mLastTextView instanceof TextView) {
-//            ((TextView) mLastTextView).setText(text);
-//        }
-//    }
 
     private void updateVoiceInputVolume(int volume) {
         // TODO:
