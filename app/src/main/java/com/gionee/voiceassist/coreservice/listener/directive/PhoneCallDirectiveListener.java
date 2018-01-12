@@ -1,37 +1,16 @@
 package com.gionee.voiceassist.coreservice.listener.directive;
 
-import android.text.TextUtils;
-
-import com.baidu.duer.dcs.common.util.CommonUtil;
-import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
-import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
-import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextHyperUtterace;
-import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClientContextPayload;
-import com.baidu.duer.dcs.framework.message.Payload;
-import com.gionee.voiceassist.basefunction.IBaseFunction;
-import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
-import com.gionee.voiceassist.basefunction.phonecall.PhoneCallPresenter;
-import com.gionee.voiceassist.basefunction.screenrender.ScreenRender;
-import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
-import com.gionee.voiceassist.coreservice.sdk.module.phonecall.IPhoneCallImpl;
+import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.CandidateCallee;
-import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.CandidateCalleeNumber;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.ContactInfo;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.PhonecallByNamePayload;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.PhonecallByNumberPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.SelectCalleePayload;
-import com.gionee.voiceassist.customlink.CustomLinkSchema;
-import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
-import com.gionee.voiceassist.util.CUInteractionUrlParser;
 import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.util.SharedData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.gionee.voiceassist.util.Utils.doUserActivity;
 
 /**
  * Created by twf on 2017/8/26.
@@ -77,7 +56,7 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     @Override
     public void onPhoneCallByName(PhonecallByNamePayload payload) {
         LogUtil.d(TAG,"onPhoneCallByName(), payload = " + payload);
-        PhonecallDirectiveEntity msg = new PhonecallDirectiveEntity();
+        PhoneCallDirectiveEntity msg = new PhoneCallDirectiveEntity();
         List<String> candidate = new ArrayList<>();
         for (CandidateCallee item:payload.getCandidateCallees()) {
             candidate.add(item.getContactName());
@@ -89,18 +68,22 @@ public class PhoneCallDirectiveListener extends BaseDirectiveListener implements
     @Override
     public void onSelectCallee(SelectCalleePayload payload) {
         LogUtil.d(TAG,"onSelectCallee(), payload = " + payload);
+        // Query "给中国移动打电话"
 //        phoneCallDirectiveReceived(assembleContactInfoByNumber(payload));
+        PhoneCallDirectiveEntity entity = new PhoneCallDirectiveEntity();
+        entity.setPhoneByCalleeSelect(payload.getCandidateCallees(), payload.getUseSimIndex());
+        sendDirective(entity);
     }
 
     @Override
     public void onPhoneCallByNumber(PhonecallByNumberPayload payload) {
         LogUtil.d(TAG,"onPhoneCallByNumber(), payload = " + payload);
 //        phoneCallDirectiveReceived(assembleContactInfoBySingleNumber(payload));
-        PhonecallDirectiveEntity msg = new PhonecallDirectiveEntity();
+        PhoneCallDirectiveEntity msg = new PhoneCallDirectiveEntity();
         msg.setPhoneByNumber(
-                payload.getCallee().getDisplayName(),
-                payload.getCallee().getPhoneNumber(),
+                payload.getCallee(),
                 payload.getUseSimIndex());
+        sendDirective(msg);
     }
 
     //TODO Deprecated. Should migrate to new SDK

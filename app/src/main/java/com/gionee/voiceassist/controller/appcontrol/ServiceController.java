@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.gionee.voiceassist.GnVoiceAssistApplication;
+import com.gionee.voiceassist.controller.customuserinteraction.ICuiControl;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.coreservice.CoreService;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
@@ -20,7 +21,7 @@ import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEntity;
-import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
@@ -98,7 +99,7 @@ public class ServiceController {
         }
 
         @Override
-        public void onPhonecallPayload(PhonecallDirectiveEntity payload) {
+        public void onPhonecallPayload(PhoneCallDirectiveEntity payload) {
             fireDirectiveDispatch(payload, "phonecall");
         }
 
@@ -180,7 +181,10 @@ public class ServiceController {
      * 断开Service
      */
     void detachService() {
-        GnVoiceAssistApplication.getInstance().unbindService(mServiceConnection);
+        if(mService != null) {
+            GnVoiceAssistApplication.getInstance().unbindService(mServiceConnection);
+            mService = null;
+        }
     }
 
     void setCallback(List<IRecognizerStateListener> callbacks) {
@@ -221,6 +225,13 @@ public class ServiceController {
         if (mService != null) {
             mService.sendTextQuery(query);
         }
+    }
+
+    public ICuiControl getCUIController() {
+        if(mService != null) {
+            return mService.getCUIController();
+        }
+        return null;
     }
 
     private Intent getServiceIntent() {

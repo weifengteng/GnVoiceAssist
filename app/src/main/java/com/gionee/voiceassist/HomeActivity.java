@@ -115,6 +115,8 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
                         DataController.getDataController().onResume();
                     }
                 });
+            } else {
+                DataController.getDataController().onResume();
             }
         }
         super.onResume();
@@ -123,6 +125,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtil.d(TAG, "onPause");
         DataController.getDataController().onPause();
         if(btnRecord.isRippleAnimationRunning()){
             btnRecord.stopRippleAnimation();
