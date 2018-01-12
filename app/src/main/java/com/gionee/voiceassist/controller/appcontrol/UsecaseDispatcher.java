@@ -9,6 +9,7 @@ import com.gionee.voiceassist.usecase.alarm.AlarmUsecase;
 import com.gionee.voiceassist.usecase.applaunch.AppLaunchUsecase;
 import com.gionee.voiceassist.usecase.gnremote.GnRemoteUsecase;
 import com.gionee.voiceassist.usecase.music.GNMusicUsecase;
+import com.gionee.voiceassist.usecase.phonecall.PhoneCallUsecase;
 import com.gionee.voiceassist.usecase.remind.RemindUsecase;
 import com.gionee.voiceassist.util.LogUtil;
 
@@ -29,6 +30,7 @@ public class UsecaseDispatcher {
     private GNMusicUsecase gnmusicUsecase = new GNMusicUsecase();
     private GnRemoteUsecase gnRemoteUsecase = new GnRemoteUsecase();
     private RemindUsecase reminderUsecase = new RemindUsecase();
+    private PhoneCallUsecase phoneCallUsecase = new PhoneCallUsecase();
 
     public UsecaseDispatcher() {
         usecaseMap = new HashMap<>();
@@ -41,6 +43,7 @@ public class UsecaseDispatcher {
         installUsecase(gnmusicUsecase);
         installUsecase(gnRemoteUsecase);
         installUsecase(reminderUsecase);
+        installUsecase(phoneCallUsecase);
     }
 
     void destroyUsecase() {
@@ -49,6 +52,7 @@ public class UsecaseDispatcher {
         uninstallUsecase(gnmusicUsecase);
         uninstallUsecase(gnRemoteUsecase);
         uninstallUsecase(reminderUsecase);
+        uninstallUsecase(phoneCallUsecase);
     }
 
     public void installUsecase(BaseUsecase usecase) {

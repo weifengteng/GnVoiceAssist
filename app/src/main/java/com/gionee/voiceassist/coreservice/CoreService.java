@@ -20,7 +20,7 @@ import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEntity;
-import com.gionee.voiceassist.coreservice.datamodel.PhonecallDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
@@ -172,7 +172,7 @@ public class CoreService extends Service {
                 break;
             case PHONECALL:
                 for (SceneCallback callback:mExportSceneCallbacks) {
-                    callback.onPhonecallPayload((PhonecallDirectiveEntity) directivePayload);
+                    callback.onPhonecallPayload((PhoneCallDirectiveEntity) directivePayload);
                 }
                 break;
             case SMS:
@@ -262,7 +262,7 @@ public class CoreService extends Service {
         void onScreenPayload(ScreenDirectiveEntity payload);
         void onAlarmPayload(AlarmDirectiveEntity payload);
         void onContactsPayload(ContactsDirectiveEntity payload);
-        void onPhonecallPayload(PhonecallDirectiveEntity payload);
+        void onPhonecallPayload(PhoneCallDirectiveEntity payload);
         void onAppLaunchPayload(AppLaunchDirectiveEntity payload);
         void onGioneeCustomCommandPayload(GioneeCustomDirectiveEntity payload);
         void onGnRemotePayload(GnRemoteDirectiveEntity payload);
