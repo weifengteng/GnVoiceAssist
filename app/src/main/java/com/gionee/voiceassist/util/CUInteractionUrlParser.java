@@ -19,7 +19,7 @@ public class CUInteractionUrlParser {
     public static Map<String, String> parsePhonecallUrl(String url) {
         Map<String, String> result = new HashMap<>();
         Matcher phoneNumberMatcher = Pattern.compile("num=([0-9]+)").matcher(url);
-        Matcher simIdMatcher = Pattern.compile("sim=([0-1]+)").matcher(url);
+        Matcher simIdMatcher = Pattern.compile("sim=([1-2]+)").matcher(url);
         String phoneNumber = phoneNumberMatcher.find() ? phoneNumberMatcher.group(1):"";
         String simId = simIdMatcher.find() ? simIdMatcher.group(1):"";
         result.put("num", phoneNumber);
@@ -31,7 +31,7 @@ public class CUInteractionUrlParser {
         Map<String, String> result = new HashMap<>();
         Matcher phoneNumberMatcher = Pattern.compile("num=([0-9]+)").matcher(url);
         Matcher contentMatcher = Pattern.compile("msg=(.+?)(#|$)").matcher(url);
-        Matcher simIdMatcher = Pattern.compile("sim=([0-1]+)").matcher(url);
+        Matcher simIdMatcher = Pattern.compile("sim=([1-2]+)").matcher(url);
         String phoneNumber = phoneNumberMatcher.find() ? phoneNumberMatcher.group(1):"";
         String content = "";
         try {

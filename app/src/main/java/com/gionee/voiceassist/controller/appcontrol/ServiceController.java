@@ -24,6 +24,7 @@ import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEnt
 import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.SmsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.util.RecognizerState;
@@ -136,6 +137,11 @@ public class ServiceController {
         @Override
         public void onReminderPayload(ReminderDirectiveEntity payload) {
             fireDirectiveDispatch(payload, "reminder");
+        }
+
+        @Override
+        public void onSmsSendPayload(SmsDirectiveEntity payload) {
+            fireDirectiveDispatch(payload, "smsSend");
         }
     };
     private ServiceConnection mServiceConnection = new ServiceConnection() {

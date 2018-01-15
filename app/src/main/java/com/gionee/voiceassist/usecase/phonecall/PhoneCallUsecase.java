@@ -500,7 +500,7 @@ public class PhoneCallUsecase extends BaseUsecase {
                     public Payload generateContextPayloadByInteractionState(
                             CustomClicentContextMachineState customClicentContextMachineState) {
 
-                        if(CustomUserInteractionManager.getInstance().shouldStopCurrentInteraction()) {
+                        if(getCuiController().isCUIShouldStop()) {
                             // 达到最大多轮交互次数，跳出自定义多轮交互状态
                             return new CustomClientContextPayload(null);
                         }

@@ -11,6 +11,7 @@ import com.gionee.voiceassist.usecase.gnremote.GnRemoteUsecase;
 import com.gionee.voiceassist.usecase.music.GNMusicUsecase;
 import com.gionee.voiceassist.usecase.phonecall.PhoneCallUsecase;
 import com.gionee.voiceassist.usecase.remind.RemindUsecase;
+import com.gionee.voiceassist.usecase.smssend.SmsSendUseCase;
 import com.gionee.voiceassist.util.LogUtil;
 
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class UsecaseDispatcher {
     private GnRemoteUsecase gnRemoteUsecase = new GnRemoteUsecase();
     private RemindUsecase reminderUsecase = new RemindUsecase();
     private PhoneCallUsecase phoneCallUsecase = new PhoneCallUsecase();
+    private SmsSendUseCase smsSendUseCase = new SmsSendUseCase();
 
     public UsecaseDispatcher() {
         usecaseMap = new HashMap<>();
@@ -44,6 +46,7 @@ public class UsecaseDispatcher {
         installUsecase(gnRemoteUsecase);
         installUsecase(reminderUsecase);
         installUsecase(phoneCallUsecase);
+        installUsecase(smsSendUseCase);
     }
 
     void destroyUsecase() {
@@ -53,6 +56,7 @@ public class UsecaseDispatcher {
         uninstallUsecase(gnRemoteUsecase);
         uninstallUsecase(reminderUsecase);
         uninstallUsecase(phoneCallUsecase);
+        uninstallUsecase(smsSendUseCase);
     }
 
     public void installUsecase(BaseUsecase usecase) {
@@ -75,7 +79,7 @@ public class UsecaseDispatcher {
         if (isUsecaseInstalled(usecaseAlias)) {
             usecaseMap.get(usecaseAlias).handleDirective(payload);
         } else {
-            LogUtil.e(TAG, "没有对应的Usecase分发。别名" + usecaseAlias);
+            LogUtil.e(TAG, "没有对应的 UseCase 分发别名" + usecaseAlias);
         }
     }
 

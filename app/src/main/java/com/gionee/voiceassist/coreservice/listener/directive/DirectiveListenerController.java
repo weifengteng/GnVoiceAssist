@@ -15,6 +15,7 @@ import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.LocalAudio
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.reminder.ReminderDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.ScreenDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.sms.SmsDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.tvlive.TvLiveDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.webbrowser.WebBrowserDeviceModule;
@@ -39,6 +40,7 @@ public class DirectiveListenerController {
     private ScreenDirectiveListener screenListener;
     private ContactsDirectiveListener contactsListener;
     private PhoneCallDirectiveListener phonecallListener;
+    private SmsSendDirectiveListener smsSendDirectiveListener;
     private CustomCmdDirectiveListener customCommandListener;
     private AppLauncherListener applaunchListener;
     private GnRemoteListener gnRemoteListener;
@@ -90,6 +92,7 @@ public class DirectiveListenerController {
         screenListener = new ScreenDirectiveListener(mSubscribers);
         contactsListener = new ContactsDirectiveListener(mSubscribers);
         phonecallListener = new PhoneCallDirectiveListener(mSubscribers);
+        smsSendDirectiveListener = new SmsSendDirectiveListener(mSubscribers);
         customCommandListener = new CustomCmdDirectiveListener(mSubscribers);
         applaunchListener = new AppLauncherListener(mSubscribers);
         gnRemoteListener = new GnRemoteListener(mSubscribers);
@@ -115,6 +118,9 @@ public class DirectiveListenerController {
 
         ((PhoneCallDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.extensions.telephone"))
                 .addPhoneCallListener(phonecallListener);
+
+        ((SmsDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.extensions.sms"))
+                .addSmsListener(smsSendDirectiveListener);
 
         ((AppLauncherDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.app_launcher"))
                 .addAppLauncherDirectiveListener(applaunchListener);
@@ -150,6 +156,9 @@ public class DirectiveListenerController {
 
         ((PhoneCallDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.extensions.telephone"))
                 .removePhoneCallListener(phonecallListener);
+
+        ((SmsDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.extensions.sms"))
+                .removeSmsListener(smsSendDirectiveListener);
 
         ((AppLauncherDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.app_launcher"))
                 .addAppLauncherDirectiveListener(null);
