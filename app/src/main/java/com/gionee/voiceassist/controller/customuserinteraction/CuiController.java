@@ -11,6 +11,7 @@ import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ErrorCode;
 import com.gionee.voiceassist.util.ErrorHelper;
+import com.gionee.voiceassist.util.LogUtil;
 
 /**
  * 多轮交互管理controller，管理多轮交互的开始、结束、状态维护等
@@ -19,6 +20,7 @@ import com.gionee.voiceassist.util.ErrorHelper;
  */
 
 public class CuiController implements ICuiControl, CustomUserInteractionDeviceModule.ICustomUserInteractionListener {
+    private static String TAG = CuiController.class.getSimpleName();
     private volatile boolean mShouldStopCurrentInteraction = false;
     private volatile boolean mCustomUserInteractionProcessing = false;
     private ICuiResult mCuiResult;
@@ -82,6 +84,7 @@ public class CuiController implements ICuiControl, CustomUserInteractionDeviceMo
         if(!TextUtils.isEmpty(url)) {
             // handle targetUrl
             if(mCuiResult != null) {
+                LogUtil.d(TAG, "onClickLink  url= " + url);
                 mCuiResult.handleCUInteractionTargetUrl(url);
             }
         } else {
@@ -91,6 +94,7 @@ public class CuiController implements ICuiControl, CustomUserInteractionDeviceMo
 
     @Override
     public void onHandleUnknownUtterance(HandleUnknownUtterancePayload handleUnknownUtterancePayload) {
+        LogUtil.d(TAG, "onHandleUnknownUtterance ");
         // handle unknown utterance
         if(mCuiResult != null) {
             mRoundCounter.increaseCount();
@@ -103,7 +107,8 @@ public class CuiController implements ICuiControl, CustomUserInteractionDeviceMo
         private int mUpraiseCount = 0;
 
         public boolean isMaxCount() {
-            return mUpraiseCount > MAX_COUNT;
+            LogUtil.d(TAG, "isMaxCount mUpraiseCount= " + mUpraiseCount);
+            return mUpraiseCount >= MAX_COUNT;
         }
 
         public void increaseCount() {

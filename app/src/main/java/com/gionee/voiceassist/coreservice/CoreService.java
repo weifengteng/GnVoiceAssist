@@ -23,6 +23,7 @@ import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEnt
 import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.SmsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 import com.gionee.voiceassist.coreservice.listener.directive.DirectiveListenerController;
 import com.gionee.voiceassist.coreservice.listener.state.StateListenerController;
@@ -177,7 +178,7 @@ public class CoreService extends Service {
                 break;
             case SMS:
                 for (SceneCallback callback:mExportSceneCallbacks) {
-
+                    callback.onSmsSendPayload((SmsDirectiveEntity) directivePayload);
                 }
                 break;
             case APPLAUNCH:
@@ -217,7 +218,6 @@ public class CoreService extends Service {
             default:
                 break;
         }
-
     }
 
     private IDcsSdk getSdkInstance() {
@@ -270,5 +270,6 @@ public class CoreService extends Service {
         void onLocalAudioPlayerPayload(LocalAudioPlayerDirectiveEntity payload);
         void onWebBrowserPayload(WebBrowserDirectiveEntity payload);
         void onReminderPayload(ReminderDirectiveEntity payload);
+        void onSmsSendPayload(SmsDirectiveEntity payload);
     }
 }

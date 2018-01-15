@@ -33,6 +33,7 @@ import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEnt
 import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.SmsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 import com.gionee.voiceassist.customlink.CustomLinkSchema;
 import com.gionee.voiceassist.util.LogUtil;
@@ -291,6 +292,11 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
         @Override
         public void onReminderPayload(ReminderDirectiveEntity payload) {
             showText("ReminderPayload received " + payload);
+        }
+
+        @Override
+        public void onSmsSendPayload(SmsDirectiveEntity payload) {
+            showText("SmsSendPayload received " + payload);
         }
     };
 
