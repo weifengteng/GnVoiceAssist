@@ -137,7 +137,7 @@ public class DirectiveListenerManager {
         ((AlarmsDeviceModule)getDeviceModule("ai.dueros.device_interface.android.alerts")).addDirectiveListener(alarmDirectiveListener);
         ((DeviceControlDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.device_control")).addDirectiveListener(deviceControlListener);
         ((ScreenDeviceModule)getDeviceModule("ai.dueros.device_interface.screen")).addScreenListener(screenDirectiveListener);
-        ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(cuiDirectiveListener);
+        ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionListener(cuiDirectiveListener);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(localAudioPlayerListener);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).addVoiceOutputListener(ttsEventListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).addOfflineDirectiveListener(offlineAsrListener);
@@ -165,7 +165,7 @@ public class DirectiveListenerManager {
         ((DeviceControlDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.device_control")).removeDirectiveListener(deviceControlListener);
         ((ScreenDeviceModule)getDeviceModule("ai.dueros.device_interface.screen")).removeScreenListener(screenDirectiveListener);
         ((TeleControllerDeviceModule)getDeviceModule(com.gionee.voiceassist.coreservice.sdk.module.telecontroller.ApiConstants.NAMESPACE)).addDirectivieListener(null);
-        ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionDirectiveListener(null);
+        ((CustomUserInteractionDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction")).setCustomUserInteractionListener(null);
         ((LocalAudioPlayerDeviceModule)getDeviceModule("ai.dueros.device_interface.extensions.local_audio_player")).addLocalAudioPlayerListener(null);
         ((VoiceOutputDeviceModule)getDeviceModule("ai.dueros.device_interface.voice_output")).removeVoiceOutputListener(ttsEventListener);
         ((OffLineDeviceModule)getDeviceModule("ai.dueros.device_interface.offline")).removeOfflineDirectiveListener(offlineAsrListener);

@@ -3,6 +3,8 @@ package com.gionee.voiceassist.directiveListener.customuserinteraction;
 import android.text.TextUtils;
 
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.ClickLinkPayload;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.HandleUnknownUtterancePayload;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.Constants;
@@ -12,7 +14,7 @@ import com.gionee.voiceassist.util.T;
  * Created by twf on 2017/8/26.
  */
 
-public class CUIDirectiveListener implements CustomUserInteractionDeviceModule.CustomUserInteractionDirectiveListener {
+public class CUIDirectiveListener implements CustomUserInteractionDeviceModule.ICustomUserInteractionListener {
     private static final String TAG = CUIDirectiveListener.class.getSimpleName();
 
     public CUIDirectiveListener() {
@@ -20,27 +22,24 @@ public class CUIDirectiveListener implements CustomUserInteractionDeviceModule.C
     }
 
     @Override
-    public void customUserInteractionDirectiveReceived(String url, Directive directive) {
+    public void onClickLink(ClickLinkPayload clickLinkPayload) {
         ICUIDirectiveReceivedInterface receivedInterface = CustomUserInteractionManager.getInstance().getCurrInteractionListener();
         String currCUInteractionId = CustomUserInteractionManager.getInstance().getCurrCUInteractionId();
+        String url = clickLinkPayload.getUrl();
         if(receivedInterface != null) {
-            if(directive != null) {
-                String directiveName = directive.getName();
-                if(TextUtils.equals(directiveName, Constants.HANDLE_UNKNOWN_UTTERANCE)) {
-                    receivedInterface.handleCUInteractionUnknownUtterance(currCUInteractionId);
-                } else {
-                    if(TextUtils.isEmpty(url)) {
-                        T.showLong("CUIDirectiveListener customUserInteractionDirectiveReceived url is empty!");
-                        LogUtil.e(TAG, "CUIDirectiveListener customUserInteractionDirectiveReceived url is empty!");
-                    } else {
-                        receivedInterface.handleCUInteractionTargetUrl(currCUInteractionId, url);
-                    }
-                }
+            if(TextUtils.isEmpty(url)) {
+                T.showLong("CUIDirectiveListener customUserInteractionDirectiveReceived url is empty!");
+                LogUtil.e(TAG, "CUIDirectiveListener customUserInteractionDirectiveReceived url is empty!");
             } else {
-                // TODO:
+                receivedInterface.handleCUInteractionTargetUrl(currCUInteractionId, url);
             }
-        } else {
-            // TODO:
         }
+    }
+
+    @Override
+    public void onHandleUnknownUtterance(HandleUnknownUtterancePayload handleUnknownUtterancePayload) {
+        ICUIDirectiveReceivedInterface receivedInterface = CustomUserInteractionManager.getInstance().getCurrInteractionListener();
+        String currCUInteractionId = CustomUserInteractionManager.getInstance().getCurrCUInteractionId();
+        receivedInterface.handleCUInteractionUnknownUtterance(currCUInteractionId);
     }
 }

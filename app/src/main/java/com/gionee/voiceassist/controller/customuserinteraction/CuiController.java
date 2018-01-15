@@ -3,7 +3,9 @@ package com.gionee.voiceassist.controller.customuserinteraction;
 import android.text.TextUtils;
 
 import com.baidu.duer.dcs.devicemodule.custominteraction.CustomUserInteractionDeviceModule;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.ClickLinkPayload;
 import com.baidu.duer.dcs.devicemodule.custominteraction.message.CustomClicentContextMachineState;
+import com.baidu.duer.dcs.devicemodule.custominteraction.message.HandleUnknownUtterancePayload;
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.util.Constants;
@@ -16,7 +18,7 @@ import com.gionee.voiceassist.util.ErrorHelper;
  * @date 2018/1/8
  */
 
-public class CuiController implements ICuiControl, CustomUserInteractionDeviceModule.CustomUserInteractionDirectiveListener {
+public class CuiController implements ICuiControl, CustomUserInteractionDeviceModule.ICustomUserInteractionListener {
     private volatile boolean mShouldStopCurrentInteraction = false;
     private volatile boolean mCustomUserInteractionProcessing = false;
     private ICuiResult mCuiResult;
@@ -27,7 +29,7 @@ public class CuiController implements ICuiControl, CustomUserInteractionDeviceMo
         mRoundCounter = new CuiRoundCounter();
         ((CustomUserInteractionDeviceModule) SdkController.getInstance().getSdkInternalApi()
                 .getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction"))
-                .setCustomUserInteractionDirectiveListener(this);
+                .setCustomUserInteractionListener(this);
     }
 
     @Override
@@ -67,37 +69,33 @@ public class CuiController implements ICuiControl, CustomUserInteractionDeviceMo
     }
 
     @Override
-    public void customUserInteractionDirectiveReceived(String url, Directive directive) {
-        if(directive != null) {
-            String directiveName = directive.getName();
-            if(TextUtils.equals(directiveName, Constants.HANDLE_UNKNOWN_UTTERANCE)) {
-                // handle unknown utterance
-                if(mCuiResult != null) {
-                    mRoundCounter.increaseCount();
-                    mCuiResult.handleCUInteractionUnknownUtterance();
-                }
-            } else {
-                if(!TextUtils.isEmpty(url)) {
-                    // handle targetUrl
-                    if(mCuiResult != null) {
-                        mCuiResult.handleCUInteractionTargetUrl(url);
-                    }
-                } else {
-                    ErrorHelper.sendError(ErrorCode.SDK_INTERNAL_ERROR, "SDK内部错误。错误信息：customUserInteractionDirectiveReceived url is empty!");
-                }
-            }
-        } else {
-            ErrorHelper.sendError(ErrorCode.SDK_INTERNAL_ERROR, "SDK内部错误。错误信息：customUserInteractionDirectiveReceived directive is null!");
-        }
-
-    }
-
-    @Override
     public void onDestroy() {
         ((CustomUserInteractionDeviceModule) SdkController.getInstance().getSdkInternalApi()
                 .getDeviceModule("ai.dueros.device_interface.extensions.custom_user_interaction"))
-                .setCustomUserInteractionDirectiveListener(null);
+                .setCustomUserInteractionListener(null);
         mRoundCounter = null;
+    }
+
+    @Override
+    public void onClickLink(ClickLinkPayload clickLinkPayload) {
+        String url = clickLinkPayload.getUrl();
+        if(!TextUtils.isEmpty(url)) {
+            // handle targetUrl
+            if(mCuiResult != null) {
+                mCuiResult.handleCUInteractionTargetUrl(url);
+            }
+        } else {
+            ErrorHelper.sendError(ErrorCode.SDK_INTERNAL_ERROR, "SDK内部错误。错误信息：customUserInteractionDirectiveReceived url is empty!");
+        }
+    }
+
+    @Override
+    public void onHandleUnknownUtterance(HandleUnknownUtterancePayload handleUnknownUtterancePayload) {
+        // handle unknown utterance
+        if(mCuiResult != null) {
+            mRoundCounter.increaseCount();
+            mCuiResult.handleCUInteractionUnknownUtterance();
+        }
     }
 
     class CuiRoundCounter {
