@@ -219,7 +219,8 @@ public class SdkController implements ISdkController {
         mDcsSdk.putDeviceModule(localAudioPlayerDeviceModule);
 
         //初始化CustomInteraction多轮交互模块
-        CustomUserInteractionDeviceModule customUserInteractionDeviceModule = new CustomUserInteractionDeviceModule(messageSender,new DialogRequestIdHandler());
+        DialogRequestIdHandler dialogRequestIdHandler = ((DcsSdkImpl) mDcsSdk).getProvider().getDialogRequestIdHandler();
+        CustomUserInteractionDeviceModule customUserInteractionDeviceModule = new CustomUserInteractionDeviceModule(messageSender,dialogRequestIdHandler);
         mDcsSdk.putDeviceModule(customUserInteractionDeviceModule);
 
         //初始化离线识别模块
