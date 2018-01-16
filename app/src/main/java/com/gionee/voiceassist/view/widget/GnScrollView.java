@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.widget;
+package com.gionee.voiceassist.view.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -11,7 +11,9 @@ import android.widget.ListAdapter;
 import android.widget.ScrollView;
 
 import com.gionee.voiceassist.R;
-import com.gionee.voiceassist.widget.VoiceAdapter.DataSetChanged;
+import com.gionee.voiceassist.view.viewitem.BaseItem;
+import com.gionee.voiceassist.view.viewitem.SimpleInfoItem;
+import com.gionee.voiceassist.view.widget.VoiceAdapter.DataSetChanged;
 
 public class GnScrollView extends ScrollView implements DataSetChanged, OnClickListener {
 	

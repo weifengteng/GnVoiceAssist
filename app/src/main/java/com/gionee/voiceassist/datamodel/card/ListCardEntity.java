@@ -13,20 +13,32 @@ public class ListCardEntity extends CardEntity {
         setType(CardType.LIST_CARD);
     }
 
-    private List<ListItem> item = new ArrayList<>();
+    private List<ListItem> items = new ArrayList<>();
 
-    public class ListItem {
+    public static class ListItem {
         public String title;
         public String content;
         public String imgSrc;
         public Link link;
+        public ListItem(String title, String content, String imgSrc, String linkSrc, String linkAnchorText) {
+            this.title = title;
+            this.content = content;
+            this.imgSrc = imgSrc;
+            this.link = new Link();
+            link.src = linkSrc;
+            link.anchorText = linkAnchorText;
+        }
     }
 
-    public List<ListItem> getItem() {
-        return item;
+    public List<ListItem> getItems() {
+        return items;
     }
 
-    public void setItem(List<ListItem> item) {
-        this.item = item;
+    public void setItems(List<ListItem> items) {
+        this.items = items;
+    }
+
+    public void addItem(ListItem item) {
+        items.add(item);
     }
 }

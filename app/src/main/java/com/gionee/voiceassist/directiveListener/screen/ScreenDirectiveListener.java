@@ -13,10 +13,10 @@ import com.gionee.voiceassist.coreservice.sdk.module.screen.message.HtmlPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderCardPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderHintPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderVoiceInputTextPayload;
-import com.gionee.voiceassist.widget.SimpleImageListItem;
-import com.gionee.voiceassist.widget.SimpleListCardItem;
-import com.gionee.voiceassist.widget.SimpleStandardCardItem;
-import com.gionee.voiceassist.widget.SimpleTextCardItem;
+import com.gionee.voiceassist.view.viewitem.SimpleImageListItem;
+import com.gionee.voiceassist.view.viewitem.SimpleListCardItem;
+import com.gionee.voiceassist.view.viewitem.SimpleStandardCardItem;
+import com.gionee.voiceassist.view.viewitem.SimpleTextCardItem;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

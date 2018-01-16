@@ -17,8 +17,8 @@ import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUser
 import com.gionee.voiceassist.directiveListener.sms.SmsDirectiveListener;
 import com.gionee.voiceassist.coreservice.sdk.module.sms.message.SmsInfo;
 import com.gionee.voiceassist.util.T;
-import com.gionee.voiceassist.widget.ContactsListItem;
-import com.gionee.voiceassist.widget.SimCardListItem;
+import com.gionee.voiceassist.view.viewitem.ContactsListItem;
+import com.gionee.voiceassist.view.viewitem.SimCardListItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;

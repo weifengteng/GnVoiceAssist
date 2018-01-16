@@ -45,12 +45,25 @@
 						android:scrollbarStyle="outsideOverlay" />
 				</LinearLayout>
 
+				<com.gionee.voiceassist.view.widget.HomeScrollView
+					android:id="@+id/sv"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_marginTop="5dp"
+					android:visibility="visible">
+					<LinearLayout
+						android:id="@+id/sv_ll"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:orientation="vertical"/>
+				</com.gionee.voiceassist.view.widget.HomeScrollView>
+
 				<com.gionee.voiceassist.view.widget.HomeRecyclerView
 					android:id="@+id/rv"
 					android:layout_height="match_parent"
 					android:layout_width="match_parent"
 					android:layout_marginTop="5dp"
-					android:visibility="visible"/>
+					android:visibility="gone"/>
 
 				<TextView
 					android:visibility="gone"

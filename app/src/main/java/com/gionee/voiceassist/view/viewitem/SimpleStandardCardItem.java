@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.widget;
+package com.gionee.voiceassist.view.viewitem;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,22 +17,23 @@ import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.message.RenderCardPayload;
 import com.gionee.voiceassist.util.LogUtil;
+import com.squareup.picasso.Picasso;
 
 import static android.R.id.list;
 
-public class SimpleTextCardItem extends BaseItem implements OnClickListener {
-	public static final String TAG = SimpleTextCardItem.class.getSimpleName();
+public class SimpleStandardCardItem extends BaseItem implements OnClickListener {
+	public static final String TAG = SimpleStandardCardItem.class.getSimpleName();
 	private static final String APP_BROWSER_PACKAGE_NAME = "com.android.browser";
 	private Context mContext;
-	private RenderCardPayload mTextCardPayload;
+	private RenderCardPayload mStandardCardPayload;
 	private View mCachedView;
 	private LayoutInflater mInflater;
 	private ViewGroup mParent;
 
 	/******************************* 构造函数 & Override *******************************/
-	public SimpleTextCardItem(Context ctx, RenderCardPayload textCardPayload) {
+	public SimpleStandardCardItem(Context ctx, RenderCardPayload standardCardPayload) {
 		mContext = ctx;
-		mTextCardPayload = textCardPayload;
+		mStandardCardPayload = standardCardPayload;
 	}
 
 	@Override
@@ -58,16 +60,18 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 	public void bindView() {
 		LinearLayout customPanel = (LinearLayout) mCachedView.findViewById(R.id.custom_panel);
 
-			LogUtil.d(TAG, "SimpleTextCardItem bindView ---------------1111------ ");
-			View itemView = View.inflate(mContext,R.layout.text_card_info_item_lyt, null);
-			LogUtil.d(TAG, "SimpleTextCardItem bindView ---------------2222------ ");
-			if(mTextCardPayload == null) {
+			LogUtil.d(TAG, "SimpleStandardCardItem bindView ---------------1111------ ");
+			View itemView = View.inflate(mContext,R.layout.standard_card_info_item_lyt, null);
+			LogUtil.d(TAG, "SimpleStandardCardItem bindView ---------------2222------ ");
+			if(mStandardCardPayload == null) {
 				customPanel.addView(itemView);
 				return;
 			}
 
-    		setContentView(mTextCardPayload.content, itemView);
-    		setMoreInfoView(mTextCardPayload.link, itemView);
+			setNameTextView(mStandardCardPayload.title, itemView);
+    		setContentView(mStandardCardPayload.content, itemView);
+    		setMoreInfoView(mStandardCardPayload.link, itemView);
+			setImage(mStandardCardPayload.image, itemView);
 	        customPanel.addView(itemView);
 //		customPanel.addView(View.inflate(mContext, R.layout.restaurant_dianping_info, null));
 	}
@@ -86,46 +90,64 @@ public class SimpleTextCardItem extends BaseItem implements OnClickListener {
 
 	/*********************************** 私有函数 ***********************************/
 
+    private void setNameTextView(String name, View itemView) {
+		if(name != null) {
+			LogUtil.d(TAG, "SimpleStandardCardItem setNameTextView name = " + name);
+			((TextView) itemView.findViewById(R.id.title)).setText(name);
+		} else {
+			LogUtil.d(TAG, "SimpleStandardCardItem setNameTextView name == null");
+		}
+    }
+
     private void setContentView(String content, View itemView) {
 
     	if(TextUtils.isEmpty(content)) {
-			LogUtil.e(TAG, "SimpleTextCardItem setContentView content is empty");
+			LogUtil.e(TAG, "SimpleStandardCardItem setContentView content is empty");
     		return;
     	}
 
 		TextView contentView = (TextView)itemView.findViewById(R.id.content);
 		contentView.setText(content);
-		LogUtil.d(TAG, "SimpleTextCardItem setContentView list = " + list);
+
+		LogUtil.d(TAG, "SimpleStandardCardItem setContentView list = " + list);
     }
 
-    private void setMoreInfoView(final RenderCardPayload.LinkStructure link, View itemView) {
-		if(link == null) {
+	private void setImage(RenderCardPayload.ImageStructure image, View itemView) {
+		if(image == null) {
+			LogUtil.d(TAG, "SimpleStandardCardItem setImage image = " + list);
 			return;
 		}
-
-		final String linkUrl = link.url;
-		if(linkUrl != null) {
-			LogUtil.d(TAG, "SimpleTextCardItem setMoreInfoView addr[0] = " + linkUrl);
+		ImageButton imageButton = (ImageButton) itemView.findViewById(R.id.image);
+		imageButton.setVisibility(View.VISIBLE);
+		Picasso.with(mContext)
+				.load(image.src)
+				.placeholder(R.drawable.gn_detail_item_icon_phone_normal)
+				.resize(1240, 1563)
+				.onlyScaleDown()
+				.into(imageButton);
+	}
+    
+    private void setMoreInfoView(final RenderCardPayload.LinkStructure link, View itemView) {
+		if(link != null) {
 			TextView detailUrlView = (TextView) itemView.findViewById(R.id.moreinfo);
-			detailUrlView.setVisibility(View.VISIBLE);
 			detailUrlView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
 			detailUrlView.setText(link.anchorText);
 			detailUrlView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					openWebSite(linkUrl);
+					openLink(link.url);
 				}
 			});
 		} else {
-			LogUtil.e(TAG, "SimpleTextCardItem setMoreInfoView addr == null");
+			LogUtil.e(TAG, "SimpleStandardCardItem setMoreInfoView link == null");
 		}
     }
 
-	private void openWebSite(String url) {
+	private void openLink(String url) {
 		Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 		mIntent.addCategory(Intent.CATEGORY_BROWSABLE);
 		mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//		mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
+		mIntent.setPackage(APP_BROWSER_PACKAGE_NAME);
 		GnVoiceAssistApplication.getInstance().startActivity(mIntent);
 	}
 }

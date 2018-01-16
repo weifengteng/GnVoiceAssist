@@ -22,7 +22,7 @@ import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.widget.SimpleAppItem;
+import com.gionee.voiceassist.view.viewitem.SimpleAppItem;
 
 import java.util.List;
 
@@ -57,6 +57,11 @@ public class AppLaunchUsecase extends BaseUsecase {
                 fireByDeeplink(applaunchPayload);
                 break;
         }
+    }
+
+    @Override
+    public void handleUiFeedback(String uri) {
+
     }
 
     @Override
