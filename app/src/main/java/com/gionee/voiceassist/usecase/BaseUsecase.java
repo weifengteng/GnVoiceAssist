@@ -3,9 +3,11 @@ package com.gionee.voiceassist.usecase;
 import android.content.Context;
 
 import com.gionee.voiceassist.controller.appcontrol.DataController;
+import com.gionee.voiceassist.controller.appcontrol.ScreenController;
 import com.gionee.voiceassist.controller.customuserinteraction.ICuiControl;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.util.ContextUtil;
 
 /**
@@ -20,14 +22,13 @@ public abstract class BaseUsecase {
 
     public abstract void handleDirective(DirectiveEntity payload);
 
-    //TODO Handle ScreenInteract
-//    public abstract void handleScreenInteract();
+    public abstract void handleUiFeedback(String uri);
 
     public abstract String getAlias();
 
     //TODO render
-    public void render() {
-
+    public void render(CardEntity cardEntity) {
+        DataController.getDataController().getScreenController().renderToUi(cardEntity);
     }
 
 

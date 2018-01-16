@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.widget;
+package com.gionee.voiceassist.view.viewitem;
 
 import android.content.Context;
 import android.view.LayoutInflater;

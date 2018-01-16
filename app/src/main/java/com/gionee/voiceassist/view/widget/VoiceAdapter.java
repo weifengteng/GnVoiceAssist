@@ -1,10 +1,12 @@
-package com.gionee.voiceassist.widget;
+package com.gionee.voiceassist.view.widget;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.gionee.voiceassist.view.viewitem.BaseItem;
 
 import java.util.ArrayList;
 

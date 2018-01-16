@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -27,10 +26,8 @@ import com.gionee.voiceassist.util.Constants;
 import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.PermissionsChecker;
-import com.gionee.voiceassist.widget.HomeRecyclerView;
-import com.gionee.voiceassist.widget.HomeRecyclerViewAdapter;
-import com.gionee.voiceassist.widget.HomeScrollView;
-import com.gionee.voiceassist.widget.RippleLayout;
+import com.gionee.voiceassist.view.widget.HomeScrollView;
+import com.gionee.voiceassist.view.widget.RippleLayout;
 
 import java.lang.ref.WeakReference;
 
@@ -64,9 +61,6 @@ public class MainActivity extends GNBaseActivity
     private ImageView anim_outside;
     private ObjectAnimator mRotationor;
     private HomeScrollView sv;
-    private HomeRecyclerView rv;
-    private HomeRecyclerViewAdapter rvAdapter;
-    private LinearLayoutManager rvLayoutManager;
     private ExpandableListView home_listview;
     private RippleLayout rl;
     private TextView tip;
@@ -121,7 +115,7 @@ public class MainActivity extends GNBaseActivity
         super.onCreate(savedInstanceState);
         long startTs = System.currentTimeMillis();
         LogUtil.d(TAG, "onCreate");
-        setContentView(R.layout.home_activity_layout);
+        setContentView(R.layout.main_activity_layout);
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         initView();
         long endTs = System.currentTimeMillis();
@@ -200,11 +194,6 @@ public class MainActivity extends GNBaseActivity
         sv_ll = (LinearLayout)findViewById(R.id.sv_ll);
         sv = (HomeScrollView) findViewById(R.id.sv);
         rl = (RippleLayout)findViewById(R.id.ripple_layout);
-//        rv = (HomeRecyclerView) findViewById(R.id.rv);
-//        rvAdapter = new HomeRecyclerViewAdapter(this);
-//        rvLayoutManager = new LinearLayoutManager(this);
-//        rv.setAdapter(rvAdapter);
-//        rv.setLayoutManager(rvLayoutManager);
         anim_outside = (ImageView)findViewById(R.id.anim_outside);
         mRotationor = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.rotation_animator);
         mRotationor.setTarget(anim_outside);

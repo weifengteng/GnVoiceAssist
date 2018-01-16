@@ -377,6 +377,11 @@ public class GNMusicUsecase extends BaseUsecase{
     }
 
     @Override
+    public void handleUiFeedback(String uri) {
+
+    }
+
+    @Override
     public String getAlias() {
         return "localplayer";
     }

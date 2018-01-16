@@ -29,11 +29,9 @@ import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.CUInteractionUrlParser;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.T;
-import com.gionee.voiceassist.widget.ContactsListItem;
-import com.gionee.voiceassist.widget.SimCardListItem;
+import com.gionee.voiceassist.view.viewitem.ContactsListItem;
+import com.gionee.voiceassist.view.viewitem.SimCardListItem;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -249,6 +247,11 @@ public class SmsSendUseCase extends BaseUsecase {
                 chooseSimByVoice(mPhoneNumber, mSmsContent);
             }
         }
+    }
+
+    @Override
+    public void handleUiFeedback(String uri) {
+
     }
 
     @Override

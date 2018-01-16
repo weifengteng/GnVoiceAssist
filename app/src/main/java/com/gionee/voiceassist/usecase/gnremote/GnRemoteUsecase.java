@@ -33,6 +33,11 @@ public class GnRemoteUsecase extends BaseUsecase {
     }
 
     @Override
+    public void handleUiFeedback(String uri) {
+
+    }
+
+    @Override
     public String getAlias() {
         return "gnremote";
     }

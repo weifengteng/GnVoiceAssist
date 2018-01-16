@@ -16,7 +16,21 @@ public class ImageListCardEntity extends CardEntity {
     private List<ImageItem> imageItems = new ArrayList<>();
 
     public class ImageItem {
+        public ImageItem(String imgSrc) {
+            this.imgSrc = imgSrc;
+        }
         public String imgSrc = "";
     }
 
+    public List<ImageItem> getImageItems() {
+        return imageItems;
+    }
+
+    public void setImageItems(List<ImageItem> imageItems) {
+        this.imageItems = imageItems;
+    }
+
+    public void addImageItem(String imgSrc) {
+        imageItems.add(new ImageItem(imgSrc));
+    }
 }

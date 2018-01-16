@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,15 +23,21 @@ import android.widget.TextView;
 import com.gionee.voiceassist.controller.appcontrol.DataController;
 import com.gionee.voiceassist.controller.appcontrol.IRecognizerStateListener;
 import com.gionee.voiceassist.controller.appcontrol.IRenderListener;
+import com.gionee.voiceassist.controller.appcontrol.RenderEvent;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
+import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.PermissionsChecker;
 import com.gionee.voiceassist.util.RecognizerState;
-import com.gionee.voiceassist.widget.HomeRecyclerView;
-import com.gionee.voiceassist.widget.HomeRecyclerViewAdapter;
-import com.gionee.voiceassist.widget.RippleLayout;
+import com.gionee.voiceassist.view.adapter.DialogAdapter;
+import com.gionee.voiceassist.view.widget.HomeRecyclerView;
+import com.gionee.voiceassist.view.widget.RippleLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 
@@ -57,8 +64,8 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     private TextView tvTip;
     private RippleLayout btnRecord;
     private ImageButton btnHelp;
-    private HomeRecyclerView rv;
-    private HomeRecyclerViewAdapter rvAdapter;
+    private HomeRecyclerView rvDialog;
+    private DialogAdapter rvDialogAdapter;
     private LinearLayoutManager rvLayoutManager;
     private ObjectAnimator mRotationor;
     private ImageView anim_outside;
@@ -220,11 +227,11 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         lvHelpCommand = (ExpandableListView)findViewById(R.id.home_listview);
         btnRecord = (RippleLayout)findViewById(R.id.ripple_layout);
         btnRecord.setEnabled(false);
-//        rv = (HomeRecyclerView) findViewById(R.id.rv);
-//        rvAdapter = new HomeRecyclerViewAdapter(this);
-//        rvLayoutManager = new LinearLayoutManager(this);
-//        rv.setAdapter(rvAdapter);
-//        rv.setLayoutManager(rvLayoutManager);
+        rvDialog = (HomeRecyclerView) findViewById(R.id.rv);
+        rvDialogAdapter = new DialogAdapter(this);
+        rvLayoutManager = new LinearLayoutManager(this);
+        rvDialog.setAdapter(rvDialogAdapter);
+        rvDialog.setLayoutManager(rvLayoutManager);
         anim_outside = (ImageView)findViewById(R.id.anim_outside);
         mRotationor = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.rotation_animator);
         mRotationor.setTarget(anim_outside);
@@ -234,6 +241,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void initData() {
+        registerRenderCallback();
         if (mErrorHelper == null) {
             mErrorHelper = new ErrorHelper();
         }
@@ -268,6 +276,14 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         // TODO:
     }
 
+    private void registerRenderCallback() {
+        EventBus.getDefault().register(this);
+    }
+
+    private void unregisterRenderCallback() {
+        EventBus.getDefault().unregister(this);
+    }
+
     @Override
     public void onSpeakStart() {
 
@@ -289,6 +305,11 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     @Override
     public void onSpeakError(TtsController.TtsResultCode ttsResultCode, String s) {
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRenderPayload(RenderEvent renderEvent) {
+        rvDialogAdapter.addDialogItem(renderEvent.getPayload());
     }
 
 
@@ -319,6 +340,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
             mMainHandler = null;
         }
         super.onDestroy();
+        unregisterRenderCallback();
         mErrorHelper.unregisterErrorHandler();
     }
 

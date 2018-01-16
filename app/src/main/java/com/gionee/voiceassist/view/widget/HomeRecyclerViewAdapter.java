@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.widget;
+package com.gionee.voiceassist.view.widget;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

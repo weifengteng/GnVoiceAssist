@@ -11,6 +11,7 @@ import com.gionee.voiceassist.usecase.gnremote.GnRemoteUsecase;
 import com.gionee.voiceassist.usecase.music.GNMusicUsecase;
 import com.gionee.voiceassist.usecase.phonecall.PhoneCallUsecase;
 import com.gionee.voiceassist.usecase.remind.RemindUsecase;
+import com.gionee.voiceassist.usecase.screenrender.ScreenUsecase;
 import com.gionee.voiceassist.usecase.smssend.SmsSendUseCase;
 import com.gionee.voiceassist.util.LogUtil;
 
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by liyingheng on 1/9/18.
+ * 将底层语义解析返回消息、界面反馈消息分发到具体场景的Usecase中。
  */
 
 public class UsecaseDispatcher {
@@ -33,6 +34,7 @@ public class UsecaseDispatcher {
     private RemindUsecase reminderUsecase = new RemindUsecase();
     private PhoneCallUsecase phoneCallUsecase = new PhoneCallUsecase();
     private SmsSendUseCase smsSendUseCase = new SmsSendUseCase();
+    private ScreenUsecase screenUsecase = new ScreenUsecase();
 
     public UsecaseDispatcher() {
         usecaseMap = new HashMap<>();
@@ -47,6 +49,7 @@ public class UsecaseDispatcher {
         installUsecase(reminderUsecase);
         installUsecase(phoneCallUsecase);
         installUsecase(smsSendUseCase);
+        installUsecase(screenUsecase);
     }
 
     void destroyUsecase() {
@@ -57,6 +60,7 @@ public class UsecaseDispatcher {
         uninstallUsecase(reminderUsecase);
         uninstallUsecase(phoneCallUsecase);
         uninstallUsecase(smsSendUseCase);
+        uninstallUsecase(screenUsecase);
     }
 
     public void installUsecase(BaseUsecase usecase) {
@@ -80,6 +84,14 @@ public class UsecaseDispatcher {
             usecaseMap.get(usecaseAlias).handleDirective(payload);
         } else {
             LogUtil.e(TAG, "没有对应的 UseCase 分发别名" + usecaseAlias);
+        }
+    }
+
+    void uiFeedbackToUsecase(final String uri, final String usecaseAlias) {
+        if (isUsecaseInstalled(usecaseAlias)) {
+            usecaseMap.get(usecaseAlias).handleUiFeedback(uri);
+        } else {
+            LogUtil.e(TAG, "没有对应的Usecase分发别名，无法分发界面反馈." + usecaseAlias);
         }
     }
 

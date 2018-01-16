@@ -6,20 +6,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.view.View;
 
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.R;
-import com.gionee.voiceassist.basefunction.BasePresenter;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
-import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.T;
-import com.gionee.voiceassist.widget.SimpleContactInfoItem;
+import com.gionee.voiceassist.view.viewitem.SimpleContactInfoItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,6 +180,11 @@ public class ContactsUsecase extends BaseUsecase {
                 fireSearchContacts(contactsPayload.getCandidateName());
                 break;
         }
+    }
+
+    @Override
+    public void handleUiFeedback(String uri) {
+
     }
 
     @Override

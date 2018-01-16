@@ -21,7 +21,7 @@ import com.gionee.voiceassist.controller.recordcontrol.RecordController;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.widget.SimpleAppItem;
+import com.gionee.voiceassist.view.viewitem.SimpleAppItem;
 
 import java.util.List;
 

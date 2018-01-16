@@ -31,6 +31,11 @@ public class AlarmUsecase extends BaseUsecase {
         setAlarm(alarmPayload.getHour(), alarmPayload.getMinute(), alarmPayload.getRepeatDays(), "");
     }
 
+    @Override
+    public void handleUiFeedback(String uri) {
+
+    }
+
     public void setAlarm(int hour, int minute, ArrayList<Integer> triggerDays, String message) {
         Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM)
                 .putExtra(AlarmClock.EXTRA_HOUR,hour)

@@ -33,8 +33,8 @@ import com.gionee.voiceassist.util.CUInteractionUrlParser;
 import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.T;
-import com.gionee.voiceassist.widget.ContactsListItem;
-import com.gionee.voiceassist.widget.SimCardListItem;
+import com.gionee.voiceassist.view.viewitem.ContactsListItem;
+import com.gionee.voiceassist.view.viewitem.SimCardListItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -315,6 +315,11 @@ public class PhoneCallUsecase extends BaseUsecase {
                 chooseSimByVoice(mPhoneNumber);
             }
         }
+    }
+
+    @Override
+    public void handleUiFeedback(String uri) {
+
     }
 
     @Override

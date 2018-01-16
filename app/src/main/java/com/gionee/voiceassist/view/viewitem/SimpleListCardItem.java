@@ -1,4 +1,4 @@
-package com.gionee.voiceassist.widget;
+package com.gionee.voiceassist.view.viewitem;
 
 import android.Manifest;
 import android.content.Context;

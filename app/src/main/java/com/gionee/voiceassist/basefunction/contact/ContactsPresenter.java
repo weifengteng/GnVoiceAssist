@@ -16,7 +16,7 @@ import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.T;
-import com.gionee.voiceassist.widget.SimpleContactInfoItem;
+import com.gionee.voiceassist.view.viewitem.SimpleContactInfoItem;
 
 import java.util.ArrayList;
 import java.util.List;

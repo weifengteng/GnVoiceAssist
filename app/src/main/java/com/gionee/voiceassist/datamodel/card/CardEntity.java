@@ -14,9 +14,9 @@ public class CardEntity {
     private AppAction openAppAction = new AppAction();
     private Link extLink = new Link();
 
-    class Link {
-        String src = "";
-        String anchorText = "";
+    public static class Link {
+        public String src = "";
+        public String anchorText = "";
     }
 
     class AppAction {
