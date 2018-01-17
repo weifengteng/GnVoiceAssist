@@ -20,6 +20,7 @@ public class ImageListCardViewHolder extends BaseViewHolder {
     private ImageLoader mImageLoader;
     private LayoutInflater mInflater;
     private LinearLayout mListContainer;
+    private static final int MAX_IMAGE_SHOW_COUNT = 5;
 
 
     public ImageListCardViewHolder(View itemView) {
@@ -32,8 +33,11 @@ public class ImageListCardViewHolder extends BaseViewHolder {
     @Override
     public void bind(CardEntity payload) {
         ImageListCardEntity imageListCardPayload = (ImageListCardEntity) payload;
-        for (ImageListCardEntity.ImageItem item : imageListCardPayload.getImageItems()) {
-            bindItem(item);
+        int imageItemSize = imageListCardPayload.getImageItems().size();
+        // 一次最多显示 MAX_IMAGE_SHOW_COUNT 张图片
+        int maxCount = imageItemSize < MAX_IMAGE_SHOW_COUNT ? imageItemSize : MAX_IMAGE_SHOW_COUNT;
+        for(int i=0; i<maxCount; i++) {
+            bindItem(imageListCardPayload.getImageItems().get(i));
         }
     }
 

@@ -23,6 +23,7 @@ public class ListCardViewHolder extends BaseViewHolder {
     private LinearLayout listContainer;
     private LayoutInflater mInflater;
     private Context mContext;
+    private static final int MAX_IMAGE_SHOW_COUNT = 5;
 
     private ListCardViewHolder(View itemView, Context context) {
         super(itemView);
@@ -34,8 +35,11 @@ public class ListCardViewHolder extends BaseViewHolder {
     @Override
     public void bind(CardEntity payload) {
         ListCardEntity listCardPayload = (ListCardEntity) payload;
-        for (ListCardEntity.ListItem item : listCardPayload.getItems()) {
-            bindListItem(item);
+        int listCardItemSize = listCardPayload.getItems().size();
+        int maxCount = listCardItemSize > MAX_IMAGE_SHOW_COUNT ? MAX_IMAGE_SHOW_COUNT : listCardItemSize;
+
+        for(int i=0; i < maxCount; i++) {
+            bindListItem(listCardPayload.getItems().get(i));
         }
     }
 
@@ -65,6 +69,7 @@ public class ListCardViewHolder extends BaseViewHolder {
         tvTitle.setVisibility(hasTitle ? View.VISIBLE:View.GONE);
         tvContent.setVisibility(hasContent ? View.VISIBLE:View.GONE);
         tvMoreInfo.setVisibility(hasLink ? View.VISIBLE:View.GONE);
+        ivImage.setVisibility(hasImg ? View.VISIBLE:View.GONE);
 
         if (hasTitle) {
             tvTitle.setText(title);

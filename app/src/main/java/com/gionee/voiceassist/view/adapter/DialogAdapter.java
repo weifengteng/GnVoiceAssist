@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.gionee.voiceassist.datamodel.card.CardEntity;
-import com.gionee.voiceassist.datamodel.card.CardType;
 import com.gionee.voiceassist.datamodel.card.CardTypeCode;
 import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
@@ -40,7 +39,8 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 return ListCardViewHolder.newInstance(parent);
             case CardTypeCode.IMAGE_LIST_CARD:
                 return ImageListCardViewHolder.newInstance(parent);
-
+            default:
+                break;
         }
         return null;
     }
