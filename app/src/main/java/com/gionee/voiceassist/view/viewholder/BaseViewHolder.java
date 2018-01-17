@@ -17,6 +17,10 @@ public abstract class BaseViewHolder extends RecyclerView.ViewHolder {
 
     public abstract void bind(CardEntity payload);
 
+    public void onRecycled() {
+
+    }
+
     void setVisible(View view) {
         view.setVisibility(View.VISIBLE);
     }
