@@ -45,6 +45,12 @@ public class ImageListCardViewHolder extends BaseViewHolder {
         mListContainer.addView(itemView);
     }
 
+    @Override
+    public void onRecycled() {
+        super.onRecycled();
+        mListContainer.removeAllViews();
+    }
+
     public static ImageListCardViewHolder newInstance(ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.card_item_listcard_container, parent, false);
