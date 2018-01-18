@@ -12,7 +12,10 @@ import android.widget.TextView;
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.ListCardEntity;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.component.ImageLoader;
+import com.gionee.voiceassist.view.adapter.DialogSubItemPool;
+
 
 /**
  * Created by liyingheng on 1/16/18.
@@ -24,11 +27,13 @@ public class ListCardViewHolder extends BaseViewHolder {
     private LayoutInflater mInflater;
     private Context mContext;
     private static final int MAX_IMAGE_SHOW_COUNT = 5;
+    private DialogSubItemPool mItemPool;
 
-    private ListCardViewHolder(View itemView, Context context) {
+    private ListCardViewHolder(View itemView, Context context, DialogSubItemPool itemPool) {
         super(itemView);
         mInflater = LayoutInflater.from(context);
         mContext = context;
+        mItemPool = itemPool;
         listContainer = (LinearLayout) itemView.findViewById(R.id.lyt_list_container);
     }
 
@@ -43,10 +48,10 @@ public class ListCardViewHolder extends BaseViewHolder {
         }
     }
 
-    public static ListCardViewHolder newInstance(ViewGroup parent) {
+    public static ListCardViewHolder newInstance(ViewGroup parent, DialogSubItemPool subItemPool) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.card_item_listcard_container, parent, false);
-        return new ListCardViewHolder(itemView, parent.getContext());
+        return new ListCardViewHolder(itemView, parent.getContext(), subItemPool);
     }
 
     private void bindListItem(ListCardEntity.ListItem item) {
@@ -60,7 +65,7 @@ public class ListCardViewHolder extends BaseViewHolder {
         boolean hasLink = false;
         boolean hasImg = !TextUtils.isEmpty(imgSrc);
 
-        View itemView = mInflater.inflate(R.layout.card_item_listcard, listContainer, false);
+        View itemView = mItemPool.getListItemView(listContainer);
         TextView tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
         TextView tvContent = (TextView) itemView.findViewById(R.id.tv_content);
         TextView tvMoreInfo = (TextView) itemView.findViewById(R.id.tv_moreinfo);
@@ -91,6 +96,25 @@ public class ListCardViewHolder extends BaseViewHolder {
         }
 
         listContainer.addView(itemView);
+        log("subitem add." + " adding subItem url = " + content);
     }
 
+    @Override
+    public void onRecycled() {
+        super.onRecycled();
+        int childViewCount = listContainer.getChildCount();
+        log("subitem recycle begin." + " ChildViewCount = " + listContainer.getChildCount());
+        for (int i = childViewCount; i > 0; i--) {
+            View subItemView = listContainer.getChildAt(i - 1);
+            mItemPool.recycleListItemView(subItemView);
+            listContainer.removeViewAt(i - 1);
+//            log("subitem recycled." + " removing subItem... ChildViewCount = " + listContainer.getChildCount());
+        }
+        log("subitem recycled." + " all subitem removed. ChildViewCount = " + listContainer.getChildCount());
+    }
+
+    private void log(String message) {
+        String msg = "ListCardView At position " + getAdapterPosition() + ": " + message;
+        LogUtil.d("ListCard", msg);
+    }
 }
