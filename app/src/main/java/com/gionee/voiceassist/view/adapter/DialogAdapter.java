@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.gionee.voiceassist.datamodel.card.CardEntity;
+import com.gionee.voiceassist.datamodel.card.CardType;
 import com.gionee.voiceassist.datamodel.card.CardTypeCode;
 import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
@@ -23,9 +24,11 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private List<CardEntity> mPayloads = new ArrayList<>();
     private Context mContext;
+    private DialogSubItemPool mSubItemPool;
 
     public DialogAdapter(Context context) {
         mContext = context;
+        mSubItemPool = new DialogSubItemPool();
     }
 
     @Override
@@ -36,11 +39,12 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             case CardTypeCode.STANDARD_CARD:
                 return StandardCardViewHolder.newInstance(parent);
             case CardTypeCode.LIST_CARD:
-                return ListCardViewHolder.newInstance(parent);
+                return ListCardViewHolder.newInstance(parent, mSubItemPool);
             case CardTypeCode.IMAGE_LIST_CARD:
-                return ImageListCardViewHolder.newInstance(parent);
+                return ImageListCardViewHolder.newInstance(parent, mSubItemPool);
             default:
                 break;
+
         }
         return null;
     }
@@ -65,6 +69,12 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             mPayloads.add(payload);
             notifyItemInserted(mPayloads.size() - 1);
         }
+    }
+
+    @Override
+    public void onViewRecycled(BaseViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.onRecycled();
     }
 
     public void updateDialogItem(CardEntity payload) {
