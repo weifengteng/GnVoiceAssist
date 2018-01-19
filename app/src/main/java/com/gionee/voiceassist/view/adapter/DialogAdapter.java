@@ -86,12 +86,6 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
 
-    @Override
-    public void onViewRecycled(BaseViewHolder holder) {
-        super.onViewRecycled(holder);
-        holder.onRecycled();
-    }
-
     public void updateDialogItem(CardEntity payload) {
         //TODO 更新DialogItem
 

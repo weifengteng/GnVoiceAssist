@@ -82,7 +82,7 @@ public class StandardCardViewHolder extends BaseViewHolder {
         if (hasImg) {
             ivImage.setVisibility(View.VISIBLE);
             ImageLoader imageLoader = new ImageLoader(mContext);
-            imageLoader.loadImageFromRemote(imgSrc, ivImage, 15, 20, R.drawable.call_btn);
+            imageLoader.loadImageFromRemote(imgSrc, ivImage, 500, 500, R.drawable.call_btn);
         } else {
             ivImage.setVisibility(View.GONE);
         }
