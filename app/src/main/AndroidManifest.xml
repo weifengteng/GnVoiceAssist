@@ -101,6 +101,10 @@
             android:theme="@style/Theme.AppCompat"
             android:exported="true">
         </activity>
+
+        <activity android:name=".ImageListCardBigPictureActivity"
+            android:theme="@style/Transparent">
+        </activity>
     </application>
 
 </manifest>

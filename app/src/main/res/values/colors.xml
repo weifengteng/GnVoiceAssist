@@ -32,4 +32,5 @@
     <color name="sms_content_name_color">#ffffff</color>
     <color name="dialog_checkbox_color">#66000000</color>
     <color name="home_background">#ee000000</color>
+    <color name="half_transparent">#9000</color>
 </resources>

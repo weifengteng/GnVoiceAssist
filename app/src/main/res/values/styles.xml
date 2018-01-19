@@ -24,4 +24,10 @@
 		<item name="android:paddingEnd">5dp</item>
 	</style>
 
+	<style name="Transparent" parent="@android:style/Theme.NoTitleBar">
+		<item name="android:windowBackground">@color/half_transparent</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+	</style>
+
 </resources>
