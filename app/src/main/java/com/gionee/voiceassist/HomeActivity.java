@@ -122,8 +122,6 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
                         DataController.getDataController().onResume();
                     }
                 });
-            } else {
-                DataController.getDataController().onResume();
             }
         }
         super.onResume();
@@ -340,6 +338,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
             mMainHandler = null;
         }
         super.onDestroy();
+        DataController.getDataController().onDestroy();
         unregisterRenderCallback();
         mErrorHelper.unregisterErrorHandler();
     }

@@ -2,7 +2,6 @@ package com.gionee.voiceassist.controller.recordcontrol;
 
 import android.os.Handler;
 
-import com.baidu.duer.dcs.api.IDialogStateListener;
 import com.baidu.duer.dcs.api.IVoiceRequestListener;
 import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
@@ -137,6 +136,8 @@ public class RecordController implements IRecordControl {
                         @Override
                         public void onSucceed() {
                             LogUtil.d(TAG, "cancel Voice Request success");
+                            // TODO: Bug, DialogState not callback sometimes, may block in speaking or idle state
+                            setSDKRecording(false);
                         }
                     });
                 } else {

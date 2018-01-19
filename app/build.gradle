@@ -98,6 +98,7 @@ dependencies {
     }
     annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:3.0.1"
     compile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    compile 'com.youth.banner:banner:1.4.10'
 
     // Compile DuerOS Dependencies
     compile files(

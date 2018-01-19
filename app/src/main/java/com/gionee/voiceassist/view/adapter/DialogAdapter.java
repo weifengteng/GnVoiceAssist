@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.CardType;
 import com.gionee.voiceassist.datamodel.card.CardTypeCode;
+import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ListCardViewHolder;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 
 public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
-
+    private static final String TAG = DialogAdapter.class.getSimpleName();
     private List<CardEntity> mPayloads = new ArrayList<>();
     private Context mContext;
     private DialogSubItemPool mSubItemPool;
@@ -33,6 +34,7 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LogUtil.d(TAG, "onCreateViewHolder viewType= " + viewType);
         switch (viewType) {
             case CardTypeCode.TEXT_CARD:
                 return TextCardViewHolder.newInstance(parent);
@@ -51,7 +53,13 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
+        LogUtil.d(TAG, "onBindViewHolder position= " + position);
         holder.bind(mPayloads.get(position));
+    }
+
+    @Override
+    public void onBindViewHolder(BaseViewHolder holder, int position, List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
     }
 
     @Override
@@ -64,7 +72,14 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         return mPayloads.size();
     }
 
+    @Override
+    public void onViewRecycled(BaseViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.onRecycled();
+    }
+
     public void addDialogItem(CardEntity payload) {
+        LogUtil.d(TAG, "addDialogItem CardEntity = " + payload.getType());
         if (payload != null) {
             mPayloads.add(payload);
             notifyItemInserted(mPayloads.size() - 1);

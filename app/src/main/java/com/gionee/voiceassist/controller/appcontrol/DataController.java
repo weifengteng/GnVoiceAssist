@@ -1,5 +1,6 @@
 package com.gionee.voiceassist.controller.appcontrol;
 
+import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.util.Preconditions;
 import com.gionee.voiceassist.util.RecognizerState;
 
@@ -49,7 +50,8 @@ public class DataController {
     }
 
     public void onDestroy() {
-
+        mServiceController.detachService();
+        mUsecaseDispatcher.destroyUsecase();
     }
 
     public void onResume() {
@@ -60,8 +62,6 @@ public class DataController {
 
     public void onPause() {
         setAppInForeground(false);
-        mServiceController.detachService();
-        mUsecaseDispatcher.destroyUsecase();
     }
 
     private void setAppInForeground(boolean inForeground) {
