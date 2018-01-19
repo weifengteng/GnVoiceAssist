@@ -15,6 +15,7 @@ import com.gionee.voiceassist.datamodel.card.ListCardEntity;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.component.ImageLoader;
 import com.gionee.voiceassist.view.adapter.DialogSubItemPool;
+import com.gionee.voiceassist.view.widget.RecycleImageView;
 
 
 /**
@@ -69,7 +70,7 @@ public class ListCardViewHolder extends BaseViewHolder {
         TextView tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
         TextView tvContent = (TextView) itemView.findViewById(R.id.tv_content);
         TextView tvMoreInfo = (TextView) itemView.findViewById(R.id.tv_moreinfo);
-        ImageButton ivImage = (ImageButton) itemView.findViewById(R.id.iv_image);
+        RecycleImageView ivImage = (RecycleImageView) itemView.findViewById(R.id.iv_image);
 
         tvTitle.setVisibility(hasTitle ? View.VISIBLE:View.GONE);
         tvContent.setVisibility(hasContent ? View.VISIBLE:View.GONE);

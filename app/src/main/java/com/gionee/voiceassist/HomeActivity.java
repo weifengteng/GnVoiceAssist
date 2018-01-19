@@ -122,6 +122,8 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
                         DataController.getDataController().onResume();
                     }
                 });
+            } else {
+                DataController.getDataController().onResume();
             }
         }
         super.onResume();
@@ -249,6 +251,14 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         needInitFramework = false;
     }
 
+    private void destroyData() {
+        unregisterRenderCallback();
+        mErrorHelper.unregisterErrorHandler();
+        DataController.getDataController().removeRecognizerStateListener(recoStateListener);
+        DataController.getDataController().removeRenderListener(renderListener);
+        DataController.getDataController().onDestroy();
+    }
+
     private void initHandler() {
         mMainHandler = new MainHandler(this);
     }
@@ -337,10 +347,8 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
             mMainHandler.removeCallbacksAndMessages(null);
             mMainHandler = null;
         }
+        destroyData();
         super.onDestroy();
-        DataController.getDataController().onDestroy();
-        unregisterRenderCallback();
-        mErrorHelper.unregisterErrorHandler();
     }
 
     static class MainHandler extends Handler {
