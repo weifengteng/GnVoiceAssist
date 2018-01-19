@@ -5,12 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.gionee.voiceassist.datamodel.card.CardEntity;
-import com.gionee.voiceassist.datamodel.card.CardType;
 import com.gionee.voiceassist.datamodel.card.CardTypeCode;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ListCardViewHolder;
+import com.gionee.voiceassist.view.viewholder.QueryTextCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StandardCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.TextCardViewHolder;
 
@@ -36,7 +36,9 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LogUtil.d(TAG, "onCreateViewHolder viewType= " + viewType);
         switch (viewType) {
-            case CardTypeCode.TEXT_CARD:
+            case CardTypeCode.QUERY_TEXT_CARD:
+                return QueryTextCardViewHolder.newInstance(parent);
+            case CardTypeCode.ANSWER_TEXT_CARD:
                 return TextCardViewHolder.newInstance(parent);
             case CardTypeCode.STANDARD_CARD:
                 return StandardCardViewHolder.newInstance(parent);
@@ -70,12 +72,6 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override
     public int getItemCount() {
         return mPayloads.size();
-    }
-
-    @Override
-    public void onViewRecycled(BaseViewHolder holder) {
-        super.onViewRecycled(holder);
-        holder.onRecycled();
     }
 
     public void addDialogItem(CardEntity payload) {
