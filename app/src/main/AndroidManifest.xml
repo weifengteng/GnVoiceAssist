@@ -77,7 +77,8 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/HomeVoiceFullScreenThemeWallpaper">
+            android:theme="@style/HomeVoiceFullScreenThemeWallpaper"
+            android:exported="true">
         </activity>
         <activity android:name=".PermissionsActivity" />
 

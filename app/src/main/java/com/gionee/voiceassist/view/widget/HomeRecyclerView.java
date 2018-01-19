@@ -27,6 +27,14 @@ public class HomeRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
     }
 
+    private AdapterDataObserver mObserver = new AdapterDataObserver() {
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            scrollToPosition(positionStart);
+        }
+    };
+
+    private View mEmptyView;
 
     /**
      * 触摸事件
@@ -83,13 +91,19 @@ public class HomeRecyclerView extends RecyclerView {
 //        }
 //    }
 
+    public void setEmptyView(View v) {
+        mEmptyView = v;
+    }
 
-    public void addView(View v) {
+    public void updateEmptyView(View v, boolean withAnimation) {
 
     }
 
-    public void removeView(int position) {
-
+    @Override
+    public void setAdapter(Adapter adapter) {
+        super.setAdapter(adapter);
+        adapter.registerAdapterDataObserver(mObserver);
     }
+
 
 }
