@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
-import com.gionee.voiceassist.datamodel.card.TextCardEntity;
+import com.gionee.voiceassist.datamodel.card.AnswerTextCardEntity;
 import com.gionee.voiceassist.util.ContextUtil;
 
 /**
@@ -30,17 +30,17 @@ public class TextCardViewHolder extends BaseViewHolder {
 
     @Override
     public void bind(CardEntity payload) {
-        bindContent((TextCardEntity) payload);
-        bindMoreInfo((TextCardEntity) payload);
+        bindContent((AnswerTextCardEntity) payload);
+        bindMoreInfo((AnswerTextCardEntity) payload);
     }
 
     public static TextCardViewHolder newInstance(ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.card_item_textcard, parent, false);
+        View itemView = inflater.inflate(R.layout.card_item_answer_textcard, parent, false);
         return new TextCardViewHolder(itemView);
     }
 
-    private void bindContent(TextCardEntity payload) {
+    private void bindContent(AnswerTextCardEntity payload) {
         String content = payload.getContent();
         if (content != null && !TextUtils.isEmpty(content)) {
             tvContent.setVisibility(View.VISIBLE);
@@ -50,7 +50,7 @@ public class TextCardViewHolder extends BaseViewHolder {
         }
     }
 
-    private void bindMoreInfo(TextCardEntity payload) {
+    private void bindMoreInfo(AnswerTextCardEntity payload) {
         CardEntity.Link link = payload.getExtLink();
         if (!TextUtils.isEmpty(link.src)) {
             if (!TextUtils.isEmpty(link.anchorText)) {

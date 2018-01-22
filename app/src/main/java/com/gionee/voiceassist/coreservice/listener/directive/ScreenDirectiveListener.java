@@ -1,7 +1,5 @@
 package com.gionee.voiceassist.coreservice.listener.directive;
 
-import android.content.Context;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.screen.ImagelistCardEntity;
@@ -37,7 +35,7 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
             String asrResult = renderVoiceInputTextPayload.text;
             RenderVoiceInputTextPayload.Type type = renderVoiceInputTextPayload.type;
             LogUtil.d(TAG, "asrResult= " + asrResult);
-            // 实时显示识别结果
+            /*// 实时显示识别结果
             if(isLastAsrRoundComplete) {
 //                screenRender.renderQueryInScreen(asrResult);
                 isLastAsrRoundComplete = false;
@@ -47,12 +45,15 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
                     isLastAsrRoundComplete = true;
 //                    screenRender.setAsrResult(asrResult);
                 }
-            }
-
-            /*// 只显示最终结果
-            if(type == RenderVoiceInputTextPayload.Type.FINAL) {
-                screenRender.renderQueryInScreen(asrResult);
             }*/
+
+            // 只显示最终结果
+            if(type == RenderVoiceInputTextPayload.Type.FINAL) {
+//                screenRender.renderQueryInScreen(asrResult);
+                TextCardEntity entity = new TextCardEntity();
+                entity.bind(renderVoiceInputTextPayload);
+                sendDirective(entity);
+            }
         }
     }
 

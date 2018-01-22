@@ -2,9 +2,13 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_marginEnd="80dp"
+    android:layout_marginTop="10dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
     android:layout_height="wrap_content"
-    style="@style/DialogCardStyle">
+    android:background="@drawable/background_left">
 
     <TextView
         android:id="@+id/tv_content"
@@ -12,6 +16,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="@color/tel_addr_text_color"
+        android:paddingStart="15dp"
+        android:paddingEnd="10dp"
         android:textSize="@dimen/sub_content_text_size"/>
 
     <TextView
@@ -22,7 +28,9 @@
         android:textColor="@color/tel_addr_text_color"
         android:visibility="gone"
         android:textSize="@dimen/sub1_content_text_size"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/layout_margin_bottom"/>
+        android:layout_alignParentEnd="true"
+        android:paddingStart="15dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"/>
 
 </RelativeLayout>

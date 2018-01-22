@@ -1,20 +1,15 @@
 package com.gionee.voiceassist.usecase.screenrender;
 
-import android.os.Handler;
-import android.os.Message;
-import android.text.TextUtils;
-import android.view.View;
-
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.screen.ImagelistCardEntity;
+import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.ImageListCardEntity;
 import com.gionee.voiceassist.datamodel.card.ListCardEntity;
+import com.gionee.voiceassist.datamodel.card.QueryTextCardEntity;
 import com.gionee.voiceassist.datamodel.card.StandardCardEntity;
-import com.gionee.voiceassist.datamodel.card.TextCardEntity;
+import com.gionee.voiceassist.datamodel.card.AnswerTextCardEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
-import com.gionee.voiceassist.util.Constants;
-import com.gionee.voiceassist.util.LogUtil;
 
 
 /**
@@ -110,11 +105,17 @@ public class ScreenUsecase extends BaseUsecase{
     }
 
     private void fireTextCard(com.gionee.voiceassist.coreservice.datamodel.screen.TextCardEntity payload) {
-        TextCardEntity cardEntity = new TextCardEntity();
-        cardEntity.setTitle(payload.getTitle());
-        cardEntity.setContent(payload.getContent());
-        if (payload.getLink() != null) {
-            cardEntity.setExtLink(payload.getLink().src, payload.getLink().anchor);
+        CardEntity cardEntity;
+        if(payload.isVoiceInputText()) {
+            cardEntity = new QueryTextCardEntity();
+            cardEntity.setContent(payload.getContent());
+        } else {
+            cardEntity = new AnswerTextCardEntity();
+            cardEntity.setTitle(payload.getTitle());
+            cardEntity.setContent(payload.getContent());
+            if (payload.getLink() != null) {
+                cardEntity.setExtLink(payload.getLink().src, payload.getLink().anchor);
+            }
         }
         render(cardEntity);
     }
