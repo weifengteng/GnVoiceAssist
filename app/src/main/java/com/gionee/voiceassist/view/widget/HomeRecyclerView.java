@@ -15,6 +15,8 @@ import android.view.animation.TranslateAnimation;
 
 public class HomeRecyclerView extends RecyclerView {
 
+    private float mFlingRatio = 1f;
+
     public HomeRecyclerView(Context context) {
         super(context);
     }
@@ -27,11 +29,39 @@ public class HomeRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
     }
 
+    private AdapterDataObserver mObserver = new AdapterDataObserver() {
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            scrollToPosition(positionStart);
+            if (getAdapter().getItemCount() == 0) {
+                mEmptyView.setVisibility(VISIBLE);
+            } else {
+                mEmptyView.setVisibility(GONE);
+            }
+        }
 
-    /**
-     * 触摸事件
-     * @param ev event
-     */
+        @Override
+        public void onChanged() {
+            if (getAdapter().getItemCount() == 0) {
+                mEmptyView.setVisibility(VISIBLE);
+            } else {
+                mEmptyView.setVisibility(GONE);
+            }
+        }
+
+        @Override
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            if (getAdapter().getItemCount() == 0) {
+                mEmptyView.setVisibility(VISIBLE);
+            } else {
+                mEmptyView.setVisibility(GONE);
+            }
+        }
+    };
+
+    private View mEmptyView;
+
+    
 //    public void commOnTouchEvent(MotionEvent ev) {
 //        int action = ev.getAction();
 //        switch (action) {
@@ -83,13 +113,32 @@ public class HomeRecyclerView extends RecyclerView {
 //        }
 //    }
 
+    public void setEmptyView(View v) {
+        mEmptyView = v;
+        if (getAdapter().getItemCount() == 0) {
+            mEmptyView.setVisibility(VISIBLE);
+        } else {
+            mEmptyView.setVisibility(GONE);
+        }
+    }
 
-    public void addView(View v) {
+    public void updateEmptyView(View v, boolean withAnimation) {
 
     }
 
-    public void removeView(int position) {
-
+    @Override
+    public void setAdapter(Adapter adapter) {
+        super.setAdapter(adapter);
+        adapter.registerAdapterDataObserver(mObserver);
     }
 
+    @Override
+    public boolean fling(int velocityX, int velocityY) {
+        velocityX = (int) (velocityX * mFlingRatio);
+        return super.fling(velocityX, velocityY);
+    }
+
+    public void setFlingRatio(float flingRatio) {
+        mFlingRatio = flingRatio;
+    }
 }

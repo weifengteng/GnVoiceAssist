@@ -32,6 +32,7 @@ import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.PermissionsChecker;
 import com.gionee.voiceassist.util.RecognizerState;
 import com.gionee.voiceassist.view.adapter.DialogAdapter;
+import com.gionee.voiceassist.view.widget.DialogLayoutManager;
 import com.gionee.voiceassist.view.widget.HomeRecyclerView;
 import com.gionee.voiceassist.view.widget.RippleLayout;
 
@@ -66,7 +67,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     private ImageButton btnHelp;
     private HomeRecyclerView rvDialog;
     private DialogAdapter rvDialogAdapter;
-    private LinearLayoutManager rvLayoutManager;
+    private DialogLayoutManager rvLayoutManager;
     private ObjectAnimator mRotationor;
     private ImageView anim_outside;
     private LinearLayout llHelpCommand;
@@ -222,16 +223,24 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
     private void initView() {
         tvTip = (TextView)findViewById(R.id.tip);
-        tvTip.setVisibility(View.VISIBLE);
+//        tvTip.setVisibility(View.VISIBLE);
         btnHelp = (ImageButton)findViewById(R.id.help);
         lvHelpCommand = (ExpandableListView)findViewById(R.id.home_listview);
         btnRecord = (RippleLayout)findViewById(R.id.ripple_layout);
         btnRecord.setEnabled(false);
+
+        //Dialog列表配置
         rvDialog = (HomeRecyclerView) findViewById(R.id.rv);
         rvDialogAdapter = new DialogAdapter(this);
-        rvLayoutManager = new LinearLayoutManager(this);
+        rvLayoutManager = new DialogLayoutManager(this);
         rvDialog.setAdapter(rvDialogAdapter);
         rvDialog.setLayoutManager(rvLayoutManager);
+        rvDialog.setEmptyView(tvTip);
+        rvDialog.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
+        rvDialog.setFlingRatio(0.25f);
+        rvLayoutManager.setScrollSpeedRatio(0.65f);
+
+
         anim_outside = (ImageView)findViewById(R.id.anim_outside);
         mRotationor = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.rotation_animator);
         mRotationor.setTarget(anim_outside);
@@ -264,7 +273,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void updateStopRecordingUI() {
-        tvTip.setVisibility(View.GONE);
+//        tvTip.setVisibility(View.GONE);
         btnHelp.setVisibility(View.VISIBLE);
         btnRecord.stopRippleAnimation();
         LogUtil.d(TAG, "setUIByClick stopRippleAnimation");
