@@ -223,7 +223,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
     private void initView() {
         tvTip = (TextView)findViewById(R.id.tip);
-        tvTip.setVisibility(View.VISIBLE);
+//        tvTip.setVisibility(View.VISIBLE);
         btnHelp = (ImageButton)findViewById(R.id.help);
         lvHelpCommand = (ExpandableListView)findViewById(R.id.home_listview);
         btnRecord = (RippleLayout)findViewById(R.id.ripple_layout);
@@ -235,7 +235,10 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
         rvLayoutManager = new DialogLayoutManager(this);
         rvDialog.setAdapter(rvDialogAdapter);
         rvDialog.setLayoutManager(rvLayoutManager);
+        rvDialog.setEmptyView(tvTip);
         rvDialog.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
+        rvDialog.setFlingRatio(0.25f);
+        rvLayoutManager.setScrollSpeedRatio(0.65f);
 
 
         anim_outside = (ImageView)findViewById(R.id.anim_outside);
@@ -270,7 +273,7 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     }
 
     private void updateStopRecordingUI() {
-        tvTip.setVisibility(View.GONE);
+//        tvTip.setVisibility(View.GONE);
         btnHelp.setVisibility(View.VISIBLE);
         btnRecord.stopRippleAnimation();
         LogUtil.d(TAG, "setUIByClick stopRippleAnimation");

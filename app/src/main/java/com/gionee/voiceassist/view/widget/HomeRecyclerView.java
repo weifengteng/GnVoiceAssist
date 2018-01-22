@@ -15,6 +15,8 @@ import android.view.animation.TranslateAnimation;
 
 public class HomeRecyclerView extends RecyclerView {
 
+    private float mFlingRatio = 1f;
+
     public HomeRecyclerView(Context context) {
         super(context);
     }
@@ -31,15 +33,35 @@ public class HomeRecyclerView extends RecyclerView {
         @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
             scrollToPosition(positionStart);
+            if (getAdapter().getItemCount() == 0) {
+                mEmptyView.setVisibility(VISIBLE);
+            } else {
+                mEmptyView.setVisibility(GONE);
+            }
+        }
+
+        @Override
+        public void onChanged() {
+            if (getAdapter().getItemCount() == 0) {
+                mEmptyView.setVisibility(VISIBLE);
+            } else {
+                mEmptyView.setVisibility(GONE);
+            }
+        }
+
+        @Override
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            if (getAdapter().getItemCount() == 0) {
+                mEmptyView.setVisibility(VISIBLE);
+            } else {
+                mEmptyView.setVisibility(GONE);
+            }
         }
     };
 
     private View mEmptyView;
 
-    /**
-     * 触摸事件
-     * @param ev event
-     */
+    
 //    public void commOnTouchEvent(MotionEvent ev) {
 //        int action = ev.getAction();
 //        switch (action) {
@@ -93,6 +115,11 @@ public class HomeRecyclerView extends RecyclerView {
 
     public void setEmptyView(View v) {
         mEmptyView = v;
+        if (getAdapter().getItemCount() == 0) {
+            mEmptyView.setVisibility(VISIBLE);
+        } else {
+            mEmptyView.setVisibility(GONE);
+        }
     }
 
     public void updateEmptyView(View v, boolean withAnimation) {
@@ -105,5 +132,13 @@ public class HomeRecyclerView extends RecyclerView {
         adapter.registerAdapterDataObserver(mObserver);
     }
 
+    @Override
+    public boolean fling(int velocityX, int velocityY) {
+        velocityX = (int) (velocityX * mFlingRatio);
+        return super.fling(velocityX, velocityY);
+    }
 
+    public void setFlingRatio(float flingRatio) {
+        mFlingRatio = flingRatio;
+    }
 }

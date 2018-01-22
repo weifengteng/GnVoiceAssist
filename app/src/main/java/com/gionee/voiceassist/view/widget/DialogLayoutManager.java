@@ -16,6 +16,7 @@ import android.util.DisplayMetrics;
 public class DialogLayoutManager extends LinearLayoutManager {
 
     private final float SCROLL_SPEED_MS_PERINCH = 3f;
+    private float mSpeedRatio = 1f;
 
     public DialogLayoutManager(Context context) {
         super(context);
@@ -49,8 +50,23 @@ public class DialogLayoutManager extends LinearLayoutManager {
         startSmoothScroll(scroller);
     }
 
+    @Override
+    public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
+        int origin = super.scrollVerticallyBy((int)(dy * mSpeedRatio), recycler, state);
+        if (origin == (int) (dy * mSpeedRatio)) {
+            return dy;
+        }
+        return origin;
+    }
+
+
+
     public void scrollToBottom(RecyclerView recyclerView) {
         scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
+    }
+
+    public void setScrollSpeedRatio(float speedRatio) {
+        mSpeedRatio = speedRatio;
     }
 
 }
