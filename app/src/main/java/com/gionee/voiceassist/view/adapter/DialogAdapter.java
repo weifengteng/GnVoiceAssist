@@ -12,6 +12,7 @@ import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.QueryTextCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StandardCardViewHolder;
+import com.gionee.voiceassist.view.viewholder.StopwatchCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.TextCardViewHolder;
 
 import java.util.ArrayList;
@@ -46,9 +47,10 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 return ListCardViewHolder.newInstance(parent, mSubItemPool);
             case CardTypeCode.IMAGE_LIST_CARD:
                 return ImageListCardViewHolder.newInstance(parent, mSubItemPool);
+            case CardTypeCode.STOPWATCH_CARD:
+                return StopwatchCardViewHolder.newInstance(parent);
             default:
                 break;
-
         }
         return null;
     }

@@ -57,7 +57,7 @@ public class CustomCmdDirectiveListener extends BaseDirectiveListener implements
     public void onStartTimer() {
         // TODO:
         LogUtil.d(TAG, "onStartTimer");
-        sendDirective(createPayload(GioneeCustomDirectiveEntity.GioneeCustomAction.START_TIMER));
+        sendDirective(createPayload(GioneeCustomDirectiveEntity.GioneeCustomAction.START_STOPWATCH));
     }
 
     private GioneeCustomDirectiveEntity createPayload(GioneeCustomDirectiveEntity.GioneeCustomAction action) {

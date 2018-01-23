@@ -111,7 +111,12 @@ public class ServiceController {
 
         @Override
         public void onGioneeCustomCommandPayload(GioneeCustomDirectiveEntity payload) {
-            fireDirectiveDispatch(payload, "gionee_custom_command");
+//            fireDirectiveDispatch(payload, "gionee_custom_command");
+            switch (payload.getAction()) {
+                case START_STOPWATCH:
+                    fireDirectiveDispatch(payload, "stopwatch");
+                    break;
+            }
         }
 
         @Override

@@ -13,6 +13,7 @@ import com.gionee.voiceassist.usecase.phonecall.PhoneCallUsecase;
 import com.gionee.voiceassist.usecase.remind.RemindUsecase;
 import com.gionee.voiceassist.usecase.screenrender.ScreenUsecase;
 import com.gionee.voiceassist.usecase.smssend.SmsSendUseCase;
+import com.gionee.voiceassist.usecase.timing.StopwatchUsecase;
 import com.gionee.voiceassist.util.LogUtil;
 
 import java.util.HashMap;
@@ -35,6 +36,7 @@ public class UsecaseDispatcher {
     private PhoneCallUsecase phoneCallUsecase = new PhoneCallUsecase();
     private SmsSendUseCase smsSendUseCase = new SmsSendUseCase();
     private ScreenUsecase screenUsecase = new ScreenUsecase();
+    private StopwatchUsecase stopwatchUsecase = new StopwatchUsecase();
 
     public UsecaseDispatcher() {
         usecaseMap = new HashMap<>();
@@ -50,6 +52,7 @@ public class UsecaseDispatcher {
         installUsecase(phoneCallUsecase);
         installUsecase(smsSendUseCase);
         installUsecase(screenUsecase);
+        installUsecase(stopwatchUsecase);
     }
 
     void destroyUsecase() {
@@ -61,6 +64,7 @@ public class UsecaseDispatcher {
         uninstallUsecase(phoneCallUsecase);
         uninstallUsecase(smsSendUseCase);
         uninstallUsecase(screenUsecase);
+        uninstallUsecase(stopwatchUsecase);
     }
 
     public void installUsecase(BaseUsecase usecase) {
