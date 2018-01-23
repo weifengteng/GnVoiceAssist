@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.gionee.voiceassist.R;
@@ -22,6 +23,8 @@ public class StopwatchCardViewHolder extends BaseViewHolder {
 
     private TextView tvTimeIndicator;
     private Button btnControl;
+    private FrameLayout lytCancelledIndicator;
+
     private StopwatchCardEntity mPayload;
     private StopwatchCardEntity.StopwatchState mState = StopwatchCardEntity.StopwatchState.STOP;
 
@@ -29,16 +32,8 @@ public class StopwatchCardViewHolder extends BaseViewHolder {
 
         @Override
         public void onStateChanged(StopwatchCardEntity.StopwatchState state) {
-            String nextStateText = "";
-            switch (state) {
-                case START:
-                    nextStateText = "暂停";
-                    break;
-                case PAUSE:
-                    nextStateText = "恢复";
-                    break;
-            }
-            btnControl.setText(nextStateText);
+            mState = state;
+            bindState(state);
         }
 
         @Override
@@ -51,13 +46,14 @@ public class StopwatchCardViewHolder extends BaseViewHolder {
         super(itemView);
         tvTimeIndicator = (TextView) itemView.findViewById(R.id.tv_time_indicator);
         btnControl = (Button) itemView.findViewById(R.id.btn_stopwatch_control);
+        lytCancelledIndicator = (FrameLayout) itemView.findViewById(R.id.lyt_cancel);
         btnControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String nextStateAction = "";
                 switch (mState) {
-                     case START:
-                        nextStateAction = "pause";
+                    case START:
+                        nextStateAction = "stop";
                         break;
                     case PAUSE:
                         nextStateAction = "resume";
@@ -72,6 +68,7 @@ public class StopwatchCardViewHolder extends BaseViewHolder {
     public void bind(CardEntity payload) {
         mPayload = (StopwatchCardEntity) payload;
         bindTotalTime(mPayload);
+        bindState(mPayload.getState());
         registerStopwatchObserver(mPayload);
     }
 
@@ -113,6 +110,26 @@ public class StopwatchCardViewHolder extends BaseViewHolder {
         }
         String totalTimeStr = formatTime(payload.getTotalTime());
         tvTimeIndicator.setText(totalTimeStr);
+    }
+
+    private void bindState(StopwatchCardEntity.StopwatchState state) {
+        String nextStateText = "";
+        switch (state) {
+            case START:
+                nextStateText = "暂停";
+                lytCancelledIndicator.setVisibility(View.GONE);
+                break;
+            case PAUSE:
+                nextStateText = "恢复";
+                lytCancelledIndicator.setVisibility(View.GONE);
+                break;
+            case STOP:
+                nextStateText = "开始";
+                lytCancelledIndicator.setVisibility(View.VISIBLE);
+//                btnControl.setOnClickListener(null);
+                break;
+        }
+        btnControl.setText(nextStateText);
     }
 
     private String formatTime(long timeInMills) {

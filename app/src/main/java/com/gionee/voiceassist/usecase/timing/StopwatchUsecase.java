@@ -46,7 +46,12 @@ public class StopwatchUsecase extends BaseUsecase {
 
     @Override
     public void handleUiFeedback(String uri) {
-
+        String action = uri.split("://")[1];
+        switch (action) {
+            case "stop":
+                stopwatchControl.stop();
+                break;
+        }
     }
 
     @Override
@@ -67,7 +72,9 @@ public class StopwatchUsecase extends BaseUsecase {
                 }
             };
             stopwatchControl.start();
+            updateState(StopwatchCardEntity.StopwatchState.START);
         } else {
+            cardPayload.setState(StopwatchCardEntity.StopwatchState.START);
             playAndRenderText("计时器已开启");
         }
     }
@@ -77,7 +84,21 @@ public class StopwatchUsecase extends BaseUsecase {
             @Override
             public void run() {
                 for (StopwatchCardEntity payload:activeCards) {
-                    payload.updateTime(totalTime);
+                    payload.setTotalTime(totalTime);
+                }
+            }
+        });
+    }
+
+    private void updateState(final StopwatchCardEntity.StopwatchState state) {
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (StopwatchCardEntity payload:activeCards) {
+                    payload.setState(state);
+                    if (state == StopwatchCardEntity.StopwatchState.STOP) {
+
+                    }
                 }
             }
         });
@@ -101,6 +122,8 @@ public class StopwatchUsecase extends BaseUsecase {
 
         public void stop() {
             stopwatchTask.cancel();
+            updateState(StopwatchCardEntity.StopwatchState.STOP);
+
 //            Iterator<String> iter = cardUids.iterator();
 //            while (iter.hasNext()) {
 //                String uid = iter.next();

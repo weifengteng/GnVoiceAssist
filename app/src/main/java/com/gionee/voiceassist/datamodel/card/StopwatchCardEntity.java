@@ -41,11 +41,18 @@ public class StopwatchCardEntity extends CardEntity {
 
     public void setState(StopwatchState state) {
         this.state = state;
+        updateState(state);
     }
 
     public void updateTime(long timeValue) {
         for (StopwatchObserver observer : mObservers) {
             observer.onDataChanged(timeValue);
+        }
+    }
+
+    public void updateState(StopwatchState state) {
+        for (StopwatchObserver observer:mObservers) {
+            observer.onStateChanged(state);
         }
     }
 
