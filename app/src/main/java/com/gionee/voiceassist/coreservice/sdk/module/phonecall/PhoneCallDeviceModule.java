@@ -26,6 +26,7 @@ import com.baidu.duer.dcs.framework.message.Payload;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.PhonecallByNamePayload;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.PhonecallByNumberPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.SelectCalleePayload;
+import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.TelephoneStatePayload;
 
 
 import java.util.HashMap;
@@ -53,10 +54,11 @@ public class PhoneCallDeviceModule extends BaseDeviceModule {
     @Override
     public ClientContext clientContext () {
         String namespace = ApiConstants.NAMESPACE;
-        String name = ApiConstants.Events.PhoneState.NAME;
+        String name = ApiConstants.Events.TelephoneState.NAME;
         Header header = new Header(namespace, name);
         // 当前电话服务需传递空payload
-        Payload payload = new Payload();
+//        Payload payload = new Payload();
+        TelephoneStatePayload payload = getPermitCallState(false, true);
         return new ClientContext(header, payload);
     }
 
@@ -129,5 +131,10 @@ public class PhoneCallDeviceModule extends BaseDeviceModule {
         void onSelectCallee(SelectCalleePayload payload);
 
         void onPhoneCallByNumber(PhonecallByNumberPayload payload);
+    }
+
+    private TelephoneStatePayload getPermitCallState(boolean inAirMode, boolean hasSim) {
+        boolean permit = hasSim && !inAirMode;
+        return new TelephoneStatePayload(permit ? TelephoneStatePayload.TelephoneStatus.PERMIT: TelephoneStatePayload.TelephoneStatus.REJECT, hasSim);
     }
 }

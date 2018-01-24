@@ -28,6 +28,9 @@ public class ApiConstants {
         public static final class PhoneState {
             public static final String NAME = PhoneState.class.getSimpleName();
         }
+        public static final class TelephoneState {
+            public static final String NAME = TelephoneState.class.getSimpleName();
+        }
     }
 
     public static final class Directives {

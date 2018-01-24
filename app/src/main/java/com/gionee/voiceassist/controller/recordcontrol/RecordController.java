@@ -7,6 +7,7 @@ import com.baidu.duer.dcs.devicemodule.system.SystemDeviceModule;
 import com.baidu.duer.dcs.framework.internalapi.DcsConfig;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.MaxUpriseCounter;
+import com.gionee.voiceassist.coreservice.CoreServiceConfig;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
 import com.gionee.voiceassist.util.ConnectivityUtils;
@@ -85,7 +86,7 @@ public class RecordController implements IRecordControl {
 
     public void startRecord() {
         boolean isOnline = ConnectivityUtils.isOnline(GnVoiceAssistApplication.getInstance().getApplicationContext());
-        startRecord(isOnline ? GnVoiceAssistApplication.ASR_MODE : DcsConfig.ASR_MODE_OFFLINE);
+        startRecord(isOnline ? CoreServiceConfig.ASR_MODE : DcsConfig.ASR_MODE_OFFLINE);
     }
 
     public void startRecord(int mode) {

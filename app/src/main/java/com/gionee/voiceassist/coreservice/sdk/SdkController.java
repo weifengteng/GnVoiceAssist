@@ -25,6 +25,7 @@ import com.baidu.duer.dcs.systeminterface.IOauth;
 import com.baidu.duer.dcs.wakeup.WakeUpConfig;
 import com.baidu.duer.dcs.wakeup.WakeUpWord;
 import com.gionee.voiceassist.GnVoiceAssistApplication;
+import com.gionee.voiceassist.coreservice.CoreServiceConfig;
 import com.gionee.voiceassist.coreservice.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.applauncher.IAppLauncher;
@@ -146,7 +147,7 @@ public class SdkController implements ISdkController {
                 .withPid(729)
                 .build();
         getSdkInternalApi().setDebug(true);
-        getSdkInternalApi().setAsrMode(GnVoiceAssistApplication.ASR_MODE);
+        getSdkInternalApi().setAsrMode(CoreServiceConfig.ASR_MODE);
 
         //二、设置基础功能：DeviceModule、离线功能、唤醒功能
         setupDeviceModule(context);

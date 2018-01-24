@@ -116,6 +116,8 @@ public class ServiceController {
                 case START_STOPWATCH:
                     fireDirectiveDispatch(payload, "stopwatch");
                     break;
+                case LAUNCH_ALIPAY_PAILITAO:
+                    fireDirectiveDispatch(payload, "custom.pailitao");
             }
         }
 

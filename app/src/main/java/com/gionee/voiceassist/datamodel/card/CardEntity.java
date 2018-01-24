@@ -19,10 +19,18 @@ public class CardEntity {
         public String anchorText = "";
     }
 
-    class AppAction {
-        String name = "";
-        String pkgName = "";
-        String action = "";
+    public static class AppAction {
+        public String name = "";
+        public String pkgName = "";
+        public String action = "";
+        public AppAction() {
+
+        }
+        public AppAction(String name, String pkgName, String action) {
+            this.name = name;
+            this.pkgName = pkgName;
+            this.action = action;
+        }
     }
 
     protected void setType(CardType type) {

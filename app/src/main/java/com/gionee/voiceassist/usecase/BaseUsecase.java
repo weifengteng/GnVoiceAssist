@@ -7,6 +7,7 @@ import com.gionee.voiceassist.controller.appcontrol.ScreenController;
 import com.gionee.voiceassist.controller.customuserinteraction.ICuiControl;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.datamodel.card.AnswerTextCardEntity;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.util.ContextUtil;
 
@@ -33,6 +34,9 @@ public abstract class BaseUsecase {
 
 
     public void playAndRenderText(String text) {
+        AnswerTextCardEntity renderPayload = new AnswerTextCardEntity();
+        renderPayload.setContent(text);
+        DataController.getDataController().getScreenController().renderToUi(renderPayload);
         DataController.getDataController().getServiceController().playTts(text);
     }
 
