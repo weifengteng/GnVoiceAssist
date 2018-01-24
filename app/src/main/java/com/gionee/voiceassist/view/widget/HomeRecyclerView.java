@@ -61,7 +61,7 @@ public class HomeRecyclerView extends RecyclerView {
 
     private View mEmptyView;
 
-    
+
 //    public void commOnTouchEvent(MotionEvent ev) {
 //        int action = ev.getAction();
 //        switch (action) {

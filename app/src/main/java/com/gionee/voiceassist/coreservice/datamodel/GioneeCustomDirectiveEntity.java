@@ -19,7 +19,8 @@ public class GioneeCustomDirectiveEntity extends DirectiveEntity {
         LAUNCH_ALIPAY_PAILITAO,
         LAUNCH_HEARTRATE,
         SHOW_MOBILE_DEVICE_INFO,
-        START_TIMER
+        START_TIMER,
+        START_STOPWATCH
     }
 
     /**
