@@ -1,5 +1,8 @@
 package com.gionee.voiceassist.usecase.screenrender;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.screen.ImagelistCardEntity;
@@ -10,6 +13,11 @@ import com.gionee.voiceassist.datamodel.card.QueryTextCardEntity;
 import com.gionee.voiceassist.datamodel.card.StandardCardEntity;
 import com.gionee.voiceassist.datamodel.card.AnswerTextCardEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
+import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.util.SharedData;
+import com.gionee.voiceassist.view.viewholder.QueryTextCardViewHolder;
+
+import java.util.ArrayList;
 
 
 /**
@@ -17,7 +25,11 @@ import com.gionee.voiceassist.usecase.BaseUsecase;
  */
 
 public class ScreenUsecase extends BaseUsecase{
+    private final static String TAG = ScreenUsecase.class.getSimpleName();
     private String asrResult;
+    private QueryTextCardEntity queryTextCardEntity;
+    private volatile boolean isVoiceInputFinal = true;
+    private volatile ArrayList<String> partialAsrResultList = new ArrayList<>();
 
     public ScreenUsecase() {
 
@@ -106,9 +118,65 @@ public class ScreenUsecase extends BaseUsecase{
 
     private void fireTextCard(com.gionee.voiceassist.coreservice.datamodel.screen.TextCardEntity payload) {
         CardEntity cardEntity;
+        LogUtil.d("TWF", "fireTextCard: " + payload.getContent());
         if(payload.isVoiceInputText()) {
-            cardEntity = new QueryTextCardEntity();
-            cardEntity.setContent(payload.getContent());
+            if(isVoiceInputFinal) {
+                SharedData.getInstance().setLastQueryItemPosition(-1);
+                isVoiceInputFinal = false;
+                partialAsrResultList.clear();
+                // 一条新的 voiceRequest，第一次返回 asr 结果先绑定
+                queryTextCardEntity = new QueryTextCardEntity(new QueryTextCardEntity.IPartialResultCallbackBind() {
+                    @Override
+                    public void onCallbackBind(final QueryTextCardViewHolder.AsrPartialResultCallback callback) {
+
+                        HandlerThread handlerThread = new HandlerThread("callbackThread");
+                        handlerThread.start();
+                        Handler handler = new Handler(handlerThread.getLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                int count = 0;
+                                while (!isVoiceInputFinal || !partialAsrResultList.isEmpty()) {
+
+                                    if(partialAsrResultList.isEmpty()) {
+                                        LogUtil.d("TWF", "partialAsrResultList is empty, continue currentThread= " + Thread.currentThread().getName());
+                                        count++;
+                                        if(count == 100) {
+                                            // 连续超过5秒没有 partial asr result 识别结果，退出。
+                                            LogUtil.d("TWF", "partialAsrResultList is empty, count max = " + count + " , break ");
+                                            break;
+                                        } else {
+                                            try {
+                                                Thread.sleep(50);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            } finally {
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    String partialResult = partialAsrResultList.remove(0);
+                                    callback.onPartialResult(partialResult);
+                                    count = 0;
+                                    LogUtil.d("TWF", "update PartialResultCallback " + partialResult);
+                                }
+                            }
+                        });
+
+
+                    }
+                });
+                queryTextCardEntity.setContent(payload.getContent());
+                render(queryTextCardEntity);
+                // 之后返回的结果都以回调形式更新
+            } else {
+                partialAsrResultList.add(payload.getContent());
+            }
+
+            if(payload.isFinalResult()) {
+                isVoiceInputFinal = true;
+                queryTextCardEntity = null;
+            }
         } else {
             cardEntity = new AnswerTextCardEntity();
             cardEntity.setTitle(payload.getTitle());
@@ -116,8 +184,8 @@ public class ScreenUsecase extends BaseUsecase{
             if (payload.getLink() != null) {
                 cardEntity.setExtLink(payload.getLink().src, payload.getLink().anchor);
             }
+            render(cardEntity);
         }
-        render(cardEntity);
     }
 
     private void fireStandardCard(com.gionee.voiceassist.coreservice.datamodel.screen.StandardCardEntity payload) {
