@@ -15,6 +15,7 @@ public class SharedData {
     private String desiredScene;
     private boolean isVadReceiving;
     private Scene currentScene;
+    private int mLastQueryItemPosition;
 
     private SharedData(){
         currentScene = Scene.IDLE;
@@ -61,4 +62,11 @@ public class SharedData {
         return currentScene;
     }
 
+    public int getLastQueryItemPosition() {
+        return mLastQueryItemPosition;
+    }
+
+    public void setLastQueryItemPosition(int lastQueryItemPosition) {
+        this.mLastQueryItemPosition = lastQueryItemPosition;
+    }
 }
