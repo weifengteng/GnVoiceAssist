@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -26,11 +25,11 @@ import com.gionee.voiceassist.controller.appcontrol.IRenderListener;
 import com.gionee.voiceassist.controller.appcontrol.RenderEvent;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
-import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.PermissionsChecker;
 import com.gionee.voiceassist.util.RecognizerState;
+import com.gionee.voiceassist.util.SharedData;
 import com.gionee.voiceassist.view.adapter.DialogAdapter;
 import com.gionee.voiceassist.view.widget.DialogLayoutManager;
 import com.gionee.voiceassist.view.widget.HomeRecyclerView;
@@ -326,7 +325,16 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRenderPayload(RenderEvent renderEvent) {
-        rvDialogAdapter.addDialogItem(renderEvent.getPayload());
+        int pos = renderEvent.getPayload().getCardPosition();
+        LogUtil.d("twf_test", "onRenderPayload");
+        if(pos == -1) {
+            int position = rvDialogAdapter.addDialogItem(renderEvent.getPayload());
+            LogUtil.d("twf_test", "HomeActivity ADD Card. position = " + position);
+            SharedData.getInstance().setLastQueryItemPosition(position);
+        } else {
+            LogUtil.d("twf_test", "HomeActivity UPDATE Card. position = " + pos);
+            rvDialogAdapter.notifyItemChanged(pos, renderEvent);
+        }
     }
 
 

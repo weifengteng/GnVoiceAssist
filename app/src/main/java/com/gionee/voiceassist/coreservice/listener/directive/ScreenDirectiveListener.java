@@ -34,9 +34,9 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
             RenderVoiceInputTextPayload renderVoiceInputTextPayload = (RenderVoiceInputTextPayload) payload;
             String asrResult = renderVoiceInputTextPayload.text;
             RenderVoiceInputTextPayload.Type type = renderVoiceInputTextPayload.type;
-            LogUtil.d(TAG, "asrResult= " + asrResult);
-            /*// 实时显示识别结果
-            if(isLastAsrRoundComplete) {
+            LogUtil.d("TWF", "asrResult= " + asrResult);
+            // 实时显示识别结果
+            /*if(isLastAsrRoundComplete) {
 //                screenRender.renderQueryInScreen(asrResult);
                 isLastAsrRoundComplete = false;
             } else {
@@ -48,12 +48,16 @@ public class ScreenDirectiveListener extends BaseDirectiveListener implements Sc
             }*/
 
             // 只显示最终结果
-            if(type == RenderVoiceInputTextPayload.Type.FINAL) {
+            /*if(type == RenderVoiceInputTextPayload.Type.FINAL) {
 //                screenRender.renderQueryInScreen(asrResult);
                 TextCardEntity entity = new TextCardEntity();
                 entity.bind(renderVoiceInputTextPayload);
                 sendDirective(entity);
-            }
+            }*/
+
+            TextCardEntity entity = new TextCardEntity();
+            entity.bind(renderVoiceInputTextPayload);
+            sendDirective(entity);
         }
     }
 
