@@ -9,9 +9,10 @@ import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.QueryTextCardEntity;
 import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.util.SharedData;
 
 /**
- *
+ * TODO: 有时会出现显示顺序错乱的问题，怀疑是消息延迟或者 sdk 返回消息顺序不对，待查
  * @author twf
  * @date 2018/1/19
  */
@@ -20,6 +21,7 @@ public class QueryTextCardViewHolder extends BaseViewHolder {
     private static final String TAG = QueryTextCardEntity.class.getSimpleName();
     private TextView tvQueryText;
     private AsrPartialResultCallback asrPartialResultCallback;
+    private volatile boolean isTextSetFreeze;
     public QueryTextCardViewHolder(View itemView) {
         super(itemView);
         tvQueryText = (TextView) itemView.findViewById(R.id.tv_querytext);
@@ -28,8 +30,22 @@ public class QueryTextCardViewHolder extends BaseViewHolder {
     @Override
     public void bind(CardEntity payload) {
         LogUtil.d("twf_test", payload.getContent());
-        tvQueryText.setText(payload.getContent());
-        registerAsrPartialResultCallback((QueryTextCardEntity) payload);
+        QueryTextCardEntity queryTextCardEntity = (QueryTextCardEntity) payload;
+        boolean isForceSet = queryTextCardEntity.isForceSet();
+        if(isForceSet) {
+            isTextSetFreeze = true;
+            LogUtil.d("twf_test", "isForceSet bind text = " + payload.getContent());
+            tvQueryText.setText(payload.getContent());
+            if(queryTextCardEntity.getCallbackBindInterface() != null) {
+                queryTextCardEntity.getCallbackBindInterface().onTextUpdateFreeze(payload.getContent());
+            }
+        }
+
+        if(!isTextSetFreeze) {
+            LogUtil.d("twf_test", "Text not freeze, bind text = " + payload.getContent());
+            tvQueryText.setText(payload.getContent());
+            registerAsrPartialResultCallback((QueryTextCardEntity) payload);
+        }
     }
 
     public void registerAsrPartialResultCallback(QueryTextCardEntity entity) {
@@ -40,7 +56,12 @@ public class QueryTextCardViewHolder extends BaseViewHolder {
                     tvQueryText.post(new Runnable() {
                         @Override
                         public void run() {
-                            tvQueryText.setText(text);
+                            if(!isTextSetFreeze) {
+                                LogUtil.d("twf_test", "registerAsrPartialResultCallback, text not freeze, update: " + text);
+                                tvQueryText.setText(text);
+                            } else {
+                                LogUtil.d("twf_test", "registerAsrPartialResultCallback, text is frozen ,cannot update");
+                            }
                         }
                     });
 
@@ -48,7 +69,9 @@ public class QueryTextCardViewHolder extends BaseViewHolder {
             };
         }
         LogUtil.d("TWF", "onCallbackBind");
-        entity.getCallbackBindInterface().onCallbackBind(asrPartialResultCallback);
+        if(entity.getCallbackBindInterface() != null) {
+            entity.getCallbackBindInterface().onCallbackBind(asrPartialResultCallback);
+        }
     }
 
     public static QueryTextCardViewHolder newInstance(ViewGroup parent) {

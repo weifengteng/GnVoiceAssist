@@ -25,6 +25,8 @@ import com.gionee.voiceassist.controller.appcontrol.IRenderListener;
 import com.gionee.voiceassist.controller.appcontrol.RenderEvent;
 import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.controller.ttscontrol.TtsController;
+import com.gionee.voiceassist.datamodel.card.AnswerTextCardEntity;
+import com.gionee.voiceassist.datamodel.card.QueryTextCardEntity;
 import com.gionee.voiceassist.util.ErrorHelper;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.PermissionsChecker;
@@ -326,11 +328,15 @@ public class HomeActivity extends GNBaseActivity implements View.OnClickListener
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRenderPayload(RenderEvent renderEvent) {
         int pos = renderEvent.getPayload().getCardPosition();
-        LogUtil.d("twf_test", "onRenderPayload");
         if(pos == -1) {
             int position = rvDialogAdapter.addDialogItem(renderEvent.getPayload());
-            LogUtil.d("twf_test", "HomeActivity ADD Card. position = " + position);
-            SharedData.getInstance().setLastQueryItemPosition(position);
+            if(renderEvent.getPayload() instanceof QueryTextCardEntity) {
+                LogUtil.w("twf_test", "HomeActivity ADD query Card. position = " + position + " text= " + renderEvent.getPayload().getContent());
+                SharedData.getInstance().setLastQueryItemPosition(position);
+            } else if(renderEvent.getPayload() instanceof AnswerTextCardEntity) {
+                LogUtil.w("twf_test", "HomeActivity ADD Answer Card. position = " + position + " text= " + renderEvent.getPayload().getContent());
+                SharedData.getInstance().setLastQueryItemPosition(position);
+            }
         } else {
             LogUtil.d("twf_test", "HomeActivity UPDATE Card. position = " + pos);
             rvDialogAdapter.notifyItemChanged(pos, renderEvent);

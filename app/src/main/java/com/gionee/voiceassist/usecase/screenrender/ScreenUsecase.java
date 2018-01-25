@@ -29,6 +29,7 @@ public class ScreenUsecase extends BaseUsecase{
     private String asrResult;
     private QueryTextCardEntity queryTextCardEntity;
     private volatile boolean isVoiceInputFinal = true;
+    private volatile boolean isAsrResultFrozen;
     private volatile ArrayList<String> partialAsrResultList = new ArrayList<>();
 
     public ScreenUsecase() {
@@ -118,14 +119,15 @@ public class ScreenUsecase extends BaseUsecase{
 
     private void fireTextCard(com.gionee.voiceassist.coreservice.datamodel.screen.TextCardEntity payload) {
         CardEntity cardEntity;
-        LogUtil.d("TWF", "fireTextCard: " + payload.getContent());
         if(payload.isVoiceInputText()) {
             if(isVoiceInputFinal) {
                 SharedData.getInstance().setLastQueryItemPosition(-1);
                 isVoiceInputFinal = false;
                 partialAsrResultList.clear();
                 // 一条新的 voiceRequest，第一次返回 asr 结果先绑定
-                queryTextCardEntity = new QueryTextCardEntity(new QueryTextCardEntity.IPartialResultCallbackBind() {
+                queryTextCardEntity = new QueryTextCardEntity();
+                queryTextCardEntity.setContent(payload.getContent());
+                queryTextCardEntity.setCallbackBindInterface(new QueryTextCardEntity.IPartialResultCallbackBind() {
                     @Override
                     public void onCallbackBind(final QueryTextCardViewHolder.AsrPartialResultCallback callback) {
 
@@ -139,7 +141,6 @@ public class ScreenUsecase extends BaseUsecase{
                                 while (!isVoiceInputFinal || !partialAsrResultList.isEmpty()) {
 
                                     if(partialAsrResultList.isEmpty()) {
-                                        LogUtil.d("TWF", "partialAsrResultList is empty, continue currentThread= " + Thread.currentThread().getName());
                                         count++;
                                         if(count == 100) {
                                             // 连续超过5秒没有 partial asr result 识别结果，退出。
@@ -162,18 +163,25 @@ public class ScreenUsecase extends BaseUsecase{
                                 }
                             }
                         });
+                    }
 
-
+                    @Override
+                    public void onTextUpdateFreeze(String frozenText) {
+                        isAsrResultFrozen = true;
+                        SharedData.getInstance().setAsrResult(frozenText);
                     }
                 });
-                queryTextCardEntity.setContent(payload.getContent());
+
                 render(queryTextCardEntity);
-                // 之后返回的结果都以回调形式更新
             } else {
+                // 之后返回的结果都以回调形式更新
                 partialAsrResultList.add(payload.getContent());
             }
 
             if(payload.isFinalResult()) {
+                if(!isAsrResultFrozen) {
+                    SharedData.getInstance().setAsrResult(payload.getContent());
+                }
                 isVoiceInputFinal = true;
                 queryTextCardEntity = null;
             }
