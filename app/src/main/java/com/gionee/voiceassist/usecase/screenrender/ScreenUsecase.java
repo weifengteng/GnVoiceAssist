@@ -119,6 +119,7 @@ public class ScreenUsecase extends BaseUsecase{
 
     private void fireTextCard(com.gionee.voiceassist.coreservice.datamodel.screen.TextCardEntity payload) {
         CardEntity cardEntity;
+        LogUtil.d("TWF", "fireTextCard: " + payload.getContent());
         if(payload.isVoiceInputText()) {
             if(isVoiceInputFinal) {
                 SharedData.getInstance().setLastQueryItemPosition(-1);

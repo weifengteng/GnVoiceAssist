@@ -9,7 +9,6 @@ import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.QueryTextCardEntity;
 import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.util.SharedData;
 
 /**
  * TODO: 有时会出现显示顺序错乱的问题，怀疑是消息延迟或者 sdk 返回消息顺序不对，待查
@@ -81,6 +80,10 @@ public class QueryTextCardViewHolder extends BaseViewHolder {
     }
 
     public interface AsrPartialResultCallback {
+        /**
+         * 中间识别结果回调接口
+         * @param text 中间识别结果
+         */
         void onPartialResult(String text);
     }
 }

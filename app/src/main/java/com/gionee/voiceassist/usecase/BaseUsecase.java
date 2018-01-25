@@ -37,9 +37,6 @@ public abstract class BaseUsecase {
 
 
     public void playAndRenderText(String text) {
-        AnswerTextCardEntity renderPayload = new AnswerTextCardEntity();
-        renderPayload.setContent(text);
-        DataController.getDataController().getScreenController().renderToUi(renderPayload);
         DataController.getDataController().getServiceController().playTts(text);
 
         AnswerTextCardEntity entity = new AnswerTextCardEntity();
