@@ -7,6 +7,9 @@ import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.usecase.alarm.AlarmUsecase;
 import com.gionee.voiceassist.usecase.applaunch.AppLaunchUsecase;
+import com.gionee.voiceassist.usecase.customcommand.AlipayPaymentCodeUsecase;
+import com.gionee.voiceassist.usecase.customcommand.AlipayScanUsecase;
+import com.gionee.voiceassist.usecase.customcommand.PailitaoUsecase;
 import com.gionee.voiceassist.usecase.gnremote.GnRemoteUsecase;
 import com.gionee.voiceassist.usecase.music.GNMusicUsecase;
 import com.gionee.voiceassist.usecase.phonecall.PhoneCallUsecase;
@@ -37,6 +40,9 @@ public class UsecaseDispatcher {
     private SmsSendUseCase smsSendUseCase = new SmsSendUseCase();
     private ScreenUsecase screenUsecase = new ScreenUsecase();
     private StopwatchUsecase stopwatchUsecase = new StopwatchUsecase();
+    private PailitaoUsecase pailitaoUsecase = new PailitaoUsecase();
+    private AlipayScanUsecase alipayScanUsecase = new AlipayScanUsecase();
+    private AlipayPaymentCodeUsecase alipayPaymentCodeUsecase = new AlipayPaymentCodeUsecase();
 
     public UsecaseDispatcher() {
         usecaseMap = new HashMap<>();
@@ -53,6 +59,9 @@ public class UsecaseDispatcher {
         installUsecase(smsSendUseCase);
         installUsecase(screenUsecase);
         installUsecase(stopwatchUsecase);
+        installUsecase(pailitaoUsecase);
+        installUsecase(alipayScanUsecase);
+        installUsecase(alipayPaymentCodeUsecase);
     }
 
     void destroyUsecase() {
@@ -65,6 +74,9 @@ public class UsecaseDispatcher {
         uninstallUsecase(smsSendUseCase);
         uninstallUsecase(screenUsecase);
         uninstallUsecase(stopwatchUsecase);
+        uninstallUsecase(pailitaoUsecase);
+        uninstallUsecase(alipayScanUsecase);
+        uninstallUsecase(alipayPaymentCodeUsecase);
     }
 
     public void installUsecase(BaseUsecase usecase) {
