@@ -11,9 +11,9 @@ import com.gionee.voiceassist.view.viewholder.QueryTextCardViewHolder;
 public class QueryTextCardEntity extends CardEntity {
 
     private IPartialResultCallbackBind callbackBindInterface;
-    public QueryTextCardEntity(IPartialResultCallbackBind iCallbackBind) {
+    private boolean isForceSet;
+    public QueryTextCardEntity() {
         setType(CardType.QUERY_TEXT_CARD);
-        this.callbackBindInterface = iCallbackBind;
     }
 
     public IPartialResultCallbackBind getCallbackBindInterface() {
@@ -26,5 +26,15 @@ public class QueryTextCardEntity extends CardEntity {
 
     public interface IPartialResultCallbackBind {
         void onCallbackBind(QueryTextCardViewHolder.AsrPartialResultCallback callback);
+
+        void onTextUpdateFreeze(String freezeText);
+    }
+
+    public boolean isForceSet() {
+        return isForceSet;
+    }
+
+    public void setForceSet(boolean forceSet) {
+        isForceSet = forceSet;
     }
 }

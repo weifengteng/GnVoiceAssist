@@ -8,6 +8,7 @@ import com.gionee.voiceassist.controller.appcontrol.RenderEvent;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.CardTypeCode;
 import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.util.SharedData;
 import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ListCardViewHolder;
@@ -69,13 +70,10 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public void onBindViewHolder(BaseViewHolder holder, int position, List<Object> payloads) {
         LogUtil.d("twf_test", "DialogAdapter onBindViewHolder w/Payload . position = " + position);
         if(payloads != null && !payloads.isEmpty()) {
-            LogUtil.d("twf_test","onBindViewHolder partial update. payloads size = " + payloads.size());
             for(Object o : payloads) {
-                LogUtil.d("twf_test","partial update. payload is " + ((RenderEvent)o).getPayload());
                 holder.bind(((RenderEvent)o).getPayload());
             }
         } else {
-            LogUtil.d("twf_test","onBindViewHolder full update. payloads size = " + payloads.size());
             holder.bind(mPayloads.get(position));
         }
 
