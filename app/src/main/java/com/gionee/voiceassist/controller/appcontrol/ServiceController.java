@@ -118,6 +118,22 @@ public class ServiceController {
                     break;
                 case LAUNCH_ALIPAY_PAILITAO:
                     fireDirectiveDispatch(payload, "custom.pailitao");
+                    break;
+                case LAUNCH_ALIPAY_SCAN:
+                    fireDirectiveDispatch(payload, "custom.alipayscan");
+                    break;
+                case LAUNCH_ALIPAY_PAYMENT_CODE:
+                    fireDirectiveDispatch(payload, "custom.alipay_paymentcode");
+                    break;
+                case SHOW_MOBILE_DEVICE_INFO:
+                    fireDirectiveDispatch(payload, "custom.show_device_info");
+                    break;
+                case START_TIMER:
+                    fireDirectiveDispatch(payload, "timing.timer");
+                    break;
+                case LAUNCH_HEARTRATE:
+                    fireDirectiveDispatch(payload, "custom.heartrate");
+                    break;
             }
         }
 

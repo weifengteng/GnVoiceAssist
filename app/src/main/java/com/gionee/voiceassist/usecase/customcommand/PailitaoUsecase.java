@@ -31,8 +31,7 @@ public class PailitaoUsecase extends BaseUsecase {
         String pailitao_uri = "pailitao://pailitaoview";
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(pailitao_uri));
         intent.addCategory(Intent.CATEGORY_DEFAULT);
-//        intent.setClassName("com.gionee.sidebar",
-//                "com.gionee.sidebar.alibaba.CameraExampleActivity_1");
+        intent.setPackage("com.gionee.sidebar");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (intent.resolveActivity(ContextUtil.getAppContext().getPackageManager()) != null) {
             playAndRenderText("正在打开拍立淘");
