@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -79,7 +80,7 @@ public class QuickSettingsViewHolder extends BaseViewHolder {
     }
 
     private void bindNodes(List<QuickSettingCardEntity.QuickSettingItem> nodes) {
-        for (QuickSettingCardEntity.QuickSettingItem node:nodes) {
+        for (final QuickSettingCardEntity.QuickSettingItem node:nodes) {
             View nodeView = LayoutInflater.from(
                     lytOptions.getContext()).inflate(R.layout.card_item_quicksettingscard,
                     lytOptions,
@@ -94,6 +95,14 @@ public class QuickSettingsViewHolder extends BaseViewHolder {
 
             lytOptions.addView(nodeView);
             bindNodes(node.getSubOptionNodes());
+
+            optionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    String feedbackUrl = QUICK_SETTING_SCHEME + "://" + node.optionAlias + "/" + (isChecked ? "enable":"disable");
+                    DataController.getDataController().getScreenController().uiActionFeedback(feedbackUrl);
+                }
+            });
 
         }
     }

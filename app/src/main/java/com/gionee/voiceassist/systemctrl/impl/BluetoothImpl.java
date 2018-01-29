@@ -24,12 +24,13 @@ public class BluetoothImpl extends BaseCtrlImpl implements ISwitchCtrl {
                 .getAdapter();
         if (bluetoothAdapter.isEnabled() == enabled) {
             Toast.makeText(mAppCtx,"蓝牙已" + (enabled ? "打开":"关闭"), Toast.LENGTH_SHORT).show();
-            return;
+//            return;
         }
         if (enabled) {
             bluetoothAdapter.enable();
         } else {
             bluetoothAdapter.disable();
         }
+        callback.onSuccess();
     }
 }

@@ -18,6 +18,7 @@ public class QuickSettingCardEntity extends CardEntity {
     private List<QuickSettingItem> optionNodes = new ArrayList<>();
 
     public QuickSettingCardEntity(String settingName, String settingAlias) {
+        setType(CardType.QUICKSETTING_CARD);
         this.settingName = settingName;
         this.settingAlias = settingAlias;
     }
@@ -52,6 +53,10 @@ public class QuickSettingCardEntity extends CardEntity {
 
     public void setOptionNodes(List<QuickSettingItem> optionNodes) {
         this.optionNodes = optionNodes;
+    }
+
+    public void addOptionNode(String optionName, String optionDescription, String optionAlias, QuickSettingState optionState) {
+        optionNodes.add(new QuickSettingItem(optionName, optionDescription, optionAlias, optionState));
     }
 
     public interface QuickSettingObserver {
