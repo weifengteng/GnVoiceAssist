@@ -13,6 +13,7 @@ import com.gionee.voiceassist.usecase.customcommand.PailitaoUsecase;
 import com.gionee.voiceassist.usecase.gnremote.GnRemoteUsecase;
 import com.gionee.voiceassist.usecase.music.GNMusicUsecase;
 import com.gionee.voiceassist.usecase.phonecall.PhoneCallUsecase;
+import com.gionee.voiceassist.usecase.quicksetting.QuickSettingUsecase;
 import com.gionee.voiceassist.usecase.remind.RemindUsecase;
 import com.gionee.voiceassist.usecase.screenrender.ScreenUsecase;
 import com.gionee.voiceassist.usecase.smssend.SmsSendUseCase;
@@ -43,6 +44,7 @@ public class UsecaseDispatcher {
     private PailitaoUsecase pailitaoUsecase = new PailitaoUsecase();
     private AlipayScanUsecase alipayScanUsecase = new AlipayScanUsecase();
     private AlipayPaymentCodeUsecase alipayPaymentCodeUsecase = new AlipayPaymentCodeUsecase();
+    private QuickSettingUsecase quickSettingUsecase = new QuickSettingUsecase();
 
     public UsecaseDispatcher() {
         usecaseMap = new HashMap<>();
@@ -62,6 +64,7 @@ public class UsecaseDispatcher {
         installUsecase(pailitaoUsecase);
         installUsecase(alipayScanUsecase);
         installUsecase(alipayPaymentCodeUsecase);
+        installUsecase(quickSettingUsecase);
     }
 
     void destroyUsecase() {
@@ -77,6 +80,7 @@ public class UsecaseDispatcher {
         uninstallUsecase(pailitaoUsecase);
         uninstallUsecase(alipayScanUsecase);
         uninstallUsecase(alipayPaymentCodeUsecase);
+        uninstallUsecase(quickSettingUsecase);
     }
 
     public void installUsecase(BaseUsecase usecase) {

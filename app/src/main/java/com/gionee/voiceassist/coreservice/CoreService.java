@@ -15,6 +15,7 @@ import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.DeviceControlDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
@@ -215,6 +216,10 @@ public class CoreService extends Service {
                 for (SceneCallback callback:mExportSceneCallbacks) {
                     callback.onReminderPayload((ReminderDirectiveEntity) directivePayload);
                 }
+            case DEVICE_CONTROL:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onDeviceControlPayload((DeviceControlDirectiveEntity) directivePayload);
+                }
             default:
                 break;
         }
@@ -267,6 +272,7 @@ public class CoreService extends Service {
         void onGioneeCustomCommandPayload(GioneeCustomDirectiveEntity payload);
         void onGnRemotePayload(GnRemoteDirectiveEntity payload);
         void onGnRemoteTvPayload(GnRemoteTvDirectiveEntity payload);
+        void onDeviceControlPayload(DeviceControlDirectiveEntity payload);
         void onLocalAudioPlayerPayload(LocalAudioPlayerDirectiveEntity payload);
         void onWebBrowserPayload(WebBrowserDirectiveEntity payload);
         void onReminderPayload(ReminderDirectiveEntity payload);

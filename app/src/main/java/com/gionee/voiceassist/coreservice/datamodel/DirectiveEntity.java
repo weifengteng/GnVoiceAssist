@@ -31,6 +31,7 @@ public class DirectiveEntity implements Serializable {
         GN_REMOTE_TV,
         WEBBROWSER,
         REMINDER,
+        DEVICE_CONTROL
     }
 
 }

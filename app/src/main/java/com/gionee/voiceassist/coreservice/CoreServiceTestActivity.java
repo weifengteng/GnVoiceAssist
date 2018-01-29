@@ -26,6 +26,7 @@ import com.gionee.voiceassist.controller.ttscontrol.TtsController;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.DeviceControlDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteTvDirectiveEntity;
@@ -277,6 +278,11 @@ public class CoreServiceTestActivity extends AppCompatActivity implements View.O
         @Override
         public void onGnRemoteTvPayload(GnRemoteTvDirectiveEntity payload) {
             showText("GnRemoteTvPayload received " + payload);
+        }
+
+        @Override
+        public void onDeviceControlPayload(DeviceControlDirectiveEntity payload) {
+
         }
 
         @Override

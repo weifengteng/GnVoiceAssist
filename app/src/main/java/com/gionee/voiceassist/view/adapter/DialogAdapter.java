@@ -11,6 +11,7 @@ import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.QueryTextCardViewHolder;
+import com.gionee.voiceassist.view.viewholder.QuickSettingsViewHolder;
 import com.gionee.voiceassist.view.viewholder.StandardCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StopwatchCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.TextCardViewHolder;
@@ -49,6 +50,8 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 return ImageListCardViewHolder.newInstance(parent, mSubItemPool);
             case CardTypeCode.STOPWATCH_CARD:
                 return StopwatchCardViewHolder.newInstance(parent);
+            case CardTypeCode.QUICKSETTING_CARD:
+                return QuickSettingsViewHolder.newInstance(parent);
             default:
                 break;
         }
