@@ -36,9 +36,11 @@ public class MobiledataSwitchImpl extends BaseCtrlImpl implements ISwitchCtrl {
             argsClass[0] = boolean.class;
             Method method = ownerClass.getMethod("setMobileDataEnabled",argsClass);
             method.invoke(connectivityManager, enabled);
+            callback.onSuccess();
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             LogUtil.e(TAG,"移动数据设置错误：" + e.toString());
             e.printStackTrace();
+            callback.onFailure(FailureCode.UNKNOWN_FAILURE, e.toString());
         }
     }
 }

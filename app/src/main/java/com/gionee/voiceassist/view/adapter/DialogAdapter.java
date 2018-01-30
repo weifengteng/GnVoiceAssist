@@ -51,7 +51,7 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             case CardTypeCode.STOPWATCH_CARD:
                 return StopwatchCardViewHolder.newInstance(parent);
             case CardTypeCode.QUICKSETTING_CARD:
-                return QuickSettingsViewHolder.newInstance(parent);
+                return QuickSettingsViewHolder.newInstance(parent, mSubItemPool);
             default:
                 break;
         }
@@ -92,6 +92,9 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     }
 
-
-
+    @Override
+    public void onViewRecycled(BaseViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.onRecycled();
+    }
 }

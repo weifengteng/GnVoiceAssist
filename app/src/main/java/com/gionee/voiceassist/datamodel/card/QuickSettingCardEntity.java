@@ -16,6 +16,7 @@ public class QuickSettingCardEntity extends CardEntity {
     private String settingName = "";    //操作名称（如蓝牙、WiFi）
     private String settingAlias = "";   //操作别名（如bluetooth、wifi）
     private List<QuickSettingItem> optionNodes = new ArrayList<>();
+    private List<QuickSettingObserver> observers = new ArrayList<>();
 
     public QuickSettingCardEntity(String settingName, String settingAlias) {
         setType(CardType.QUICKSETTING_CARD);
@@ -59,8 +60,53 @@ public class QuickSettingCardEntity extends CardEntity {
         optionNodes.add(new QuickSettingItem(optionName, optionDescription, optionAlias, optionState));
     }
 
+    public void addObserver(QuickSettingObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    public void removeObserver(QuickSettingObserver observer) {
+        if (observer != null && observers.contains(observer)) {
+            observers.remove(observer);
+        }
+    }
+
+    public void updateNodeState(String optionAlias, QuickSettingState state) {
+        // traverse nodes to update
+        QuickSettingItem node = traverseNode(optionAlias);
+        node.optionState = state;
+        for (QuickSettingObserver observer:observers) {
+            observer.onStateChanged(optionAlias, state);
+        }
+    }
+
+    public void updateNodeDescription(String optionAlias, String desc) {
+        // traverse nodes to update
+        QuickSettingItem node = traverseNode(optionAlias);
+        node.optionDescription = desc;
+        for (QuickSettingObserver observer:observers) {
+            observer.onDescriptionChanged(optionAlias, desc);
+        }
+    }
+
+    private QuickSettingItem traverseNode(String optionAlias) {
+        for (QuickSettingItem node:optionNodes) {
+            if (node.optionAlias.equals(optionAlias)) {
+                return node;
+            } else {
+                QuickSettingItem subNode = traverseNode(optionAlias);
+                if (subNode != null) {
+                    return subNode;
+                }
+            }
+        }
+        return null;
+    }
+
     public interface QuickSettingObserver {
         void onStateChanged(String optionAlias, QuickSettingState state);
+        void onDescriptionChanged(String optionAlias, String description);
     }
 
     public enum QuickSettingState {
@@ -89,6 +135,34 @@ public class QuickSettingCardEntity extends CardEntity {
 
         public void setSubOptionNodes(List<QuickSettingItem> subOptionNodes) {
             this.subOptionNodes = subOptionNodes;
+        }
+    }
+
+    public static class QuickSettingCardBuilder {
+
+        private String settingName;
+        private String settingAlias;
+        private List<QuickSettingItem> optionNodes;
+
+        public QuickSettingCardBuilder(String settingName, String settingAlias) {
+            this.settingName = settingName;
+            this.settingAlias = settingAlias;
+            optionNodes = new ArrayList<>();
+        }
+
+        public QuickSettingCardBuilder addNode(
+                String optionName,
+                String optionDescription,
+                String optionAlias,
+                QuickSettingState state) {
+            optionNodes.add(new QuickSettingItem(optionName, optionDescription, optionAlias, state));
+            return this;
+        }
+
+        public QuickSettingCardEntity build() {
+            QuickSettingCardEntity instance = new QuickSettingCardEntity(settingName, settingAlias);
+            instance.setOptionNodes(optionNodes);
+            return instance;
         }
     }
 }

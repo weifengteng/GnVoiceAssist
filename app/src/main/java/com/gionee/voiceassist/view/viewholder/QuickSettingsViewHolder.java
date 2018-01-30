@@ -14,6 +14,8 @@ import com.gionee.voiceassist.R;
 import com.gionee.voiceassist.controller.appcontrol.DataController;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.QuickSettingCardEntity;
+import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.view.adapter.DialogSubItemPool;
 
 import java.util.List;
 
@@ -22,6 +24,8 @@ import java.util.List;
  */
 
 public class QuickSettingsViewHolder extends BaseViewHolder {
+
+    private static final String TAG = QuickSettingsViewHolder.class.getSimpleName();
 
     //actionFeedback的URL格式： quicksetting://[settingAlias]/[enable]
     //action点击URL：          quicksetting://[settingAlias]/clicked
@@ -33,9 +37,25 @@ public class QuickSettingsViewHolder extends BaseViewHolder {
     private ImageView ivActionIcon;
     private LinearLayout lytOptions;
     private View mView;
+    private DialogSubItemPool mItemPool;
+    private QuickSettingCardEntity mQsPayload;
+    private QuickSettingCardEntity.QuickSettingObserver mObserver = new QuickSettingCardEntity.QuickSettingObserver() {
+        @Override
+        public void onStateChanged(String optionAlias, QuickSettingCardEntity.QuickSettingState state) {
+            LogUtil.d(TAG, "QuickSettingCardObserver onStateChanged. OptionAlias:" + optionAlias + "; state:" + state);
+            updateOptionState(optionAlias, state);
+        }
 
-    public QuickSettingsViewHolder(View itemView) {
+        @Override
+        public void onDescriptionChanged(String optionAlias, String description) {
+            LogUtil.d(TAG, "QuickSettingCardObserver onDescriptionChanged. OptionAlias:" + optionAlias + "; Description:" + description);
+            updateOptionDescription(optionAlias, description);
+        }
+    };
+
+    public QuickSettingsViewHolder(View itemView, DialogSubItemPool itemPool) {
         super(itemView);
+        mItemPool = itemPool;
         mView = itemView;
         settingTitleBar = itemView.findViewById(R.id.action_title_bar);
         tvActionName = (TextView) itemView.findViewById(R.id.tv_action_name);
@@ -45,15 +65,16 @@ public class QuickSettingsViewHolder extends BaseViewHolder {
 
     @Override
     public void bind(CardEntity payload) {
-        QuickSettingCardEntity qsPayload = (QuickSettingCardEntity) payload;
-        bindActionTitleBar(qsPayload);
-        bindOptions(qsPayload);
+        mQsPayload = (QuickSettingCardEntity) payload;
+        mQsPayload.addObserver(mObserver);
+        bindActionTitleBar(mQsPayload);
+        bindOptions(mQsPayload);
     }
 
-    public static QuickSettingsViewHolder newInstance (ViewGroup parent) {
+    public static QuickSettingsViewHolder newInstance (ViewGroup parent, DialogSubItemPool itemPool) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.card_item_quicksettingscard_lyt, parent, false);
-        return new QuickSettingsViewHolder(itemView);
+        return new QuickSettingsViewHolder(itemView, itemPool);
     }
 
     private void bindActionTitleBar(final QuickSettingCardEntity payload) {
@@ -81,10 +102,8 @@ public class QuickSettingsViewHolder extends BaseViewHolder {
 
     private void bindNodes(List<QuickSettingCardEntity.QuickSettingItem> nodes) {
         for (final QuickSettingCardEntity.QuickSettingItem node:nodes) {
-            View nodeView = LayoutInflater.from(
-                    lytOptions.getContext()).inflate(R.layout.card_item_quicksettingscard,
-                    lytOptions,
-                    false);
+            View nodeView = mItemPool.getQuickSettingsItemView(lytOptions);
+            nodeView.setTag(node.optionAlias);
             TextView tvOptionName = (TextView) nodeView.findViewById(R.id.tv_option_name);
             TextView tvOptionDescription = (TextView) nodeView.findViewById(R.id.tv_option_description);
             Switch optionSwitch = (Switch) nodeView.findViewById(R.id.switch_control);
@@ -99,12 +118,52 @@ public class QuickSettingsViewHolder extends BaseViewHolder {
             optionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    String feedbackUrl = QUICK_SETTING_SCHEME + "://" + node.optionAlias + "/" + (isChecked ? "enable":"disable");
-                    DataController.getDataController().getScreenController().uiActionFeedback(feedbackUrl);
+                    if (buttonView.isPressed()) {
+                        buttonView.setEnabled(false);
+                        String feedbackUrl = QUICK_SETTING_SCHEME + "://" + node.optionAlias + "/" + (isChecked ? "enable":"disable");
+                        DataController.getDataController().getScreenController().uiActionFeedback(feedbackUrl);
+                    }
                 }
             });
 
         }
+    }
+
+    private void updateOptionState(String optionAlias, QuickSettingCardEntity.QuickSettingState state) {
+        View nodeView = lytOptions.findViewWithTag(optionAlias);
+        if (nodeView != null) {
+            Switch controlSwitch = (Switch)nodeView.findViewById(R.id.switch_control);
+            controlSwitch.setEnabled(true);
+            controlSwitch.setChecked(state == QuickSettingCardEntity.QuickSettingState.ENABLED);
+        }
+    }
+
+    private void updateOptionDescription(String optionAlias, String optionDesc) {
+        View nodeView = lytOptions.findViewWithTag(optionAlias);
+        if (nodeView != null) {
+            TextView tvDesc = (TextView) nodeView.findViewById(R.id.tv_option_description);
+            tvDesc.setText(optionDesc);
+        }
+    }
+
+    @Override
+    public void onRecycled() {
+        super.onRecycled();
+        if (mQsPayload != null) {
+            mQsPayload.removeObserver(mObserver);
+        }
+        recycleItemView();
+    }
+
+    private void recycleItemView() {
+        int childCount = lytOptions.getChildCount();
+        LogUtil.d(TAG, "recycleItemView. Container initial size = " + childCount);
+        for (int i = childCount - 1; i >= 0; i--) {
+            View childView = lytOptions.getChildAt(i);
+            mItemPool.recycleQuickSettingsItemView(childView);
+            lytOptions.removeView(childView);
+        }
+        LogUtil.d(TAG, "recycleItemView. Item recycled. Container size= " + lytOptions.getChildCount());
     }
 
     private void setText(TextView view, String content) {

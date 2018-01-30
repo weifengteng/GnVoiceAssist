@@ -21,11 +21,13 @@ public class DialogSubItemPool {
 
     private List<View> mListItemPool;
     private List<View> mImageListItemPool;
+    private List<View> mQuickSettingItemPool;
 
 
     public DialogSubItemPool() {
         mListItemPool = new LinkedList<>();
         mImageListItemPool = new LinkedList<>();
+        mQuickSettingItemPool = new LinkedList<>();
     }
 
     public View getListItemView(ViewGroup parent) {
@@ -64,6 +66,28 @@ public class DialogSubItemPool {
 
     private View createImageListItemView(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_imagelistcard, parent, false);
+    }
+
+    public View getQuickSettingsItemView(ViewGroup parent) {
+        View itemView;
+        if (mQuickSettingItemPool.size() > 0) {
+            itemView = mQuickSettingItemPool.remove(0);
+        } else {
+            itemView = createQuickSettingsItemView(parent);
+        }
+        return itemView;
+    }
+
+    public void recycleQuickSettingsItemView(View qsItemView) {
+        qsItemView.setTag(null);
+        mQuickSettingItemPool.add(qsItemView);
+    }
+
+    private View createQuickSettingsItemView(ViewGroup parent) {
+        return LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.card_item_quicksettingscard, parent, false);
+
     }
 
 }
