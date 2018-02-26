@@ -8,6 +8,8 @@ import com.gionee.voiceassist.GnVoiceAssistApplication;
 import com.gionee.voiceassist.basefunction.IBaseFunction;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.datamodel.card.AlarmCardEntity;
+import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 
 import java.util.ArrayList;
@@ -28,7 +30,10 @@ public class AlarmUsecase extends BaseUsecase {
     @Override
     public void handleDirective(DirectiveEntity payload) {
         AlarmDirectiveEntity alarmPayload = (AlarmDirectiveEntity) payload;
-        setAlarm(alarmPayload.getHour(), alarmPayload.getMinute(), alarmPayload.getRepeatDays(), "");
+//        setAlarm(alarmPayload.getHour(), alarmPayload.getMinute(), alarmPayload.getRepeatDays(), "");
+
+        AlarmCardEntity alarmCardEntity = generateFromDirectiveEntity(alarmPayload);
+        render(alarmCardEntity);
     }
 
     @Override
@@ -38,6 +43,7 @@ public class AlarmUsecase extends BaseUsecase {
 
     public void setAlarm(int hour, int minute, ArrayList<Integer> triggerDays, String message) {
         Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM)
+                .putExtra(AlarmClock.EXTRA_SKIP_UI, false)
                 .putExtra(AlarmClock.EXTRA_HOUR,hour)
                 .putExtra(AlarmClock.EXTRA_MINUTES,minute)
                 .putExtra(AlarmClock.EXTRA_DAYS,triggerDays)
@@ -63,5 +69,13 @@ public class AlarmUsecase extends BaseUsecase {
     @Override
     public String getAlias() {
         return "alarm";
+    }
+
+    private AlarmCardEntity generateFromDirectiveEntity(AlarmDirectiveEntity alarmDirectiveEntity) {
+        AlarmCardEntity alarmCardEntity = new AlarmCardEntity();
+        alarmCardEntity.setHour(alarmDirectiveEntity.getHour())
+                .setMinute(alarmDirectiveEntity.getMinute())
+                .setRepeatDay(alarmDirectiveEntity.getRepeatDays());
+        return alarmCardEntity;
     }
 }
