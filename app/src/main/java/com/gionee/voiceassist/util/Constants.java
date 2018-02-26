@@ -51,7 +51,7 @@ public class Constants {
     public static final String FUN_SETCELLULAR = "SetCellular";
     public static final String FUN_SETPHONEPOWER = "SetPhonePower";
     public static final String FUN_SETHOTSPOT = "SetHotspot";
-    public static final String FUN_SETNFC = "setNfc";
+    public static final String FUN_SETNFC = "SetNfc";
 
     // Device control function value in Payload
     // PhoneMode  key:mode

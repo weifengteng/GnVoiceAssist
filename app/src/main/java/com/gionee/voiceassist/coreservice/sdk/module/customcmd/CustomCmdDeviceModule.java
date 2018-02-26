@@ -68,7 +68,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
             }
         } else if(ApiConstants.Directives.OperateFlashlight.NAME.equals(headerName)) {
             if(payload instanceof OperateFlashLightPayload) {
-                handleOperateFlashLightPayload();
+                handleOperateFlashLightPayload(((OperateFlashLightPayload)payload).getQuery());
             }
         } else if(ApiConstants.Directives.PaiLiTao.NAME.equals(headerName)) {
             if(payload instanceof PaiLiTaoPayload) {
@@ -168,11 +168,11 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
         }
     }
 
-    public void handleOperateFlashLightPayload() {
+    public void handleOperateFlashLightPayload(String msg) {
         for(ICustomCmdDirectiveListener listener : directiveListeners) {
             if(listener instanceof ICustomCmdDirectiveListener) {
                 // TODO: execute operate flashflight in DeviceModule DirectiveListener
-//                ((ICustomCmdDirectiveListener) listener).onLaunchAliPaymentCode();
+                listener.onOperateFlashlight(msg);
                 LogUtil.d(TAG, "handleOperateFlashLightPayload");
                 break;
             }
@@ -215,5 +215,7 @@ public class CustomCmdDeviceModule extends BaseDeviceModule {
         void onShowMobileDeviceInfo();
         void onLaunchPaiLiTao();
         void onStartTimer();
+        void onOperateFlashlight(String msg);
+
     }
 }

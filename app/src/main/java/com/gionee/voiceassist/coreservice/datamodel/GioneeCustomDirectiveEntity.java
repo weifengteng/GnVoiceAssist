@@ -20,7 +20,8 @@ public class GioneeCustomDirectiveEntity extends DirectiveEntity {
         LAUNCH_HEARTRATE,
         SHOW_MOBILE_DEVICE_INFO,
         START_TIMER,
-        START_STOPWATCH
+        START_STOPWATCH,
+        OPERATE_FLASHLIGHT
     }
 
     /**

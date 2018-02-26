@@ -60,6 +60,12 @@ public class CustomCmdDirectiveListener extends BaseDirectiveListener implements
         sendDirective(createPayload(GioneeCustomDirectiveEntity.GioneeCustomAction.START_STOPWATCH));
     }
 
+    @Override
+    public void onOperateFlashlight(String msg) {
+        LogUtil.d(TAG, "onOperateFlashlight");
+        sendDirective(createPayload(GioneeCustomDirectiveEntity.GioneeCustomAction.OPERATE_FLASHLIGHT, msg));
+    }
+
     private GioneeCustomDirectiveEntity createPayload(GioneeCustomDirectiveEntity.GioneeCustomAction action) {
         return createPayload(action,"");
     }

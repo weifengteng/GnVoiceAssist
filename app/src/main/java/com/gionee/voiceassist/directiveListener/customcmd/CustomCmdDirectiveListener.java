@@ -59,4 +59,9 @@ public class CustomCmdDirectiveListener extends BaseDirectiveListener implements
         // TODO:
         LogUtil.d(TAG, "onStartTimer");
     }
+
+    @Override
+    public void onOperateFlashlight(String msg) {
+
+    }
 }
