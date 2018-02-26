@@ -22,8 +22,9 @@ public class WifiSwitchImpl extends BaseCtrlImpl implements ISwitchCtrl {
         WifiManager wifiManager = (WifiManager) mAppCtx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiManager.isWifiEnabled() == enabled) {
             Toast.makeText(mAppCtx,"WiFi已" + (enabled ? "打开":"关闭"), Toast.LENGTH_SHORT).show();
-            return;
+//            return;
         }
         wifiManager.setWifiEnabled(enabled);
+        callback.onSuccess();
     }
 }

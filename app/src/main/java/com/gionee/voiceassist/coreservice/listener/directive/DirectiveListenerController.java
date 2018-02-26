@@ -11,6 +11,7 @@ import com.gionee.voiceassist.coreservice.sdk.module.alarms.AlarmsDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.applauncher.AppLauncherDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.contacts.ContactsDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.customcmd.CustomCmdDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.devicecontrol.DeviceControlDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.LocalAudioPlayerDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.reminder.ReminderDeviceModule;
@@ -48,6 +49,7 @@ public class DirectiveListenerController {
     private LocalAudioPlayerListener localAudioPlayerListener;
     private WebBrowserListener webBrowserListener;
     private ReminderDirectiveListener reminderListener;
+    private DeviceControlDirectiveListener deviceControlListener;
 
     private List<DirectiveCallback> mSubscribers = new ArrayList<>();
 
@@ -100,6 +102,7 @@ public class DirectiveListenerController {
         localAudioPlayerListener = new LocalAudioPlayerListener(mSubscribers);
         webBrowserListener = new WebBrowserListener(mSubscribers);
         reminderListener = new ReminderDirectiveListener(mSubscribers);
+        deviceControlListener = new DeviceControlDirectiveListener(mSubscribers);
         listenerInited = true;
     }
 
@@ -140,6 +143,9 @@ public class DirectiveListenerController {
         ((ReminderDeviceModule) getDeviceModule("ai.dueros.device_interface.extensions.alert_nlu"))
                 .addDirectiveListener(reminderListener);
 
+        ((DeviceControlDeviceModule) getDeviceModule("ai.dueros.device_interface.extensions.device_control"))
+                .addDirectiveListener(deviceControlListener);
+
         listenerInstalled = true;
     }
 
@@ -177,6 +183,9 @@ public class DirectiveListenerController {
 
         ((ReminderDeviceModule) getDeviceModule("ai.dueros.device_interface.extensions.alert_nlu"))
                 .removeDirectiveListener(reminderListener);
+
+        ((DeviceControlDeviceModule) getDeviceModule("ai.dueros.device_interface.extensions.device_control"))
+                .removeDirectiveListener(deviceControlListener);
 
         listenerInstalled = false;
     }

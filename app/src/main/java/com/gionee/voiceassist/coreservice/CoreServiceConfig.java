@@ -12,7 +12,7 @@ public class CoreServiceConfig {
     /**
      * 语音识别ASR模式
      */
-    public static final int ASR_MODE = DcsConfig.ASR_MODE_OFFLINE_PRIORITY;
+    public static final int ASR_MODE = DcsConfig.ASR_MODE_ONLINE;
 
     /**
      * TTS播报模式

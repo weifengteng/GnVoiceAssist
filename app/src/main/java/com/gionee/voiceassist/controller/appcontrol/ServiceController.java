@@ -16,6 +16,7 @@ import com.gionee.voiceassist.coreservice.CoreService;
 import com.gionee.voiceassist.coreservice.datamodel.AlarmDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.AppLaunchDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ContactsDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.DeviceControlDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GioneeCustomDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.GnRemoteDirectiveEntity;
@@ -145,6 +146,11 @@ public class ServiceController {
         @Override
         public void onGnRemoteTvPayload(GnRemoteTvDirectiveEntity payload) {
             fireDirectiveDispatch(payload, "gnremote");
+        }
+
+        @Override
+        public void onDeviceControlPayload(DeviceControlDirectiveEntity payload) {
+            fireDirectiveDispatch(payload, "quicksetting");
         }
 
         @Override

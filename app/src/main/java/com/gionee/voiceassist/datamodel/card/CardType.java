@@ -16,6 +16,7 @@ public enum CardType {
     ALARM_CARD(21),
     TIMER_CARD(22),
     STOPWATCH_CARD(23),
+    QUICKSETTING_CARD(24),
     CONTACT_SELECT_CARD(31),
     SIM_SELECT_CARD(32);
 

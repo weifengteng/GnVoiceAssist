@@ -22,3 +22,7 @@
 ## 没有考虑好的
 + DataController中调用ServiceController的attach()和detach()在onCreate()时调用还是onResume()时调用？    (liyingheng at 2018.01.09)
 + TtsController是Service内部调用的。但是其有个utter的回调，外部有需要的时候要调用。如何将其utter回调传进去？  (已解决) (liyingheng at 2018.01.09)
+
+
+## 新想法
++ 每个Usecase可以定义一个注解。每个Usecase进行装载时，可不可以使用注解装载？  (liyingheng at 2018.01.26)

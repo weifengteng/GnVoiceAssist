@@ -1,60 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    style="@style/DialogCardStyle">
-
+    android:gravity="center_vertical">
     <LinearLayout
-        android:id="@+id/action_title_bar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
         android:gravity="center_vertical"
-        android:background="@drawable/amigo_btn_round_corner_default_mtrl_shape">
-
-        <ImageView
-            android:id="@+id/iv_action_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@mipmap/ic_launcher_round"/>
-
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
         <TextView
-            android:id="@+id/tv_action_name"
+            android:id="@+id/tv_option_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:text="Action Name"
-            android:layout_weight="1"/>
+            android:text="Name"
+            android:textSize="18sp"/>
 
-        <ImageView
-            android:id="@+id/iv_action_forward"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/amigo_preference_arrow"/>
-
+        <TextView
+            android:id="@+id/tv_option_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="description"
+            android:visibility="gone"
+            />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/lyt_content"
-        android:layout_width="match_parent"
+    <Switch
+        android:id="@+id/switch_control"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/action_title_bar"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-        <TextView
-            android:id="@+id/tv_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:text="State"/>
-        <Switch
-            android:id="@+id/switch_control"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"/>
-    </LinearLayout>
-
-</RelativeLayout>
+        android:layout_marginRight="16dp"/>
+</LinearLayout>
