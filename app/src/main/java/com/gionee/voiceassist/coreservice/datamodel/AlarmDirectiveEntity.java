@@ -1,8 +1,6 @@
 package com.gionee.voiceassist.coreservice.datamodel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 闹钟场景Payload

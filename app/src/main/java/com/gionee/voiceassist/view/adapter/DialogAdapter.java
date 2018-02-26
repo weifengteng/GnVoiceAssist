@@ -8,12 +8,13 @@ import com.gionee.voiceassist.controller.appcontrol.RenderEvent;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.CardTypeCode;
 import com.gionee.voiceassist.util.LogUtil;
-import com.gionee.voiceassist.util.SharedData;
+import com.gionee.voiceassist.view.viewholder.AlarmCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.QueryTextCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.QuickSettingsViewHolder;
+import com.gionee.voiceassist.view.viewholder.ReminderCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StandardCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StopwatchCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.TextCardViewHolder;
@@ -54,6 +55,10 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 return StopwatchCardViewHolder.newInstance(parent);
             case CardTypeCode.QUICKSETTING_CARD:
                 return QuickSettingsViewHolder.newInstance(parent, mSubItemPool);
+            case CardTypeCode.ALARM_CARD:
+                return AlarmCardViewHolder.newInstance(parent);
+            case CardTypeCode.REMINDER_CARD:
+                return ReminderCardViewHolder.newInstance(parent);
             default:
                 break;
         }
