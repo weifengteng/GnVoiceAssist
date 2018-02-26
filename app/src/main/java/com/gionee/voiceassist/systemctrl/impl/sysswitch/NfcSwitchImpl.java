@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
+//import android.nfc.INfcAdapter;
 import android.os.RemoteException;
+//import android.os.ServiceManager;
 
 import com.gionee.voiceassist.systemctrl.iface.ISwitchCtrl;
 import com.gionee.voiceassist.systemctrl.impl.BaseCtrlImpl;
@@ -46,6 +48,7 @@ public class NfcSwitchImpl extends BaseCtrlImpl implements ISwitchCtrl {
 //        } catch (RemoteException e) {
 //            callback.onFailure(FailureCode.UNKNOWN_FAILURE, "绑定NFC服务失败: " + e);
 //        }
+        callback.onSuccess();
 
 
     }

@@ -157,13 +157,13 @@ public class QuickSettingsViewHolder extends BaseViewHolder {
 
     private void recycleItemView() {
         int childCount = lytOptions.getChildCount();
-        LogUtil.d(TAG, "recycleItemView. Container initial size = " + childCount);
+//        LogUtil.d(TAG, "recycleItemView. Container initial size = " + childCount);
         for (int i = childCount - 1; i >= 0; i--) {
             View childView = lytOptions.getChildAt(i);
             mItemPool.recycleQuickSettingsItemView(childView);
             lytOptions.removeView(childView);
         }
-        LogUtil.d(TAG, "recycleItemView. Item recycled. Container size= " + lytOptions.getChildCount());
+//        LogUtil.d(TAG, "recycleItemView. Item recycled. Container size= " + lytOptions.getChildCount());
     }
 
     private void setText(TextView view, String content) {

@@ -135,6 +135,9 @@ public class ServiceController {
                 case LAUNCH_HEARTRATE:
                     fireDirectiveDispatch(payload, "custom.heartrate");
                     break;
+                case OPERATE_FLASHLIGHT:
+                    fireDirectiveDispatch(payload, "quicksetting");
+                     break;
             }
         }
 
