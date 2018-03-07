@@ -14,10 +14,9 @@ public class ReminderDirectiveEntity extends DirectiveEntity {
         setType(Type.REMINDER);
     }
 
-    private String time;
-    private String content;
-    private ReminderRepeat repeat;
-    private ReminderAction action;
+    protected String content;
+    protected ReminderRepeat repeat;
+    protected ReminderAction action;
 
 
     public static class ReminderRepeat {
@@ -93,27 +92,6 @@ public class ReminderDirectiveEntity extends DirectiveEntity {
         }
     }
 
-    public void setCreateReminder(String time, String content, ReminderRepeat repeat) {
-        this.time = time;
-        this.content = content;
-        this.repeat = repeat;
-        setAction(ReminderAction.CREATE_REMINDER);
-    }
-
-    public void setSearchReminder(String time) {
-        this.time = time;
-        this.action = ReminderAction.SEARCH_REMINDER;
-    }
-
-    public void setDeleteReminder(String time) {
-        this.time = time;
-        this.action = ReminderAction.DELETE_REMINDER;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
     public String getContent() {
         return content;
     }
@@ -134,15 +112,5 @@ public class ReminderDirectiveEntity extends DirectiveEntity {
         CREATE_REMINDER,
         SEARCH_REMINDER,
         DELETE_REMINDER
-    }
-
-    @Override
-    public String toString() {
-        return "ReminderDirectiveEntity{" +
-                "time='" + time + '\'' +
-                ", content='" + content + '\'' +
-                ", repeat=" + repeat +
-                ", action=" + action +
-                '}';
     }
 }

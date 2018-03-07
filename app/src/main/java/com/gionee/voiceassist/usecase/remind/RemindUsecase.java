@@ -5,7 +5,9 @@ import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ReminderCreateDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ReminderManageDirectiveEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.DateUtil;
 import com.gionee.voiceassist.util.LogUtil;
@@ -31,13 +33,13 @@ public class RemindUsecase extends BaseUsecase {
         ReminderDirectiveEntity.ReminderAction action = reminderPayload.getAction();
         switch (action) {
             case CREATE_REMINDER:
-                fireCreateReminder(reminderPayload);
+                fireCreateReminder((ReminderCreateDirectiveEntity) reminderPayload);
                 break;
             case SEARCH_REMINDER:
-                fireDeleteReminder(reminderPayload);
+                fireSearchReminder((ReminderManageDirectiveEntity) reminderPayload);
                 break;
             case DELETE_REMINDER:
-                fireDeleteReminder(reminderPayload);
+                fireDeleteReminder((ReminderManageDirectiveEntity) reminderPayload);
                 break;
 
         }
@@ -53,7 +55,7 @@ public class RemindUsecase extends BaseUsecase {
         return "reminder";
     }
 
-    private void fireCreateReminder(ReminderDirectiveEntity payload) {
+    private void fireCreateReminder(ReminderCreateDirectiveEntity payload) {
         String timeStr = payload.getTime().replace("T", " ");
         String content = payload.getContent();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ssX");
@@ -71,12 +73,12 @@ public class RemindUsecase extends BaseUsecase {
         }
     }
 
-    private void fireSearchReminder(ReminderDirectiveEntity payload) {
-
+    private void fireSearchReminder(ReminderManageDirectiveEntity payload) {
+        LogUtil.d(TAG, "**ACTION PERFORM** searchReminder. payload = " + payload);
     }
 
-    private void fireDeleteReminder(ReminderDirectiveEntity payload) {
-
+    private void fireDeleteReminder(ReminderManageDirectiveEntity payload) {
+        LogUtil.d(TAG, "**ACTION PERFORM** deleteReminder. payload = " + payload);
     }
 
     private void createSchedule(Date time, String name) {
