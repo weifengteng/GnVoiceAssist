@@ -24,6 +24,7 @@ import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEnt
 import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ScreenExtendedDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.SmsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 import com.gionee.voiceassist.coreservice.listener.directive.DirectiveListenerController;
@@ -220,6 +221,10 @@ public class CoreService extends Service {
                 for (SceneCallback callback:mExportSceneCallbacks) {
                     callback.onDeviceControlPayload((DeviceControlDirectiveEntity) directivePayload);
                 }
+            case SCREEN_EXTENDED:
+                for (SceneCallback callback:mExportSceneCallbacks) {
+                    callback.onScreenExtendedPayload((ScreenExtendedDirectiveEntity) directivePayload);
+                }
             default:
                 break;
         }
@@ -265,6 +270,7 @@ public class CoreService extends Service {
 
     public interface SceneCallback {
         void onScreenPayload(ScreenDirectiveEntity payload);
+        void onScreenExtendedPayload(ScreenExtendedDirectiveEntity payload);
         void onAlarmPayload(AlarmDirectiveEntity payload);
         void onContactsPayload(ContactsDirectiveEntity payload);
         void onPhonecallPayload(PhoneCallDirectiveEntity payload);

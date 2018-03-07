@@ -1,5 +1,7 @@
 package com.gionee.voiceassist.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -40,6 +42,43 @@ public class DateUtil {
 
     public static Date getTodayEndDate() {
         return new Date(getTodayEndTimestamp());
+    }
+
+    public static int dayConvert(String dayStr) {
+        switch (dayStr) {
+            case "MON":
+                return Calendar.MONDAY;
+            case "TUE":
+                return Calendar.TUESDAY;
+            case "WED":
+                return Calendar.WEDNESDAY;
+            case "THU":
+                return Calendar.THURSDAY;
+            case "FRI":
+                return Calendar.FRIDAY;
+            case "SAT":
+                return Calendar.SATURDAY;
+            case "SUN":
+                return Calendar.SUNDAY;
+            default:
+                return -1;
+
+        }
+    }
+
+    public static Date convertStrToDate(String timeStr, String format) {
+        if (timeStr == null) {
+            return new Date();
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        Date time = new Date();
+        try {
+            time = formatter.parse(timeStr);
+        } catch (ParseException e) {
+            LogUtil.e("DateUtil", "解析时间错误");
+            e.printStackTrace();
+        }
+        return time;
     }
 
 }

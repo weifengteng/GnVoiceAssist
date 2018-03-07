@@ -23,6 +23,7 @@ public class DirectiveEntity implements Serializable {
         PHONECALL,
         SMS,
         SCREEN,
+        SCREEN_EXTENDED,
         APPLAUNCH,
         CONTACTS,
         GIONEE_CUSTOM_COMMAND,

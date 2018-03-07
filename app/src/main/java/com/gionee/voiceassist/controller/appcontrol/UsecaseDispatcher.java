@@ -15,6 +15,7 @@ import com.gionee.voiceassist.usecase.music.GNMusicUsecase;
 import com.gionee.voiceassist.usecase.phonecall.PhoneCallUsecase;
 import com.gionee.voiceassist.usecase.quicksetting.QuickSettingUsecase;
 import com.gionee.voiceassist.usecase.remind.RemindUsecase;
+import com.gionee.voiceassist.usecase.screenrender.ScreenExtendedUsecase;
 import com.gionee.voiceassist.usecase.screenrender.ScreenUsecase;
 import com.gionee.voiceassist.usecase.smssend.SmsSendUseCase;
 import com.gionee.voiceassist.usecase.timing.StopwatchUsecase;
@@ -40,6 +41,7 @@ public class UsecaseDispatcher {
     private PhoneCallUsecase phoneCallUsecase = new PhoneCallUsecase();
     private SmsSendUseCase smsSendUseCase = new SmsSendUseCase();
     private ScreenUsecase screenUsecase = new ScreenUsecase();
+    private ScreenExtendedUsecase screenExtendedUsecase = new ScreenExtendedUsecase();
     private StopwatchUsecase stopwatchUsecase = new StopwatchUsecase();
     private PailitaoUsecase pailitaoUsecase = new PailitaoUsecase();
     private AlipayScanUsecase alipayScanUsecase = new AlipayScanUsecase();
@@ -60,6 +62,7 @@ public class UsecaseDispatcher {
         installUsecase(phoneCallUsecase);
         installUsecase(smsSendUseCase);
         installUsecase(screenUsecase);
+        installUsecase(screenExtendedUsecase);
         installUsecase(stopwatchUsecase);
         installUsecase(pailitaoUsecase);
         installUsecase(alipayScanUsecase);
@@ -76,6 +79,7 @@ public class UsecaseDispatcher {
         uninstallUsecase(phoneCallUsecase);
         uninstallUsecase(smsSendUseCase);
         uninstallUsecase(screenUsecase);
+        uninstallUsecase(screenExtendedUsecase);
         uninstallUsecase(stopwatchUsecase);
         uninstallUsecase(pailitaoUsecase);
         uninstallUsecase(alipayScanUsecase);
