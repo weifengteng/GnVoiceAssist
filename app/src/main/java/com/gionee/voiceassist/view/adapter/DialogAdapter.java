@@ -15,6 +15,7 @@ import com.gionee.voiceassist.view.viewholder.QuickSettingsViewHolder;
 import com.gionee.voiceassist.view.viewholder.StandardCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StopwatchCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.TextCardViewHolder;
+import com.gionee.voiceassist.view.viewholder.WeatherCardViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,8 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 return StopwatchCardViewHolder.newInstance(parent);
             case CardTypeCode.QUICKSETTING_CARD:
                 return QuickSettingsViewHolder.newInstance(parent, mSubItemPool);
+            case CardTypeCode.WEATHER_CARD:
+                return WeatherCardViewHolder.newInstance(parent);
             default:
                 break;
         }

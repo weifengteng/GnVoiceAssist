@@ -5,7 +5,9 @@ import com.gionee.voiceassist.util.DateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by liyingheng on 3/5/18.
@@ -13,21 +15,21 @@ import java.util.List;
 
 public class WeatherCardEntity extends ScreenExtendedDirectiveEntity {
 
-    private String city;        // 城市名称
+    private String city = "";        // 城市名称
 
-    private String county;      // 镇或乡村名称
+    private String county = "";      // 镇或乡村名称
 
     private int askingDay;      // 询问星期几，以Calendar的星期常数作为返回结果
 
-    private String askingDate;  // 询问日期, 返回格式为yyyy-MM-dd
+    private String askingDate = "";  // 询问日期, 返回格式为yyyy-MM-dd
 
-    private float currentTemperature;  // 当前气温
+    private float currentTemperature = 0;  // 当前气温
 
-    private int currentPM25;     // 当前PM 2.5
+    private int currentPM25 = 0;     // 当前PM 2.5
 
-    private String currentAirQuality;  // 当前空气质量
+    private String currentAirQuality = "";  // 当前空气质量
 
-    private List<WeatherSummary> weatherSummaries;      // 天气概况
+    private List<WeatherSummary> weatherSummaries ;      // 天气概况
 
     public WeatherCardEntity(String city, String county, int askingDay, String askingDate, float currentTemperature, int currentPM25, String currentAirQuality, List<WeatherSummary> weatherSummaries) {
         this.city = city;
@@ -46,23 +48,23 @@ public class WeatherCardEntity extends ScreenExtendedDirectiveEntity {
     }
 
     public static class WeatherSummary {
-        private String date;    // 日期
+        public String date;    // 日期
 
-        private int day;        //星期几（以Calendar的周几常数作为返回结果
+        public int day;        //星期几（以Calendar的周几常数作为返回结果
 
-        private int weatherConditionNo;     // 天气状况编号。用来表示不同的天气信息
+        public int weatherConditionNo;     // 天气状况编号。用来表示不同的天气信息
 
-        private String weatherConditionDescription;     // 天气状况语言描述
+        public String weatherConditionDescription;     // 天气状况语言描述
 
-        private float highTemperature;      // 最高温度
+        public float highTemperature;      // 最高温度
 
-        private float lowTemperature;       // 最低温度
+        public float lowTemperature;       // 最低温度
 
-        private String wind;        // 风向风速信息
+        public String wind;        // 风向风速信息
 
-        private int pm25;       // pm2.5
+        public int pm25;       // pm2.5
 
-        private String airQuality;  // 空气质量指数
+        public String airQuality;  // 空气质量指数
 
         @Override
         public String toString() {
@@ -161,6 +163,18 @@ public class WeatherCardEntity extends ScreenExtendedDirectiveEntity {
         Date current = DateUtil.getNow();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(current).equals(askingDate);
+    }
+
+    public Map<String, WeatherSummary> generateWeatherSummaryMap() {
+        Map<String, WeatherSummary> summaryMap = new HashMap<>();
+        if (weatherSummaries != null) {
+            for (WeatherSummary summary:weatherSummaries) {
+                if (summary != null) {
+                    summaryMap.put(summary.date, summary);
+                }
+            }
+        }
+        return summaryMap;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.gionee.voiceassist.coreservice.datamodel.screen.extended.AirPollution
 import com.gionee.voiceassist.coreservice.datamodel.screen.extended.DateCardEntity;
 import com.gionee.voiceassist.coreservice.datamodel.screen.extended.TrafficRestrictionCardEntity;
 import com.gionee.voiceassist.coreservice.datamodel.screen.extended.WeatherCardEntity;
+import com.gionee.voiceassist.datamodel.card.extend.WeatherCard;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.LogUtil;
 
@@ -52,7 +53,9 @@ public class ScreenExtendedUsecase extends BaseUsecase {
     }
 
     private void fireWeatherCard(WeatherCardEntity payload) {
-
+        WeatherCard card = new WeatherCard();
+        card.setWithWeatherEntity(payload);
+        render(card);
     }
 
     private void fireAirPollutionCard(AirPollutionCardEntity payload) {

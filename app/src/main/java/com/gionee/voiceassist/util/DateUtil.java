@@ -1,5 +1,7 @@
 package com.gionee.voiceassist.util;
 
+import android.text.format.Time;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -79,6 +81,38 @@ public class DateUtil {
             e.printStackTrace();
         }
         return time;
+    }
+
+    public static String convertDateToStr(Date date, String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        return dateFormat.format(date);
+    }
+
+    public static String getFriendlyDateDescription(String dateStr) {
+        Date date = convertStrToDate(dateStr, "yyyy-MM-dd");
+        return getFriendlyDateDescription(date);
+    }
+
+    public static String getFriendlyDateDescription(Date date) {
+        // If the date is today, return the localized version of "Today" instead of the actual
+        // day name.
+
+        long dateInMillis = date.getTime();
+        Time t = new Time();
+        t.setToNow();
+        int julianDay = Time.getJulianDay(dateInMillis, t.gmtoff);
+        int currentJulianDay = Time.getJulianDay(System.currentTimeMillis(), t.gmtoff);
+        if (julianDay == currentJulianDay) {
+            return "今天";
+        } else if ( julianDay == currentJulianDay +1 ) {
+            return "明天";
+        } else {
+            Time time = new Time();
+            time.setToNow();
+            // Otherwise, the format is just the day of the week (e.g "Wednesday".
+            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+            return dayFormat.format(dateInMillis);
+        }
     }
 
 }

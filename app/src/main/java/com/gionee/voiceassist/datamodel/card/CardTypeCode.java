@@ -19,5 +19,10 @@ public class CardTypeCode {
     public static final int QUICKSETTING_CARD = 24;
     public static final int CONTACT_SELECT_CARD = 31;
     public static final int SIM_SELECT_CARD = 32;
+    public static final int WEATHER_CARD = 41;
+    public static final int AIR_POLLUTION_CARD = 42;
+    public static final int TRAFFIC_RESTRICTION_CARD = 43;
+    public static final int STOCK_CARD = 44;
+    public static final int DATETIME_CARD = 45;
 
 }

@@ -73,11 +73,14 @@ public class ScreenExtendedDirectiveListener extends BaseDirectiveListener
         List<WeatherCardEntity.WeatherSummary> summaries = new ArrayList<>();
         for (RenderWeatherPayload.WeatherForecast dailyForecast:payload.weatherForecast) {
             // Convert High Temp
-            float highTemp = Float.parseFloat(dailyForecast.highTemperature.substring(0, dailyForecast.highTemperature.length() - 1));
-            float lowTemp = Float.parseFloat(dailyForecast.lowTemperature.substring(0, dailyForecast.lowTemperature.length() - 1));
+            float highTemp = Float.valueOf(dailyForecast.highTemperature.substring(0, dailyForecast.highTemperature.length() - 1));
+            float lowTemp = Float.valueOf(dailyForecast.lowTemperature.substring(0, dailyForecast.lowTemperature.length() - 1));
             int day = DateUtil.dayConvert(dailyForecast.day);
             String date = dailyForecast.date;
             String weatherConditionDesc = dailyForecast.weatherCondition;
+            int pm25 = dailyForecast.currentPM25 != null ? Integer.valueOf(dailyForecast.currentPM25):Integer.valueOf(dailyForecast.pm25);
+            String airQuality = dailyForecast.currentAirQuality != null ? dailyForecast.currentAirQuality:dailyForecast.airQuality;
+            String wind = dailyForecast.windCondition;
 
             WeatherCardEntity.WeatherSummary summary = new WeatherCardEntity.WeatherSummary(
                     date,
@@ -86,11 +89,16 @@ public class ScreenExtendedDirectiveListener extends BaseDirectiveListener
                     weatherConditionDesc,
                     highTemp,
                     lowTemp,
-                    "",
-                    -1,
-                    "");
+                    wind,
+                    pm25,
+                    airQuality);
             summaries.add(summary);
         }
+
+        RenderWeatherPayload.WeatherForecast currentItem = payload.weatherForecast.get(0);
+        currentTemp = Float.parseFloat(currentItem.currentTemperature.substring(0, currentItem.currentTemperature.length() - 1));
+        currentPM25 = Integer.parseInt(currentItem.currentPM25.substring(0, currentItem.currentPM25.length() - 1));
+        currentAirQuality = payload.weatherForecast.get(0).currentAirQuality;
         WeatherCardEntity entity = new WeatherCardEntity(city, "", askingDay, askingDate, currentTemp, currentPM25, currentAirQuality, summaries);
         return entity;
     }
@@ -176,6 +184,11 @@ public class ScreenExtendedDirectiveListener extends BaseDirectiveListener
         return new DateCardEntity(
                 DateUtil.convertStrToDate(payload.datetime.replace("T", " "), "yyyy-MM-dd hh:mm:ssX"),
                 DateUtil.dayConvert(payload.day));
+    }
+
+    public boolean isAskCurrentWeather(String date) {
+        String curDateStr = DateUtil.convertDateToStr(new Date(), "yyyy-MM-dd");
+        return date.equals(curDateStr);
     }
 
 
