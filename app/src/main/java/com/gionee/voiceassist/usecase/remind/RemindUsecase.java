@@ -8,6 +8,7 @@ import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderCreateDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderManageDirectiveEntity;
+import com.gionee.voiceassist.datamodel.card.ReminderCardEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.DateUtil;
 import com.gionee.voiceassist.util.LogUtil;
@@ -59,17 +60,23 @@ public class RemindUsecase extends BaseUsecase {
         String timeStr = payload.getTime().replace("T", " ");
         String content = payload.getContent();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ssX");
-        Date time = new Date();
+        Date reminderDate = new Date();
         try {
-            time = formatter.parse(timeStr);
+            reminderDate = formatter.parse(timeStr);
         } catch (ParseException e) {
             LogUtil.e(TAG, "解析时间错误");
             e.printStackTrace();
         }
         if (content.startsWith("闹钟")) {
-            createAlarm(time, payload.getRepeat().weekly);
+            // TODO: setRepeatRule
+            ReminderCardEntity entity = new ReminderCardEntity();
+            entity.setReminderDate(reminderDate);
+            entity.setReminderContent(content);
+            render(entity);
+
+            createAlarm(reminderDate, payload.getRepeat().weekly);
         } else {
-            createSchedule(time, content);
+            createSchedule(reminderDate, content);
         }
     }
 
@@ -104,6 +111,7 @@ public class RemindUsecase extends BaseUsecase {
                 .putExtra(AlarmClock.EXTRA_HOUR,hour)
                 .putExtra(AlarmClock.EXTRA_MINUTES,minute)
                 .putExtra(AlarmClock.EXTRA_DAYS,(ArrayList<Integer>)triggerDays)
+                .putExtra(AlarmClock.EXTRA_SKIP_UI, true)
                 .putExtra(AlarmClock.EXTRA_MESSAGE,message);
 
         if (intent.resolveActivity(getAppContext().getPackageManager()) != null) {

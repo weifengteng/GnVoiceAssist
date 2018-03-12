@@ -15,6 +15,8 @@ public class SharedData {
     private String desiredScene;
     private boolean isVadReceiving;
     private Scene currentScene;
+    private int mLastQueryItemPosition;
+    private String asrResult;
 
     private SharedData(){
         currentScene = Scene.IDLE;
@@ -61,4 +63,21 @@ public class SharedData {
         return currentScene;
     }
 
+    public int getLastQueryItemPosition() {
+        return mLastQueryItemPosition;
+    }
+
+    public void setLastQueryItemPosition(int lastQueryItemPosition) {
+        this.mLastQueryItemPosition = lastQueryItemPosition;
+    }
+
+    public String getAsrResult() {
+        LogUtil.d("TWF", "getAsrResult = " + asrResult);
+        return asrResult;
+    }
+
+    public void setAsrResult(String asrResult) {
+        LogUtil.d("TWF", "setAsrResult = " + asrResult);
+        this.asrResult = asrResult;
+    }
 }

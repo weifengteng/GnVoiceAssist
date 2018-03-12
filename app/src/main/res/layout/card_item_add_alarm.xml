@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:padding="10dp"
+    android:background="#88ffffff">
+
+    <LinearLayout
+        android:id="@+id/ll_alarm_title"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="40dp">
+        <ImageView
+            android:src="@drawable/alarm"
+            android:scaleType="centerInside"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/reminder_title"
+            android:text="闹钟"
+            android:textSize="24sp"
+            android:textColor="@color/amigo_actionbar_sub_title_color_dark"
+            android:gravity="left|center_vertical"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:src="@drawable/arrow"
+            android:scaleType="centerInside"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_trigger_time"
+        android:text="07:00"
+        android:textSize="30sp"
+        android:textColor="@color/amigo_accent_color_g1"
+        android:layout_below="@+id/ll_alarm_title"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_trigger_countdown_info"
+        android:text="16小时30分钟后"
+        android:textSize="20sp"
+        android:textColor="@color/amigo_actionbar_sub_title_color_dark"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/tv_trigger_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_alarm_date"
+        android:text="2017年10月25日"
+        android:textSize="20sp"
+        android:textColor="@color/amigo_actionbar_sub_title_color_dark"
+        android:layout_below="@id/tv_trigger_countdown_info"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_alarm_day"
+        android:text="周二"
+        android:textSize="20sp"
+        android:textColor="@color/amigo_actionbar_sub_title_color_dark"
+        android:layout_toRightOf="@id/tv_alarm_date"
+        android:layout_marginLeft="10dp"
+        android:layout_alignBottom="@id/tv_alarm_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_alarm_repeat_info"
+        android:text="每天重复"
+        android:textSize="20sp"
+        android:textColor="@color/amigo_actionbar_sub_title_color_dark"
+        android:layout_below="@id/tv_alarm_day"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
