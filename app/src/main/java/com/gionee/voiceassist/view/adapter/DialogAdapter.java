@@ -4,14 +4,17 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.gionee.voiceassist.controller.appcontrol.RenderEvent;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.CardTypeCode;
 import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.view.viewholder.AlarmCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.QueryTextCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.QuickSettingsViewHolder;
+import com.gionee.voiceassist.view.viewholder.ReminderCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StandardCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StopwatchCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.TextCardViewHolder;
@@ -52,6 +55,10 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 return StopwatchCardViewHolder.newInstance(parent);
             case CardTypeCode.QUICKSETTING_CARD:
                 return QuickSettingsViewHolder.newInstance(parent, mSubItemPool);
+            case CardTypeCode.ALARM_CARD:
+                return AlarmCardViewHolder.newInstance(parent);
+            case CardTypeCode.REMINDER_CARD:
+                return ReminderCardViewHolder.newInstance(parent);
             default:
                 break;
         }
@@ -60,13 +67,21 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        LogUtil.d(TAG, "onBindViewHolder position= " + position);
+        LogUtil.d("twf_test", "DialogAdapter onBindViewHolder. position = " + position);
         holder.bind(mPayloads.get(position));
     }
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position, List<Object> payloads) {
-        super.onBindViewHolder(holder, position, payloads);
+        LogUtil.d("twf_test", "DialogAdapter onBindViewHolder w/Payload . position = " + position);
+        if(payloads != null && !payloads.isEmpty()) {
+            for(Object o : payloads) {
+                holder.bind(((RenderEvent)o).getPayload());
+            }
+        } else {
+            holder.bind(mPayloads.get(position));
+        }
+
     }
 
     @Override
@@ -79,12 +94,14 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         return mPayloads.size();
     }
 
-    public void addDialogItem(CardEntity payload) {
+    public int addDialogItem(CardEntity payload) {
         LogUtil.d(TAG, "addDialogItem CardEntity = " + payload.getType());
         if (payload != null) {
             mPayloads.add(payload);
             notifyItemInserted(mPayloads.size() - 1);
+            return mPayloads.size() - 1;
         }
+        return -1;
     }
 
     public void updateDialogItem(CardEntity payload) {

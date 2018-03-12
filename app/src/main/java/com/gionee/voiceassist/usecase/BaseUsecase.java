@@ -9,7 +9,10 @@ import com.gionee.voiceassist.controller.ttscontrol.TtsCallback;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.datamodel.card.AnswerTextCardEntity;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
+import com.gionee.voiceassist.datamodel.card.QueryTextCardEntity;
 import com.gionee.voiceassist.util.ContextUtil;
+import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.util.SharedData;
 
 /**
  * Created by liyingheng on 1/10/18.
@@ -34,14 +37,21 @@ public abstract class BaseUsecase {
 
 
     public void playAndRenderText(String text) {
-        AnswerTextCardEntity renderPayload = new AnswerTextCardEntity();
-        renderPayload.setContent(text);
-        DataController.getDataController().getScreenController().renderToUi(renderPayload);
         DataController.getDataController().getServiceController().playTts(text);
+
+        AnswerTextCardEntity entity = new AnswerTextCardEntity();
+        entity.setContent(text);
+        entity.setCardPosition(-1);
+        render(entity);
     }
 
     public void playAndRenderText(String text, String utterId, TtsCallback utteranceCallback) {
         DataController.getDataController().getServiceController().playTts(text, utterId, utteranceCallback);
+
+        AnswerTextCardEntity entity = new AnswerTextCardEntity();
+        entity.setContent(text);
+        entity.setCardPosition(-1);
+        render(entity);
     }
 
 

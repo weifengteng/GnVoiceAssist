@@ -26,12 +26,14 @@ import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.message.ContactInfo;
 import com.gionee.voiceassist.customlink.CustomLinkSchema;
+import com.gionee.voiceassist.datamodel.card.QueryTextCardEntity;
 import com.gionee.voiceassist.directiveListener.customuserinteraction.CustomUserInteractionManager;
 import com.gionee.voiceassist.directiveListener.phonecall.PhoneCallDirectiveListener;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.CUInteractionUrlParser;
 import com.gionee.voiceassist.util.ContactProcessor;
 import com.gionee.voiceassist.util.LogUtil;
+import com.gionee.voiceassist.util.SharedData;
 import com.gionee.voiceassist.util.T;
 import com.gionee.voiceassist.view.viewitem.ContactsListItem;
 import com.gionee.voiceassist.view.viewitem.SimCardListItem;
@@ -438,12 +440,12 @@ public class PhoneCallUsecase extends BaseUsecase {
                     } else if(hasSimId && hasPhoneNumber) {
                         // 有电话，有选卡号，发起拨打电话的操作
                         // TODO: update view
-                        /*String asrResult = mScreenRender.getAsrResult();
-                        if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
-                            mScreenRender. modifyLastTextInScreen("卡1");
-                        } else if(TextUtils.equals(asrResult, "卡尔") || TextUtils.equals(asrResult, "卡而")) {
-                            mScreenRender.modifyLastTextInScreen("卡2");
-                        }*/
+                        String asrResult = SharedData.getInstance().getAsrResult();
+                        if(TextUtils.equals(simId, "1")) {
+                            forceSetLastQueryTextInScreen("卡1");
+                        } else if(TextUtils.equals(simId, "2")) {
+                            forceSetLastQueryTextInScreen("卡2");
+                        }
                         getCuiController().stopCurrentCustomUserInteraction();
                         // TODO:
 //                        disableSelectSimCard();
@@ -553,12 +555,12 @@ public class PhoneCallUsecase extends BaseUsecase {
                     if(hasSimId && hasPhoneNumber) {
                         // 有电话，有选卡号，发起拨打电话的操作
                         // TODO: update view
-                        /*String asrResult = mScreenRender.getAsrResult();
-                        if(TextUtils.equals(asrResult, "卡已") || TextUtils.equals(asrResult, "卡伊")) {
-                            mScreenRender. modifyLastTextInScreen("卡1");
-                        } else if(TextUtils.equals(asrResult, "卡尔") || TextUtils.equals(asrResult, "卡而")) {
-                            mScreenRender.modifyLastTextInScreen("卡2");
-                        }*/
+                        String asrResult = SharedData.getInstance().getAsrResult();
+                        if(TextUtils.equals(simId, "1")) {
+                            forceSetLastQueryTextInScreen("卡1");
+                        } else if(TextUtils.equals(simId, "2")) {
+                            forceSetLastQueryTextInScreen("卡2");
+                        }
                         // TODO:
 //                        disableSelectSimCard();
                         getCuiController().stopCurrentCustomUserInteraction();
@@ -579,6 +581,15 @@ public class PhoneCallUsecase extends BaseUsecase {
                 startRecord();
             }
         });
+    }
 
+    private void forceSetLastQueryTextInScreen(String text) {
+        QueryTextCardEntity entity = new QueryTextCardEntity();
+        entity.setContent(text);
+        int pos = SharedData.getInstance().getLastQueryItemPosition();
+        LogUtil.d("twf_test", "forceSetLastQueryTextInScreen pos= " + pos);
+        entity.setCardPosition(SharedData.getInstance().getLastQueryItemPosition());
+        entity.setForceSet(true);
+        render(entity);
     }
 }
