@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:padding="10dp"
+    android:background="#88ffffff">
+
+    <LinearLayout
+        android:id="@+id/ll_world_time_query_title"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="40dp">
+        <ImageView
+            android:src="@drawable/alarm"
+            android:scaleType="centerInside"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/time_query_title"
+            android:text="时钟"
+            android:textSize="24sp"
+            android:textColor="@color/amigo_actionbar_sub_title_color_dark"
+            android:gravity="left|center_vertical"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:src="@drawable/arrow"
+            android:scaleType="centerInside"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/date_query_time"
+        android:text="2018-03-01"
+        android:textSize="20sp"
+        android:textColor="@color/amigo_accent_color_g1"
+        android:layout_below="@+id/ll_world_time_query_title"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/city_timezone"
+        android:text="巴塞罗那"
+        android:textSize="30sp"
+        android:textColor="@color/amigo_accent_color_g1"
+        android:layout_below="@+id/date_query_time"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/time_diff_timezones"
+        android:text="-7小时"
+        android:textSize="20sp"
+        android:textColor="@color/amigo_accent_color_g1"
+        android:layout_toRightOf="@+id/date_query_time"
+        android:layout_alignBaseline="@id/date_query_time"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/hour_minute_timezone"
+        android:text="02：48"
+        android:textSize="40sp"
+        android:textColor="@color/amigo_accent_color_g1"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

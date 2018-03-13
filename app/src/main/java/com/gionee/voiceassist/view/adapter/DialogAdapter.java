@@ -10,6 +10,7 @@ import com.gionee.voiceassist.datamodel.card.CardTypeCode;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.view.viewholder.AlarmCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.BaseViewHolder;
+import com.gionee.voiceassist.view.viewholder.DateQueryCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ImageListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.ListCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.QueryTextCardViewHolder;
@@ -19,6 +20,7 @@ import com.gionee.voiceassist.view.viewholder.StandardCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.StopwatchCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.TextCardViewHolder;
 import com.gionee.voiceassist.view.viewholder.WeatherCardViewHolder;
+import com.gionee.voiceassist.view.viewholder.WorldTimeQueryCardViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,10 @@ public class DialogAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 return AlarmCardViewHolder.newInstance(parent);
             case CardTypeCode.REMINDER_CARD:
                 return ReminderCardViewHolder.newInstance(parent);
+            case CardTypeCode.DATE_QUERY_CARD:
+                return DateQueryCardViewHolder.newInstance(parent);
+            case CardTypeCode.WORLD_TIME_QUERY_CARD:
+                return WorldTimeQueryCardViewHolder.newInstance(parent);
             default:
                 break;
         }

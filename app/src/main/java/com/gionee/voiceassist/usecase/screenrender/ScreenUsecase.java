@@ -9,9 +9,11 @@ import com.gionee.voiceassist.coreservice.datamodel.screen.ImagelistCardEntity;
 import com.gionee.voiceassist.datamodel.card.CardEntity;
 import com.gionee.voiceassist.datamodel.card.ImageListCardEntity;
 import com.gionee.voiceassist.datamodel.card.ListCardEntity;
+import com.gionee.voiceassist.datamodel.card.DateQueryCardEntity;
 import com.gionee.voiceassist.datamodel.card.QueryTextCardEntity;
 import com.gionee.voiceassist.datamodel.card.StandardCardEntity;
 import com.gionee.voiceassist.datamodel.card.AnswerTextCardEntity;
+import com.gionee.voiceassist.datamodel.card.WorldTimeQueryCardEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
 import com.gionee.voiceassist.util.LogUtil;
 import com.gionee.voiceassist.util.SharedData;
@@ -194,6 +196,13 @@ public class ScreenUsecase extends BaseUsecase{
                 cardEntity.setExtLink(payload.getLink().src, payload.getLink().anchor);
             }
             render(cardEntity);
+
+            // TODO: 针对日期、世界时查询的处理
+            if(isDateQueryCmd()) {
+                render(resolveDateQueryCardEntity(payload.getContent()));
+            } else if (isWorldTimeQueryCmd()) {
+                render(resolveWorldTimeQueryCardEntity(payload.getContent()));
+            }
         }
     }
 
@@ -228,5 +237,26 @@ public class ScreenUsecase extends BaseUsecase{
             cardEntity.addImageItem(item);
         }
         render(cardEntity);
+    }
+
+    private boolean isDateQueryCmd() {
+        // TODO: wait for luhong solution
+        return false;
+    }
+
+    private boolean isWorldTimeQueryCmd() {
+        // TODO: wait for luhong solution
+        return false;
+    }
+
+    private DateQueryCardEntity resolveDateQueryCardEntity(String query) {
+        // TODO: resolve DateQueryCardEntity from nlp engine
+        DateQueryCardEntity entity = new DateQueryCardEntity();
+        return entity;
+    }
+
+    private WorldTimeQueryCardEntity resolveWorldTimeQueryCardEntity(String query) {
+        // TODO: resolve WorldTimeQueryCardEntity from nlp engine
+        return new WorldTimeQueryCardEntity();
     }
 }
