@@ -18,6 +18,8 @@ public class CardTypeCode {
     public static final int STOPWATCH_CARD = 23;
     public static final int QUICKSETTING_CARD = 24;
     public static final int REMINDER_CARD = 25;
+    public static final int DATE_QUERY_CARD = 26;
+    public static final int WORLD_TIME_QUERY_CARD = 27;
     public static final int CONTACT_SELECT_CARD = 31;
     public static final int SIM_SELECT_CARD = 32;
     public static final int WEATHER_CARD = 41;
