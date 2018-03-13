@@ -1,8 +1,17 @@
 package com.gionee.voiceassist.usecase.remind;
 
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.OperationApplicationException;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.RemoteException;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
+import android.util.Log;
 
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderCreateDirectiveEntity;
@@ -10,12 +19,14 @@ import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderManageDirectiveEntity;
 import com.gionee.voiceassist.datamodel.card.ReminderCardEntity;
 import com.gionee.voiceassist.usecase.BaseUsecase;
+import com.gionee.voiceassist.util.ContextUtil;
 import com.gionee.voiceassist.util.DateUtil;
 import com.gionee.voiceassist.util.LogUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +38,9 @@ import java.util.List;
 public class RemindUsecase extends BaseUsecase {
 
     private static final String TAG = RemindUsecase.class.getSimpleName();
+
+    private AlarmDao alarmDao;
+    private ScheduleDao scheduleDao;
 
     @Override
     public void handleDirective(DirectiveEntity payload) {
@@ -86,11 +100,24 @@ public class RemindUsecase extends BaseUsecase {
 
     private void fireDeleteReminder(ReminderManageDirectiveEntity payload) {
         LogUtil.d(TAG, "**ACTION PERFORM** deleteReminder. payload = " + payload);
+        Date startTime = payload.getTime()[0];
+        Date endTime = payload.getTime()[1];
+        Calendar c = Calendar.getInstance();
+        c.setTime(startTime);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+        if (alarmDao == null) {
+            alarmDao = new AlarmDao();
+        }
+        alarmDao.cancelAlarmWithTime(hour, minute, false);
     }
 
     private void createSchedule(Date time, String name) {
         LogUtil.d(TAG, "**ACTION PERFORM** createSchedule. time = " + time + ";name = " + name);
-        performCreateSchedule(time, time, name);
+        if (scheduleDao == null) {
+            scheduleDao = new ScheduleDao();
+        }
+        scheduleDao.performCreateSchedule(time, time, name);
     }
 
     private void createAlarm(Date time, List<Integer> repeat) {
@@ -103,30 +130,10 @@ public class RemindUsecase extends BaseUsecase {
             int day = cal.get(Calendar.DAY_OF_WEEK);
             repeat.add(day);
         }
-        performCreateAlarm(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), repeat, "");
-    }
-
-    private void performCreateAlarm(int hour, int minute, List<Integer> triggerDays, String message) {
-        Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM)
-                .putExtra(AlarmClock.EXTRA_HOUR,hour)
-                .putExtra(AlarmClock.EXTRA_MINUTES,minute)
-                .putExtra(AlarmClock.EXTRA_DAYS,(ArrayList<Integer>)triggerDays)
-                .putExtra(AlarmClock.EXTRA_SKIP_UI, true)
-                .putExtra(AlarmClock.EXTRA_MESSAGE,message);
-
-        if (intent.resolveActivity(getAppContext().getPackageManager()) != null) {
-            getAppContext().startActivity(intent);
+        if (alarmDao == null) {
+            alarmDao = new AlarmDao();
         }
+        alarmDao.performCreateAlarm(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), repeat, "");
     }
 
-    private void performCreateSchedule(Date startTime, Date endTime, String title) {
-        Intent intent = new Intent(Intent.ACTION_INSERT)
-                .setData(CalendarContract.Events.CONTENT_URI)
-                .putExtra(CalendarContract.Events.TITLE, title)
-                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime.getTime())
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTime());
-        if (intent.resolveActivity(getAppContext().getPackageManager()) != null) {
-            getAppContext().startActivity(intent);
-        }
-    }
 }

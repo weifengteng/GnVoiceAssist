@@ -16,6 +16,7 @@ import com.gionee.voiceassist.coreservice.sdk.module.localaudioplayer.LocalAudio
 import com.gionee.voiceassist.coreservice.sdk.module.phonecall.PhoneCallDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.reminder.ReminderDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.ScreenDeviceModule;
+import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.ScreenExtendDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.sms.SmsDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.telecontroller.TeleControllerDeviceModule;
 import com.gionee.voiceassist.coreservice.sdk.module.tvlive.TvLiveDeviceModule;
@@ -39,6 +40,7 @@ public class DirectiveListenerController {
 
     private AlarmDirectiveListener alarmListener;
     private ScreenDirectiveListener screenListener;
+    private ScreenExtendedDirectiveListener screenExtendedListener;
     private ContactsDirectiveListener contactsListener;
     private PhoneCallDirectiveListener phonecallListener;
     private SmsSendDirectiveListener smsSendDirectiveListener;
@@ -50,6 +52,7 @@ public class DirectiveListenerController {
     private WebBrowserListener webBrowserListener;
     private ReminderDirectiveListener reminderListener;
     private DeviceControlDirectiveListener deviceControlListener;
+
 
     private List<DirectiveCallback> mSubscribers = new ArrayList<>();
 
@@ -92,6 +95,7 @@ public class DirectiveListenerController {
     private void initListener() {
         alarmListener = new AlarmDirectiveListener(mSubscribers);
         screenListener = new ScreenDirectiveListener(mSubscribers);
+        screenExtendedListener = new ScreenExtendedDirectiveListener(mSubscribers);
         contactsListener = new ContactsDirectiveListener(mSubscribers);
         phonecallListener = new PhoneCallDirectiveListener(mSubscribers);
         smsSendDirectiveListener = new SmsSendDirectiveListener(mSubscribers);
@@ -112,6 +116,9 @@ public class DirectiveListenerController {
 
         ((ScreenDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.screen"))
                 .addScreenListener(screenListener);
+
+        ((ScreenExtendDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.screen_extended_card"))
+                .addListener(screenExtendedListener);
 
         ((CustomCmdDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.customcmd"))
                 .addDirectiveListener(customCommandListener);
@@ -154,6 +161,10 @@ public class DirectiveListenerController {
                 .removeDirectiveLIstener(alarmListener);
         ((ScreenDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.screen"))
                 .removeScreenListener(screenListener);
+
+        ((ScreenExtendDeviceModule) getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.screen_extended_card"))
+                .removeListener(screenExtendedListener);
+
         ((CustomCmdDeviceModule)getSdkInternalApi().getDeviceModule("ai.dueros.device_interface.thirdparty.gionee.customcmd"))
                 .removeDirectiveListener(customCommandListener);
 

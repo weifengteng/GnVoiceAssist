@@ -23,6 +23,8 @@ public class RenderWeatherPayload extends Payload implements Serializable {
         public String currentTemperature;
         public String currentPM25;
         public String currentAirQuality;
+        public String pm25;
+        public String airQuality;
     }
 
     public static final class ImageStructure implements Serializable {

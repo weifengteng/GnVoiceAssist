@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/DialogCardStyle">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:id="@+id/iv_feature_tile_img"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:maxHeight="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pic_bg_big"
+            android:alpha="0.4"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="16dp">
+            <TextView
+                android:id="@+id/tv_feature_current_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4度"
+                android:textSize="28sp"/>
+            <TextView
+                android:id="@+id/tv_feature_weather_condition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tv_feature_current_temperature"
+                android:layout_alignTop="@id/tv_feature_current_temperature"
+                android:layout_marginLeft="8dp"
+                android:text="晴转多云"
+                />
+
+            <TextView
+                android:id="@+id/tv_feature_weather_all_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_feature_weather_condition"
+                android:layout_below="@id/tv_feature_weather_condition"
+                android:text="-4 ~ 8"/>
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_weather_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="天气状况"
+            android:textSize="18sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_realtime_temperature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="实时: 4度"/>
+
+        <TextView
+            android:id="@+id/tv_all_temperature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="温度： -4度 ~ 8度"/>
+
+        <TextView
+            android:id="@+id/tv_wind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="风力：北风"/>
+
+        <TextView
+            android:id="@+id/tv_air_condition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="空气质量指数：61， 良"/>
+
+    </LinearLayout>
+
+</LinearLayout>

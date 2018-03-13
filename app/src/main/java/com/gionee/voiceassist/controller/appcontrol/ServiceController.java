@@ -25,6 +25,7 @@ import com.gionee.voiceassist.coreservice.datamodel.LocalAudioPlayerDirectiveEnt
 import com.gionee.voiceassist.coreservice.datamodel.PhoneCallDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ReminderDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
+import com.gionee.voiceassist.coreservice.datamodel.ScreenExtendedDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.SmsDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.WebBrowserDirectiveEntity;
 import com.gionee.voiceassist.coreservice.sdk.SdkController;
@@ -88,6 +89,11 @@ public class ServiceController {
         @Override
         public void onScreenPayload(ScreenDirectiveEntity payload) {
             fireDirectiveDispatch(payload, "screen");
+        }
+
+        @Override
+        public void onScreenExtendedPayload(ScreenExtendedDirectiveEntity payload) {
+            fireDirectiveDispatch(payload, "screen.extend");
         }
 
         @Override
