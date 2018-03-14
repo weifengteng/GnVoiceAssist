@@ -1,5 +1,7 @@
 package com.gionee.voiceassist.coreservice.listener.directive;
 
+import android.util.Log;
+
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenExtendedDirectiveEntity;
@@ -14,12 +16,16 @@ import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.message.
 import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.message.RenderStockPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.message.RenderTrafficRestrictionPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.message.RenderWeatherPayload;
+import com.gionee.voiceassist.datamodel.card.WorldTimeQueryCardEntity;
 import com.gionee.voiceassist.util.DateUtil;
 import com.gionee.voiceassist.util.LogUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by liyingheng on 3/5/18.
@@ -182,15 +188,14 @@ public class ScreenExtendedDirectiveListener extends BaseDirectiveListener
 
     private DateCardEntity fireDateCard(RenderDatePayload payload) {
         return new DateCardEntity(
-                DateUtil.convertStrToDate(payload.datetime.replace("T", " "), "yyyy-MM-dd hh:mm:ssX"),
-                DateUtil.dayConvert(payload.day));
+                // "payload":{"datetime":"2018-03-13T17:29:47+08:00","day":"TUE"
+                DateUtil.convertStrToDate(payload.datetime, "yyyy-MM-dd'T'hh:mm:ssX"),
+                DateUtil.dayConvert(payload.day),
+                DateUtil.getGMTTimeZone(payload.datetime));
     }
 
     public boolean isAskCurrentWeather(String date) {
         String curDateStr = DateUtil.convertDateToStr(new Date(), "yyyy-MM-dd");
         return date.equals(curDateStr);
     }
-
-
-
 }
