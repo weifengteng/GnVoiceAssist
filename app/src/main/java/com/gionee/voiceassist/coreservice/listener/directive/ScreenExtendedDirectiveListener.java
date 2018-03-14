@@ -1,5 +1,7 @@
 package com.gionee.voiceassist.coreservice.listener.directive;
 
+import android.util.Log;
+
 import com.baidu.duer.dcs.framework.message.Directive;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenExtendedDirectiveEntity;
@@ -22,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by liyingheng on 3/5/18.
@@ -186,14 +190,12 @@ public class ScreenExtendedDirectiveListener extends BaseDirectiveListener
         return new DateCardEntity(
                 // "payload":{"datetime":"2018-03-13T17:29:47+08:00","day":"TUE"
                 DateUtil.convertStrToDate(payload.datetime, "yyyy-MM-dd'T'hh:mm:ssX"),
-                DateUtil.dayConvert(payload.day));
+                DateUtil.dayConvert(payload.day),
+                DateUtil.getGMTTimeZone(payload.datetime));
     }
 
     public boolean isAskCurrentWeather(String date) {
         String curDateStr = DateUtil.convertDateToStr(new Date(), "yyyy-MM-dd");
         return date.equals(curDateStr);
     }
-
-
-
 }

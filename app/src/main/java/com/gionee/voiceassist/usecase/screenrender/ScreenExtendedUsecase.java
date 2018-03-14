@@ -70,6 +70,7 @@ public class ScreenExtendedUsecase extends BaseUsecase {
     private void fireDatetimeCard(DateCardEntity payload) {
         WorldTimeQueryCardEntity card = new WorldTimeQueryCardEntity();
         card.setFormattedDate(payload.getTime());
+        card.setTimeZone(payload.getTimeZone());
         render(card);
     }
 

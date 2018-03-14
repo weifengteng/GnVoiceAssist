@@ -1,6 +1,7 @@
 package com.gionee.voiceassist.coreservice.datamodel.screen.extended;
 
 import com.gionee.voiceassist.coreservice.datamodel.ScreenExtendedDirectiveEntity;
+import com.gionee.voiceassist.util.DateUtil;
 
 import java.util.Date;
 
@@ -14,9 +15,12 @@ public class DateCardEntity extends ScreenExtendedDirectiveEntity {
 
     private int day;        // 周几
 
-    public DateCardEntity(Date time, int day) {
+    private int timeZone; // 所在时区
+
+    public DateCardEntity(Date time, int day, int timeZone ) {
         this.time = time;
         this.day = day;
+        this.timeZone = timeZone;
     }
 
     @Override
@@ -40,11 +44,21 @@ public class DateCardEntity extends ScreenExtendedDirectiveEntity {
         this.day = day;
     }
 
+    public int getTimeZone() {
+        return timeZone;
+    }
+
+    public DateCardEntity setTimeZone(int timeZone) {
+        this.timeZone = timeZone;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "DateCardEntity{" +
                 "time=" + time +
                 ", day=" + day +
+                ", timeZone=" + timeZone +
                 '}';
     }
 }

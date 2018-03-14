@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 日期/时间相关工具类
@@ -79,7 +81,6 @@ public class DateUtil {
             return new Date();
         }
         SimpleDateFormat formatter = new SimpleDateFormat(format);
-        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date time = new Date();
         try {
             time = formatter.parse(timeStr);
@@ -163,5 +164,17 @@ public class DateUtil {
             timeRemainingStr = totalHour + "小时" + totalMinute + "分钟后";
         }
         return timeRemainingStr;
+    }
+
+    public static int getGMTTimeZone(String dateTime) {
+        String reg = "[+-](.+?)(?=:)";
+        Pattern pattern = Pattern.compile(reg);
+        Matcher m = pattern.matcher(dateTime);
+        String res = "";
+        while(m.find()) {
+            res = m.group();
+        }
+        int timeZone = Integer.parseInt(res);
+        return timeZone;
     }
 }

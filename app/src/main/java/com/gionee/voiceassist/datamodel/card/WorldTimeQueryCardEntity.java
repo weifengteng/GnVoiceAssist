@@ -14,6 +14,7 @@ public class WorldTimeQueryCardEntity extends CardEntity {
 
     // eg: "2018-03-13T17:29:47+08:00"
     private Date formattedDate;
+    private int timeZone;
 
     public WorldTimeQueryCardEntity() {
         setType(CardType.WORLD_TIME_QUERY_CARD);
@@ -21,6 +22,11 @@ public class WorldTimeQueryCardEntity extends CardEntity {
 
     public WorldTimeQueryCardEntity setFormattedDate(Date formattedDate) {
         this.formattedDate = formattedDate;
+        return this;
+    }
+
+    public WorldTimeQueryCardEntity setTimeZone(int timeZone) {
+        this.timeZone = timeZone;
         return this;
     }
 
@@ -32,13 +38,19 @@ public class WorldTimeQueryCardEntity extends CardEntity {
 
     public String getTimeZoneCity() {
         // TODO:
-        return "北京";
+        return "City";
     }
 
     public String getTimeDiff() {
         // TODO:
-        int minute = formattedDate.getTimezoneOffset();
-        return "+0小时";
+        StringBuilder sb = new StringBuilder();
+        int timeDiff = timeZone - 8;
+        if(timeDiff >= 0) {
+            sb.append("+");
+        }
+        sb.append(timeDiff);
+        sb.append("小时");
+        return sb.toString();
     }
 
     public String getHourAndMinute() {
