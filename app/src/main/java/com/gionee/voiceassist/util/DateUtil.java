@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * 日期/时间相关工具类
@@ -78,12 +79,13 @@ public class DateUtil {
             return new Date();
         }
         SimpleDateFormat formatter = new SimpleDateFormat(format);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date time = new Date();
         try {
             time = formatter.parse(timeStr);
         } catch (ParseException e) {
-            LogUtil.e("DateUtil", "解析时间错误");
             e.printStackTrace();
+            LogUtil.e("DateUtil", "解析时间错误" + e.toString());
         }
         return time;
     }

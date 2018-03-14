@@ -14,9 +14,11 @@ import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.message.
 import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.message.RenderStockPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.message.RenderTrafficRestrictionPayload;
 import com.gionee.voiceassist.coreservice.sdk.module.screen.extend.card.message.RenderWeatherPayload;
+import com.gionee.voiceassist.datamodel.card.WorldTimeQueryCardEntity;
 import com.gionee.voiceassist.util.DateUtil;
 import com.gionee.voiceassist.util.LogUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -182,7 +184,8 @@ public class ScreenExtendedDirectiveListener extends BaseDirectiveListener
 
     private DateCardEntity fireDateCard(RenderDatePayload payload) {
         return new DateCardEntity(
-                DateUtil.convertStrToDate(payload.datetime.replace("T", " "), "yyyy-MM-dd hh:mm:ssX"),
+                // "payload":{"datetime":"2018-03-13T17:29:47+08:00","day":"TUE"
+                DateUtil.convertStrToDate(payload.datetime, "yyyy-MM-dd'T'hh:mm:ssX"),
                 DateUtil.dayConvert(payload.day));
     }
 
