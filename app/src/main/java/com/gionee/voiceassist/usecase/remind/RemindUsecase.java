@@ -41,6 +41,7 @@ public class RemindUsecase extends BaseUsecase {
 
     private AlarmDao alarmDao;
     private ScheduleDao scheduleDao;
+    private RemindClassifier remindClassifier;
 
     @Override
     public void handleDirective(DirectiveEntity payload) {
@@ -81,13 +82,16 @@ public class RemindUsecase extends BaseUsecase {
             LogUtil.e(TAG, "解析时间错误");
             e.printStackTrace();
         }
-        if (content.startsWith("闹钟")) {
+        if (remindClassifier == null) {
+            remindClassifier = new RemindClassifier();
+        }
+        ReminderType reminderType = remindClassifier.classify(payload);
+        if (reminderType == ReminderType.ALARM) {
             // TODO: setRepeatRule
             ReminderCardEntity entity = new ReminderCardEntity();
             entity.setReminderDate(reminderDate);
             entity.setReminderContent(content);
             render(entity);
-
             createAlarm(reminderDate, payload.getRepeat().weekly);
         } else {
             createSchedule(reminderDate, content);

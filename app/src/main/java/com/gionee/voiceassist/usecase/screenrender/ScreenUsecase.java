@@ -3,6 +3,7 @@ package com.gionee.voiceassist.usecase.screenrender;
 import android.os.Handler;
 import android.os.HandlerThread;
 
+import com.gionee.voiceassist.controller.appcontrol.DataController;
 import com.gionee.voiceassist.coreservice.datamodel.DirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.ScreenDirectiveEntity;
 import com.gionee.voiceassist.coreservice.datamodel.screen.ImagelistCardEntity;
@@ -186,6 +187,7 @@ public class ScreenUsecase extends BaseUsecase{
                     SharedData.getInstance().setAsrResult(payload.getContent());
                 }
                 isVoiceInputFinal = true;
+                DataController.getDataController().getConversationController().addUserAsr(payload.getContent());
                 queryTextCardEntity = null;
             }
         } else {
